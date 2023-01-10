@@ -1,0 +1,21 @@
+# This is a generated file; do not edit or check into version control.
+cloud_firestore=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-3.1.16/
+cloud_firestore_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore_web-2.6.15/
+desktop_webview_auth=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/desktop_webview_auth-0.0.9/
+firebase_auth=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-3.3.18/
+firebase_auth_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-3.3.15/
+firebase_core=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.17.0/
+firebase_core_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.4/
+firebase_database=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_database-9.0.14/
+firebase_database_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_database_web-0.2.0+13/
+firebase_dynamic_links=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_dynamic_links-4.2.4/
+flutter_facebook_auth=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_auth-4.3.4/
+flutter_facebook_auth_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_auth_web-3.1.2/
+google_sign_in=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in-5.3.2/
+google_sign_in_android=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in_android-5.2.8/
+google_sign_in_ios=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in_ios-5.3.1/
+google_sign_in_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in_web-0.10.1+2/
+integration_test=/home/ai/snap/flutter/common/flutter/packages/integration_test/
+sign_in_with_apple=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/sign_in_with_apple-3.3.0/
+sign_in_with_apple_web=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/sign_in_with_apple_web-1.0.1/
+twitter_login=/home/ai/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/twitter_login-4.2.3/

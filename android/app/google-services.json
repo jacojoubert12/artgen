@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "133553272540",
+    "project_id": "artgen-66569",
+    "storage_bucket": "artgen-66569.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133553272540:android:093d1219433c415729a619",
+        "android_client_info": {
+          "package_name": "com.enginosoft.artgen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuNxjIULeWbQuF1xfCbYUuYBBLmC8tWbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
