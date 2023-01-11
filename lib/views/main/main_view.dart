@@ -33,22 +33,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/auth_gate.dart';
 
-enum ViewMode {
-  moods,
-  dreams,
-  supplements,
-  diet,
-  physical,
-  activness,
-  journal,
-  community,
-  share,
-  profile,
-  settings,
-  calander,
-  badges,
-  about
-}
+enum ViewMode { search, browse, profile, settings, share, about }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -77,7 +62,7 @@ class MainScreen extends StatefulWidget {
 
 class _Mainviewstate extends State<MainScreen> {
   // View Mode: Menue select om die center view te kies
-  var viewMode = ViewMode.moods;
+  var viewMode = ViewMode.search;
   FireStoreManager fireStoreManager = FireStoreManager();
   StreamBuilder<List<Mood>> moodsStreamBuilder;
   MoodListView moodListView;
@@ -152,7 +137,7 @@ class _Mainviewstate extends State<MainScreen> {
   StatefulWidget getViewModeCenterView() {
     StatefulWidget centerView;
     switch (viewMode) {
-      case ViewMode.moods:
+      case ViewMode.search:
         if (moods.length == 0)
           // centerView = moodListView;
           centerView = imgGridView;
@@ -160,38 +145,11 @@ class _Mainviewstate extends State<MainScreen> {
         else
           centerView = moodListView;
         break;
-      case ViewMode.dreams:
-        centerView = DreamCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.supplements:
-        centerView = SupplementsCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.diet:
-        centerView = DietCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.physical:
-        centerView = PhysicalCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.activness:
-        centerView = ActivnessCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.journal:
-        centerView = PersonalJournalCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.community:
-        centerView = CommunityCenterView(setViewMode: setViewMode);
-        break;
       case ViewMode.profile:
         centerView = ProfileCenterView(setViewMode: setViewMode);
         break;
       case ViewMode.settings:
         centerView = SettingsCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.calander:
-        centerView = CalanderCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.badges:
-        centerView = BadgesCenterView(setViewMode: setViewMode);
         break;
       case ViewMode.about:
         centerView = AboutCenterView(setViewMode: setViewMode);
@@ -208,12 +166,12 @@ class _Mainviewstate extends State<MainScreen> {
 
   StatefulWidget getViewModeDetailView() {
     switch (viewMode) {
-      case ViewMode.moods:
+      case ViewMode.search:
         return moodDetailView;
         break;
-      case ViewMode.dreams:
-        return dreamDetailView;
-        break;
+      // case ViewMode.dreams:
+      //   return dreamDetailView;
+      //   break;
       // case ViewMode.supplements:
       //   return supplementDetailView;
       //   break;
@@ -226,9 +184,9 @@ class _Mainviewstate extends State<MainScreen> {
       // case ViewMode.activness:
       // return activnessDetailView;
       // break;
-      case ViewMode.journal:
-        return journalDetailView;
-        break;
+      // case ViewMode.journal:
+      //   return journalDetailView;
+      //   break;
       // case ViewMode.community:
       // return communityDetailView;
       // break;

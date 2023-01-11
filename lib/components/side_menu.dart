@@ -52,7 +52,7 @@ class SideMenu extends StatelessWidget {
 
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.moods);
+                  this.setViewMode(ViewMode.search);
                 },
                 title: "Search",
                 iconSrc: "assets/Icons/icons8-ok.svg",
@@ -61,7 +61,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.dreams);
+                  this.setViewMode(ViewMode.browse);
                 },
                 title: "Browse",
                 iconSrc: "assets/Icons/icons8-bookmark (1).svg",
@@ -70,7 +70,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.dreams);
+                  this.setViewMode(ViewMode.profile);
                 },
                 title: "Profile",
                 iconSrc: "assets/Icons/icons8-bookmark (1).svg",
@@ -79,7 +79,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.supplements);
+                  this.setViewMode(ViewMode.settings);
                 },
                 title: "Settings",
                 iconSrc: "assets/Icons/icons8-idea.svg",
