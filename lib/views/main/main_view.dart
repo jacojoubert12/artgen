@@ -68,7 +68,7 @@ class _Mainviewstate extends State<MainScreen> {
   // StreamBuilder<List<Mood>> moodsStreamBuilder;
   ImgGridView createImgCenterView;
   CreateImgDetailView createImgDetailView;
-  Set<String> selectedImages = new Set<String>();
+  Set<dynamic> selectedImages = new Set<dynamic>();
   Set<String> selectedImageUrls = new Set<String>();
 
   _Mainviewstate() {
@@ -103,8 +103,6 @@ class _Mainviewstate extends State<MainScreen> {
             updateSelectedImages: this.updateSelectedImages);
       }
     });
-
-    getViewModeDetailView();
   }
 
   showDetailView() {
