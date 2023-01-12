@@ -74,7 +74,7 @@ class _MoodDetailViewState extends State<MoodDetailView> {
                                   children: [
                                     Text(
                                       // "Syslogs: ${widget.mood.countSyslogs}",
-                                      "Todo: Replace this text",
+                                      "Todo: Replace this text - Replacing....",
                                       style: TextStyle(
                                         height: 1.5,
                                         color: Color(0xFF4D5875),

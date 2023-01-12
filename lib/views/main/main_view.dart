@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:artgen/views/main_center_views/img_grid_center_view.dart';
+import 'package:artgen/views/main_center_views/createimg_center_view.dart';
+import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/mood_list_view.dart';
 import 'package:artgen/components/side_menu.dart';
@@ -63,62 +64,27 @@ class MainScreen extends StatefulWidget {
 class _Mainviewstate extends State<MainScreen> {
   // View Mode: Menue select om die center view te kies
   var viewMode = ViewMode.search;
-  FireStoreManager fireStoreManager = FireStoreManager();
-  StreamBuilder<List<Mood>> moodsStreamBuilder;
-  MoodListView moodListView;
+  // FireStoreManager fireStoreManager = FireStoreManager();
+  // StreamBuilder<List<Mood>> moodsStreamBuilder;
+  ImgGridView createImgCenterView;
+  CreateImgDetailView createImgDetailView;
+  Set<String> selectedImages = new Set<String>();
+  Set<String> selectedImageUrls = new Set<String>();
 
   _Mainviewstate() {
-    // moodsStreamBuilder = fireStoreManager.initUserMoods(MoodListViewWidget(
-    //   setSelectedMood: this.setSelectedMood,
-    // ));
-    // moodListView = MoodListView(
-    //   setViewMode: this.setViewMode,
-    //   moodsStream: moodsStreamBuilder,
-    // );
+    createImgCenterView = ImgGridView(
+      selectedImages: selectedImages,
+      selectedImageUrls: selectedImageUrls,
+      updateSelectedImages: this.updateSelectedImages,
+      showDetailView: this.showDetailView,
+      setViewMode: this.setViewMode,
+    );
 
-    // fireStoreManager.isUserDefaultsSet();
-
-    // moodsStreamBuilder.stream.listen((event) {
-    //   print("EVENTTTTT:");
-    //   print(event);
-    //   if (event.isEmpty) {
-    //     final defaultMoodsStream = fireStoreManager.initDefaultMoods(
-    //         MoodListViewWidget(setSelectedMood: this.setSelectedMood));
-    //     defaultMoodsStream.stream.listen((event) {
-    //       print("Default EVENTTTTT:");
-    //       print(event);
-    //       if (event.isEmpty) {
-    //         print('default is empty');
-    //       } else {
-    //         print('default is not empty');
-    //         fireStoreManager.insertDefaultMoods();
-    //       }
-
-    //       setState(() {
-    //         moods = event;
-    //       });
-
-    //       print("Mooods lenght in listener");
-    //       print(moods.length);
-    //     });
-    //   }
-
-    //   setState(() {
-    //     moods = event;
-    //   });
-
-    //   print("Mooods lenght in listener");
-    //   print(moods.length);
-    // });
+    createImgDetailView = CreateImgDetailView(
+        selectedImages: selectedImages,
+        selectedImageUrls: selectedImageUrls,
+        updateSelectedImages: this.updateSelectedImages);
   }
-
-  MoodDetailView moodDetailView = new MoodDetailView(
-      mood: new Mood(
-    moodName: "No Mood Selected",
-  ));
-  DreamsDetailView dreamDetailView = new DreamsDetailView();
-  JournalDetailView journalDetailView = new JournalDetailView();
-  //TODO Rename and Add all detail views here.... decide how tmoodsStreamo do None/Null/Hide for categories that doesn't have detail views
 
   setViewMode(viewMode) {
     setState(() {
@@ -126,24 +92,35 @@ class _Mainviewstate extends State<MainScreen> {
     });
   }
 
-  setSelectedMood(mood) {
+  updateSelectedImages(selectedImageSet, selectedImageUrls) {
     setState(() {
-      moodDetailView = MoodDetailView(mood: mood);
+      this.selectedImages = selectedImages;
+      this.selectedImageUrls = selectedImageUrls;
+      if (!Responsive.isMobile(context)) {
+        createImgDetailView = CreateImgDetailView(
+            selectedImages: selectedImages,
+            selectedImageUrls: selectedImageUrls,
+            updateSelectedImages: this.updateSelectedImages);
+      }
     });
+
+    getViewModeDetailView();
   }
 
-  StatefulWidget imgGridView = ImgGridView();
+  showDetailView() {
+    if (Responsive.isMobile(context))
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => createImgDetailView,
+          ));
+  }
 
   StatefulWidget getViewModeCenterView() {
     StatefulWidget centerView;
     switch (viewMode) {
       case ViewMode.search:
-        if (moods.length == 0)
-          // centerView = moodListView;
-          centerView = imgGridView;
-        // centerView = CircularProgressIndicator();
-        else
-          centerView = moodListView;
+        centerView = createImgCenterView;
         break;
       case ViewMode.profile:
         centerView = ProfileCenterView(setViewMode: setViewMode);
@@ -155,11 +132,7 @@ class _Mainviewstate extends State<MainScreen> {
         centerView = AboutCenterView(setViewMode: setViewMode);
         break;
       default:
-        if (moods.length == 0)
-          centerView = imgGridView; // moodListView;
-        // centerView = CircularProgressIndicator();
-        else
-          centerView = imgGridView;
+        centerView = createImgCenterView;
     }
     return centerView;
   }
@@ -167,7 +140,7 @@ class _Mainviewstate extends State<MainScreen> {
   StatefulWidget getViewModeDetailView() {
     switch (viewMode) {
       case ViewMode.search:
-        return moodDetailView;
+        return this.createImgDetailView;
         break;
       // case ViewMode.dreams:
       //   return dreamDetailView;
@@ -209,7 +182,7 @@ class _Mainviewstate extends State<MainScreen> {
       // return aboutDetailView;
       // break;
       default:
-        return moodDetailView;
+        return this.createImgDetailView;
     }
   }
 
