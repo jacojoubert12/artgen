@@ -49,15 +49,20 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   generateImage() async {
     // final response = await http.get('http://localhost:5000?name=John');
     String img;
-    final uri = Uri.https('http://localhost:5000', '/', {"prompt": prompt});
-    final response = await http.get(uri);
+    final uri = Uri.http('localhost:5000', '/'); // {"prompt": prompt});
+
+    final response = await http.post(
+      uri,
+      body: jsonEncode({'prompt': prompt}),
+      headers: {'Content-Type': 'application/json'},
+    );
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       img = data['image'];
       print(img);
       setState(() {
-        generatedImgUrl = "http://localhost:5000/output/" + img;
+        generatedImgUrl = "http://localhost:5000/" + img;
       });
     } else {
       print("Request failed with status: ${response.statusCode}");

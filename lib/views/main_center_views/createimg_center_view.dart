@@ -10,22 +10,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
-
-Future<List<String>> getImageUrls() async {
-  final uri = Uri.https('lexica.art', '/api/v1/search', {'q': 'apples'});
-  final response = await http.get(uri);
-
-  if (response.statusCode == 200) {
-    final jsonData = json.decode(response.body);
-    final urls =
-        jsonData['images'].map<String>((url) => url.toString()).toList();
-    // print(urls[0]);
-    return urls;
-  } else {
-    throw Exception('Failed to load images');
-  }
-}
 
 class ImgGridView extends StatefulWidget {
   ImgGridView(
@@ -41,20 +25,52 @@ class ImgGridView extends StatefulWidget {
   final Function showDetailView;
   final selectedImages;
   final selectedImageUrls;
+  List<String> imageUrls = [];
+  List<dynamic> images = [];
+
   @override
   State<ImgGridView> createState() => _ImgGridViewState();
 }
 
 class _ImgGridViewState extends State<ImgGridView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Set<dynamic> _selectedImages;
   Set<String> _selectedImageUrls;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<String> _imageUrls;
+  List<dynamic> _images;
 
   @override
   void initState() {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
+    _imageUrls = widget.imageUrls;
+    _images = widget.images;
+    getImageUrls();
+  }
+
+  Future<List<String>> getImageUrls([String q = "art"]) async {
+    final uri = Uri.https('lexica.art', '/api/v1/search', {'q': q});
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      // print(jsonData);
+      final images = jsonData['images'].map<dynamic>((url) => url).toList();
+      final urls = jsonData['images']
+          .map<String>((image) => image['src'].toString())
+          .toList();
+
+      setState(() {
+        _imageUrls = urls;
+        _images = images;
+      });
+
+      return urls;
+    } else {
+      throw Exception('Failed to load images');
+    }
   }
 
   @override
@@ -90,8 +106,10 @@ class _ImgGridViewState extends State<ImgGridView> {
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                     Expanded(
                       child: TextField(
-                        onChanged: (value) {
-                          getImageUrls();
+                        onSubmitted: (value) {
+                          setState(() {
+                            getImageUrls(value);
+                          });
                         },
                         decoration: InputDecoration(
                           hintText: "Search",
@@ -121,7 +139,9 @@ class _ImgGridViewState extends State<ImgGridView> {
                     selectedImages: _selectedImages,
                     selectedImageUrls: _selectedImageUrls,
                     updateSelectedImages: widget.updateSelectedImages,
-                    showDetailView: widget.showDetailView),
+                    showDetailView: widget.showDetailView,
+                    imageUrls: _imageUrls,
+                    images: _images),
               ),
               SizedBox(height: kDefaultPadding),
               Container(
@@ -168,13 +188,17 @@ class ImageGridView extends StatefulWidget {
   final Set<String> selectedImageUrls;
   final Function updateSelectedImages;
   final Function showDetailView;
+  final List<String> imageUrls;
+  final List<dynamic> images;
 
   const ImageGridView(
       {Key key,
       this.updateSelectedImages,
       this.selectedImageUrls,
       this.selectedImages,
-      this.showDetailView})
+      this.showDetailView,
+      this.images,
+      this.imageUrls})
       : super(key: key);
 
   @override
@@ -184,47 +208,27 @@ class ImageGridView extends StatefulWidget {
 class _ImageGridViewState extends State<ImageGridView> {
   Set<String> _selectedImageUrls;
   Set<dynamic> _selectedImages;
-  List<String> _imageUrls = [];
-  List<dynamic> _images = [];
+  List<String> _imageUrls; // = [];
+  List<dynamic> _images; // = [];
 
   @override
   void initState() {
     super.initState();
-    getImageUrls();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-  }
-
-  Future<List<String>> getImageUrls() async {
-    final uri = Uri.https('lexica.art', '/api/v1/search', {'q': 'apples'});
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-
-      // print(jsonData);
-      final images = jsonData['images'].map<dynamic>((url) => url).toList();
-      final urls = jsonData['images']
-          .map<String>((image) => image['src'].toString())
-          .toList();
-
-      setState(() {
-        _imageUrls = urls;
-        _images = images;
-      });
-      return urls;
-    } else {
-      throw Exception('Failed to load images');
-    }
+    _images = widget.images;
+    _imageUrls = widget.imageUrls;
   }
 
   @override
   Widget build(BuildContext context) {
+    _images = widget.images;
+    _imageUrls = widget.imageUrls;
     return GridView.builder(
       itemCount: _imageUrls.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        // childAspectRatio: 1,
+        childAspectRatio: 1,
       ),
       itemBuilder: (BuildContext context, int index) {
         final imageUrl = _imageUrls[index];
