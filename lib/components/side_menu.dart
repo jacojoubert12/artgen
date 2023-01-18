@@ -52,9 +52,9 @@ class SideMenu extends StatelessWidget {
 
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.search);
+                  this.setViewMode(ViewMode.create);
                 },
-                title: "Search",
+                title: "Create",
                 iconSrc: "assets/Icons/icons8-ok.svg",
                 isActive: false,
                 showBorder: true,

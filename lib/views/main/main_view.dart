@@ -34,7 +34,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/auth_gate.dart';
 
-enum ViewMode { search, browse, profile, settings, share, about }
+enum ViewMode { create, browse, profile, settings, share, about }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -63,7 +63,7 @@ class MainScreen extends StatefulWidget {
 
 class _Mainviewstate extends State<MainScreen> {
   // View Mode: Menue select om die center view te kies
-  var viewMode = ViewMode.search;
+  var viewMode = ViewMode.create;
   // FireStoreManager fireStoreManager = FireStoreManager();
   // StreamBuilder<List<Mood>> moodsStreamBuilder;
   ImgGridView createImgCenterView;
@@ -117,7 +117,7 @@ class _Mainviewstate extends State<MainScreen> {
   StatefulWidget getViewModeCenterView() {
     StatefulWidget centerView;
     switch (viewMode) {
-      case ViewMode.search:
+      case ViewMode.create:
         centerView = createImgCenterView;
         break;
       case ViewMode.profile:
@@ -137,7 +137,7 @@ class _Mainviewstate extends State<MainScreen> {
 
   StatefulWidget getViewModeDetailView() {
     switch (viewMode) {
-      case ViewMode.search:
+      case ViewMode.create:
         return this.createImgDetailView;
         break;
       // case ViewMode.dreams:

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -185,85 +186,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ImageListView extends StatefulWidget {
-  final Set<dynamic> selectedImages;
-  final Set<String> selectedImageUrls;
-  final Function updateSelectedImages;
-
-  const ImageListView(
-      {Key key,
-      this.updateSelectedImages,
-      this.selectedImages,
-      this.selectedImageUrls})
-      : super(key: key);
-
-  @override
-  _ImageListViewState createState() => _ImageListViewState();
-}
-
-class _ImageListViewState extends State<ImageListView> {
-  Set<dynamic> _selectedImages;
-  Set<String> _selectedImageUrls;
-  List<String> _imageUrls = [];
-  List<dynamic> _images = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedImages = widget.selectedImages;
-    _selectedImageUrls = widget.selectedImageUrls;
-    _imageUrls = _selectedImageUrls.toList();
-    _images = _selectedImages.toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _imageUrls = _selectedImageUrls.toList();
-    _images = _selectedImages.toList();
-    // print(_imageUrls.length);
-    // print(_imageUrls);
-    return Container(
-      height: 200,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _imageUrls.length,
-        itemBuilder: (BuildContext context, int index) {
-          final imageUrl = _imageUrls[index];
-          final imageFull = _images[index];
-          final isSelected = _selectedImageUrls.contains(imageUrl);
-
-          return Container(
-            width: 120,
-            margin: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isSelected ? Colors.blue : Colors.transparent,
-                width: 2.0,
-              ),
-            ),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (isSelected) {
-                    _selectedImageUrls.remove(imageUrl);
-                    _selectedImages.remove(imageFull);
-                  } else {
-                    _selectedImageUrls.add(imageUrl);
-                    _selectedImages.add(imageFull);
-                  }
-                  widget.updateSelectedImages(
-                      _selectedImages, _selectedImageUrls);
-                });
-              },
-              child: Image.network(imageUrl),
-            ),
-          );
-        },
       ),
     );
   }

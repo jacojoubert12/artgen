@@ -1,3 +1,4 @@
+import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
@@ -49,7 +50,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     getImageUrls();
   }
 
-  Future<List<String>> getImageUrls([String q = "art"]) async {
+  Future<List<String>> getImageUrls([String q = "random"]) async {
     final uri = Uri.https('lexica.art', '/api/v1/search', {'q': q});
     final response = await http.get(uri);
 
@@ -71,6 +72,14 @@ class _ImgGridViewState extends State<ImgGridView> {
     } else {
       throw Exception('Failed to load images');
     }
+  }
+
+  centerViewUpdateSelectedImages(_selectedImages, _selectedImageUrls) {
+    setState(() {
+      _selectedImages = widget.selectedImages;
+      _selectedImageUrls = widget.selectedImageUrls;
+      widget.updateSelectedImages(_selectedImages, _selectedImageUrls);
+    });
   }
 
   @override
@@ -134,11 +143,18 @@ class _ImgGridViewState extends State<ImgGridView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
+              ImageListView(
+                updateSelectedImages: widget.updateSelectedImages,
+                selectedImages: _selectedImages,
+                selectedImageUrls: _selectedImageUrls,
+              ),
+              SizedBox(height: kDefaultPadding),
               Expanded(
                 child: ImageGridView(
                     selectedImages: _selectedImages,
                     selectedImageUrls: _selectedImageUrls,
-                    updateSelectedImages: widget.updateSelectedImages,
+                    updateSelectedImages:
+                        centerViewUpdateSelectedImages, //widget.updateSelectedImages,
                     showDetailView: widget.showDetailView,
                     imageUrls: _imageUrls,
                     images: _images),
@@ -225,6 +241,7 @@ class _ImageGridViewState extends State<ImageGridView> {
     _images = widget.images;
     _imageUrls = widget.imageUrls;
     return GridView.builder(
+      shrinkWrap: true,
       itemCount: _imageUrls.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
