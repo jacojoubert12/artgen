@@ -8,6 +8,7 @@ import 'package:influxdb_client/api.dart';
 
 import '../../constants.dart';
 import 'components/header.dart';
+import 'image_details_view.dart';
 
 class CreateImgDetailView extends StatefulWidget {
   CreateImgDetailView(
@@ -111,8 +112,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         child: SafeArea(
           child: Column(
             children: [
-              Header(),
-              Divider(thickness: 1),
+              // Header(),
+              // Divider(thickness: 1),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(kDefaultPadding),
@@ -350,6 +351,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                                 return Container(
                                                   child: GestureDetector(
                                                     onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return ImageDetailsModal();
+                                                        },
+                                                      );
                                                       setState(() {});
                                                     },
                                                     child: Image.network(

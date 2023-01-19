@@ -34,7 +34,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/auth_gate.dart';
 
-enum ViewMode { create, browse, profile, settings, share, about }
+enum ViewMode { create, mygallary, explore, likes, profile, about, share }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -46,6 +46,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       // appBar: AppBar(title: const Text("artgen")),
       body: MainScreen(user: user),
+      // body: MainScreen(),
     );
   }
 }
@@ -120,11 +121,17 @@ class _Mainviewstate extends State<MainScreen> {
       case ViewMode.create:
         centerView = createImgCenterView;
         break;
+      case ViewMode.mygallary:
+        centerView = MyGallaryCenterView(setViewMode: setViewMode);
+        break;
+      case ViewMode.explore:
+        centerView = ExploreCenterView(setViewMode: setViewMode);
+        break;
+      case ViewMode.likes:
+        centerView = LikesCenterView(setViewMode: setViewMode);
+        break;
       case ViewMode.profile:
         centerView = ProfileCenterView(setViewMode: setViewMode);
-        break;
-      case ViewMode.settings:
-        centerView = SettingsCenterView(setViewMode: setViewMode);
         break;
       case ViewMode.about:
         centerView = AboutCenterView(setViewMode: setViewMode);
@@ -140,45 +147,9 @@ class _Mainviewstate extends State<MainScreen> {
       case ViewMode.create:
         return this.createImgDetailView;
         break;
-      // case ViewMode.dreams:
-      //   return dreamDetailView;
+      // case ViewMode.mygallary:
+      //   return mygallaryDetailView;
       //   break;
-      // case ViewMode.supplements:
-      //   return supplementDetailView;
-      //   break;
-      // case ViewMode.diet:
-      // return dietDetailView;
-      // break;
-      // case ViewMode.physical:
-      // return physicalDetailView;
-      // break;
-      // case ViewMode.activness:
-      // return activnessDetailView;
-      // break;
-      // case ViewMode.journal:
-      //   return journalDetailView;
-      //   break;
-      // case ViewMode.community:
-      // return communityDetailView;
-      // break;
-      // case ViewMode.share:
-      // return shareDetailView;
-      // break;
-      // case ViewMode.profile:
-      // return profileDetailView;
-      // break;
-      // case ViewMode.settings:
-      // return settingsDetailView;
-      // break;
-      // case ViewMode.calander:
-      // return calanderDetailView;
-      // break;
-      //  case ViewMode.badges:
-      // return badgeDetailView;
-      // break;
-      // case ViewMode.about:
-      // return aboutDetailView;
-      // break;
       default:
         return this.createImgDetailView;
     }
