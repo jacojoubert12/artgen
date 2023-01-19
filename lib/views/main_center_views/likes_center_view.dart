@@ -7,20 +7,24 @@ import '../../../constants.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class PhysicalCenterView extends StatefulWidget {
-  const PhysicalCenterView({Key key, this.setViewMode,}) : super(key: key);
+class LikesCenterView extends StatefulWidget {
+  const LikesCenterView({
+    Key key,
+    this.setViewMode,
+  }) : super(key: key);
   final Function setViewMode;
-// class PhysicalCenterView extends StatefulWidget {
+
+// class LikesCenterView extends StatefulWidget {
 //   // Press "Command + ."
-//   const PhysicalCenterView({
+//   const LikesCenterView({
 //     Key key,
 //   }) : super(key: key);
 
   @override
-  _PhysicalCenterViewState createState() => _PhysicalCenterViewState();
+  _LikesCenterViewState createState() => _LikesCenterViewState();
 }
 
-class _PhysicalCenterViewState extends State<PhysicalCenterView> {
+class _LikesCenterViewState extends State<LikesCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {

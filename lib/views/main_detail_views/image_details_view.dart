@@ -28,7 +28,6 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: kDefaultPadding),
-            // Large Image
             Expanded(
               flex: 5,
               child: Stack(

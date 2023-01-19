@@ -7,22 +7,25 @@ import '../../../constants.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class ActivnessCenterView extends StatefulWidget {
-  const ActivnessCenterView({Key key, this.setViewMode,}) : super(key: key);
+class MyGallaryCenterView extends StatefulWidget {
+  const MyGallaryCenterView({
+    Key key,
+    this.setViewMode,
+  }) : super(key: key);
   final Function setViewMode;
   // final List<Alert> alerts;
 
-// class ActivnessCenterView extends StatefulWidget {
+// class MyGallaryCenterView extends StatefulWidget {
 //   // Press "Command + ."
-//   const ActivnessCenterView({
+//   const MyGallaryCenterView({
 //     Key key,
 //   }) : super(key: key);
 
   @override
-  _ActivnessCenterViewState createState() => _ActivnessCenterViewState();
+  _MyGallaryCenterViewState createState() => _MyGallaryCenterViewState();
 }
 
-class _ActivnessCenterViewState extends State<ActivnessCenterView> {
+class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
