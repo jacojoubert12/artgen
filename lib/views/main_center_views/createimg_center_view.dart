@@ -143,11 +143,12 @@ class _ImgGridViewState extends State<ImgGridView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
-              ImageListView(
-                updateSelectedImages: widget.updateSelectedImages,
-                selectedImages: _selectedImages,
-                selectedImageUrls: _selectedImageUrls,
-              ),
+              if (Responsive.isMobile(context))
+                ImageListView(
+                  updateSelectedImages: widget.updateSelectedImages,
+                  selectedImages: _selectedImages,
+                  selectedImageUrls: _selectedImageUrls,
+                ),
               SizedBox(height: kDefaultPadding),
               Expanded(
                 child: ImageGridView(
@@ -160,37 +161,38 @@ class _ImgGridViewState extends State<ImgGridView> {
                     images: _images),
               ),
               SizedBox(height: kDefaultPadding),
-              Container(
-                height: 80,
-                child: RoundedButton(
-                  text: "Create",
-                  press: () {
-                    widget.showDetailView();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Popup title"),
-                          content: Text(
-                              "This is the message displayed in the popup"),
-                          actions: <Widget>[
-                            Container(
-                              height: 80,
-                              width: 500,
-                              child: RoundedButton(
-                                text: "OK",
-                                press: () {
-                                  Navigator.of(context).pop();
-                                },
+              if (Responsive.isMobile(context))
+                Container(
+                  height: 80,
+                  child: RoundedButton(
+                    text: "Create",
+                    press: () {
+                      widget.showDetailView();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Popup title"),
+                            content: Text(
+                                "This is the message displayed in the popup"),
+                            actions: <Widget>[
+                              Container(
+                                height: 80,
+                                width: 500,
+                                child: RoundedButton(
+                                  text: "OK",
+                                  press: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),

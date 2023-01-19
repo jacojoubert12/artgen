@@ -217,16 +217,16 @@ class _Mainviewstate extends State<MainScreen> {
         desktop: Row(
           children: [
             Expanded(
-              flex: _size.width > 1340 ? 2 : 4,
+              flex: _size.width > 1340 ? 3 : 5,
               child: SideMenu(
                 setViewMode: setViewMode,
               ),
             ),
             Expanded(
-                flex: _size.width > 1340 ? 3 : 5,
+                flex: _size.width > 1340 ? 8 : 12,
                 child: getViewModeCenterView()),
             Expanded(
-              flex: _size.width > 1340 ? 8 : 10,
+              flex: _size.width > 1340 ? 12 : 15,
               child: getViewModeDetailView(),
             ),
           ],

@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: MyInputTheme().theme(),
       ),
       // home: WelcomeScreen(),
-      // home: MainScreen(),
-      home: AuthGate(),
+      home: HomeScreen(),
+      // home: AuthGate(),
     );
   }
 }

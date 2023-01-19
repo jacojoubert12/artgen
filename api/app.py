@@ -8,20 +8,53 @@ from PIL import Image, PngImagePlugin
 import uuid
 
 
-def generate_image(prompt):
-    url = "https://e279c347-3950-42c2.gradio.live"
+def generate_image(prompt, negprompt, steps, guidance, width, height, batch_size, batch_count=1):
+    url = "http://einstein:7863"
 
     payload = {
         "prompt": prompt,
-        "steps": 50
+        "negative_prompt": negprompt,
+        "steps": steps,
+        "cfg_scale": guidance,
+        "width": width,
+        "height": height,
+        "batch_size": batch_count, #batch_size,
+        "n_iter": batch_size, #batch_count,
+
+        "enable_hr": False,
+        "denoising_strength": 0,
+        "firstphase_width": 0,
+        "firstphase_height": 0,
+        "hr_scale": 2,
+        "hr_upscaler": "string",
+        "styles": [
+            "string"
+        ],
+        "seed": -1,
+        "subseed": -1,
+        "subseed_strength": 0,
+        "seed_resize_from_h": -1,
+        "seed_resize_from_w": -1,
+        "restore_faces": False,
+        "tiling": False,
+        "eta": 0,
+        "s_churn": 0,
+        "s_tmax": 0,
+        "s_tmin": 0,
+        "s_noise": 1,
+        "override_settings": {},
+        "override_settings_restore_afterwards": True,
+        "sampler_index": "Euler"
     }
+            # "sampler_name": "string",
 
     response = requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload)
 
     print(response)
     r = response.json()
-    print(r)
+    # print(r)
 
+    filenames = []
     for i in r['images']:
         image = Image.open(io.BytesIO(base64.b64decode(i.split(",",1)[0])))
 
@@ -35,8 +68,11 @@ def generate_image(prompt):
         pnginfo.add_text("parameters", response2.json().get("info"))
 
         filename = 'output/' + str(uuid.uuid1()) + '.png'
+        print("Filename:", filename)
         image.save(filename, pnginfo=pnginfo)
-        return filename
+
+        filenames.append(filename)
+    return filenames
 
 app = Flask(__name__, static_folder='output')
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -45,10 +81,19 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 def gen_img():
     data = request.get_json()
     prompt = data['prompt']
-    filename = generate_image(prompt)
-    image_data = {'image': filename}
+    negprompt = data['negprompt']
+    steps = data['steps']
+    guidance = data['guidance']
+    width = data['width']
+    height = data['height']
+    batch_size = data['batch_size']
+
+    filenames = generate_image(prompt, negprompt, steps, guidance, width, height, batch_size)
+    image_data = {'images': filenames}
     return jsonify(image_data)
     #return jsonify(message=f'Hello, {filename}!')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
