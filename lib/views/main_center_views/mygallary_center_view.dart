@@ -13,13 +13,6 @@ class MyGallaryCenterView extends StatefulWidget {
     this.setViewMode,
   }) : super(key: key);
   final Function setViewMode;
-  // final List<Alert> alerts;
-
-// class MyGallaryCenterView extends StatefulWidget {
-//   // Press "Command + ."
-//   const MyGallaryCenterView({
-//     Key key,
-//   }) : super(key: key);
 
   @override
   _MyGallaryCenterViewState createState() => _MyGallaryCenterViewState();
@@ -83,64 +76,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                   ],
                 ),
               ),
-              // SizedBox(height: kDefaultPadding),
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-              //   child: Row(
-              //     children: [
-              //       WebsafeSvg.asset(
-              //         "assets/Icons/Angle down.svg",
-              //         width: 16,
-              //         color: Colors.black,
-              //       ),
-              //       SizedBox(width: 5),
-              //       Text(
-              //         "Sort by date",
-              //         style: TextStyle(fontWeight: FontWeight.w500),
-              //       ),
-              //       Spacer(),
-              //       MaterialButton(
-              //         minWidth: 20,
-              //         onPressed: () {},
-              //         child: WebsafeSvg.asset(
-              //           "assets/Icons/Sort.svg",
-              //           width: 16,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(height: kDefaultPadding),
-              // Expanded(
-              //   child: ListView.builder(
-              //     itemCount: alerts.length,
-              //     // On mobile this active dosen't mean anything
-              //     itemBuilder: (context, index) => AlertCard(
-              //       isActive: Responsive.isMobile(context) ? false : index == 0,
-              //       alert: alerts[index],
-              //       press: () {
-              //         widget.setSelectedAlert(alerts[index]);
-              //         Responsive.isMobile(context)
-              //             ? Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                   builder: (context) =>
-              //                       AlertDetailView(alert: alerts[index]),
-              //                   // Iframe(alerts[index]),
-              //                 ))
-              //             : true;
-              //         // Navigator.push(
-              //         //   context,
-              //         //   MaterialPageRoute(
-              //         //     builder: (context) =>
-              //         //         AlertDetailView(alert: alerts[index]),
-              //         //   ),
-              //         // );
-              //       },
-              //     ),
-              //   ),
-              // ),
+              SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

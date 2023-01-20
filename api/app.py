@@ -6,10 +6,69 @@ import io
 import base64
 from PIL import Image, PngImagePlugin
 import uuid
+import random
 
 
-def generate_image(prompt, negprompt, steps, guidance, width, height, batch_size, batch_count=1):
-    url = "http://einstein:7863"
+def getServerURL(dmodel, speed):
+    if dmodel == 'sd':
+        instance_no = random(5)
+        if instance_no == 0:
+            url = "http://einstein:7860"
+        if instance_no == 0:
+            url = "http://einstein:7861"
+        if instance_no == 0:
+            url = "http://einstein:7862"
+        if instance_no == 0:
+            url = "http://einstein:7863"
+        if instance_no == 0:
+            url = "http://einstein:7864"
+
+    if dmodel == 'sd':
+        instance_no = random(5)
+        if instance_no == 0:
+            url = "http://einstein:7860"
+        if instance_no == 0:
+            url = "http://einstein:7861"
+        if instance_no == 0:
+            url = "http://einstein:7862"
+        if instance_no == 0:
+            url = "http://einstein:7863"
+        if instance_no == 0:
+            url = "http://einstein:7864"
+
+
+    if dmodel == 'sd':
+        instance_no = random(5)
+        if instance_no == 0:
+            url = "http://einstein:7860"
+        if instance_no == 0:
+            url = "http://einstein:7861"
+        if instance_no == 0:
+            url = "http://einstein:7862"
+        if instance_no == 0:
+            url = "http://einstein:7863"
+        if instance_no == 0:
+            url = "http://einstein:7864"
+
+
+    if dmodel == 'sd':
+        instance_no = random(5)
+        if instance_no == 0:
+            url = "http://einstein:7860"
+        if instance_no == 0:
+            url = "http://einstein:7861"
+        if instance_no == 0:
+            url = "http://einstein:7862"
+        if instance_no == 0:
+            url = "http://einstein:7863"
+        if instance_no == 0:
+            url = "http://einstein:7864"
+
+    return url
+
+def generate_image(prompt, negprompt, steps, guidance, width, height, batch_size, batch_count=1, dmodel='sd', speed=0):
+
+    url = getServerURL(dmodel, speed)
 
     payload = {
         "prompt": prompt,
@@ -91,7 +150,6 @@ def gen_img():
     filenames = generate_image(prompt, negprompt, steps, guidance, width, height, batch_size)
     image_data = {'images': filenames}
     return jsonify(image_data)
-    #return jsonify(message=f'Hello, {filename}!')
 
 if __name__ == '__main__':
     # app.run(debug=True)

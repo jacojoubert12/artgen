@@ -3,35 +3,15 @@ import 'dart:convert';
 import 'package:artgen/views/main_center_views/createimg_center_view.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
 import 'package:flutter/material.dart';
-import 'package:artgen/components/mood_list_view.dart';
 import 'package:artgen/components/side_menu.dart';
-import 'package:artgen/models/firestore_manager.dart';
-import 'package:artgen/models/influx_manager.dart';
 import 'package:artgen/responsive.dart';
 
-import 'package:artgen/models/mood.dart';
-import 'package:artgen/models/dream.dart';
-import 'package:artgen/models/journal.dart';
-import 'package:artgen/views/main_detail_views/mood_detail_view.dart';
-import 'package:artgen/views/main_detail_views/dream_detail_view.dart';
-import 'package:artgen/views/main_detail_views/journal_detail_view.dart';
-import 'package:artgen/views/main_center_views/activness_center_view.dart';
-import 'package:artgen/views/main_center_views/badges_center_view.dart';
-import 'package:artgen/views/main_center_views/calander_center_view.dart';
-import 'package:artgen/views/main_center_views/diet_center_view.dart';
-import 'package:artgen/views/main_center_views/community_center_view.dart';
-import 'package:artgen/views/main_center_views/dream_center_view.dart';
-import 'package:artgen/views/main_center_views/mood_list_view.dart';
-import 'package:artgen/views/main_center_views/journal_center_view.dart';
-import 'package:artgen/views/main_center_views/physical_center_view.dart';
+import 'package:artgen/views/main_center_views/mygallary_center_view.dart';
+import 'package:artgen/views/main_center_views/likes_center_view.dart';
+import 'package:artgen/views/main_center_views/explore_center_view.dart';
 import 'package:artgen/views/main_center_views/profile_center_view.dart';
-import 'package:artgen/views/main_center_views/settings_center_view.dart';
-import 'package:artgen/views/main_center_views/supplements_center_view.dart';
 import 'package:artgen/views/main_center_views/about_center_view.dart';
-import 'dart:developer' as developer;
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/auth_gate.dart';
 
 enum ViewMode { create, mygallary, explore, likes, profile, about, share }
@@ -72,6 +52,8 @@ class _Mainviewstate extends State<MainScreen> {
   Set<dynamic> selectedImages = new Set<dynamic>();
   Set<String> selectedImageUrls = new Set<String>();
 
+  bool shouldShowDetailView = true;
+
   _Mainviewstate() {
     createImgCenterView = ImgGridView(
       selectedImages: selectedImages,
@@ -89,6 +71,9 @@ class _Mainviewstate extends State<MainScreen> {
 
   setViewMode(viewMode) {
     setState(() {
+      viewMode == ViewMode.create
+          ? shouldShowDetailView = true
+          : shouldShowDetailView = false;
       this.viewMode = viewMode;
     });
   }
@@ -156,16 +141,6 @@ class _Mainviewstate extends State<MainScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // It provide us the width and height
     Size _size = MediaQuery.of(context).size;
@@ -179,10 +154,12 @@ class _Mainviewstate extends State<MainScreen> {
               flex: 6,
               child: getViewModeCenterView(),
             ),
-            Expanded(
-              flex: 9,
-              child: getViewModeDetailView(),
-            ),
+            shouldShowDetailView
+                ? Expanded(
+                    flex: 9,
+                    child: getViewModeDetailView(),
+                  )
+                : null,
           ],
         ),
         desktop: Row(
@@ -196,10 +173,12 @@ class _Mainviewstate extends State<MainScreen> {
             Expanded(
                 flex: _size.width > 1340 ? 8 : 12,
                 child: getViewModeCenterView()),
-            Expanded(
-              flex: _size.width > 1340 ? 12 : 15,
-              child: getViewModeDetailView(),
-            ),
+            shouldShowDetailView
+                ? Expanded(
+                    flex: _size.width > 1340 ? 12 : 15,
+                    child: getViewModeDetailView(),
+                  )
+                : null,
           ],
         ),
       ),

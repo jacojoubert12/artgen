@@ -61,7 +61,25 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.browse);
+                  this.setViewMode(ViewMode.mygallary);
+                },
+                title: "Browse",
+                iconSrc: "assets/Icons/icons8-bookmark (1).svg",
+                isActive: false,
+                showBorder: true,
+              ),
+              SideMenuItem(
+                press: () {
+                  this.setViewMode(ViewMode.explore);
+                },
+                title: "Browse",
+                iconSrc: "assets/Icons/icons8-bookmark (1).svg",
+                isActive: false,
+                showBorder: true,
+              ),
+              SideMenuItem(
+                press: () {
+                  this.setViewMode(ViewMode.likes);
                 },
                 title: "Browse",
                 iconSrc: "assets/Icons/icons8-bookmark (1).svg",
@@ -79,10 +97,10 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.settings);
+                  this.setViewMode(ViewMode.about);
                 },
-                title: "Settings",
-                iconSrc: "assets/Icons/icons8-idea.svg",
+                title: "About",
+                iconSrc: "assets/Icons/about.svg",
                 isActive: false,
                 showBorder: true,
               ),
@@ -95,15 +113,7 @@ class SideMenu extends StatelessWidget {
                 isActive: false,
                 showBorder: true,
               ),
-              SideMenuItem(
-                press: () {
-                  this.setViewMode(ViewMode.about);
-                },
-                title: "About",
-                iconSrc: "assets/Icons/about.svg",
-                isActive: false,
-                showBorder: true,
-              ),
+
               SizedBox(height: kDefaultPadding),
               SignOutButton(),
               SizedBox(height: kDefaultPadding),

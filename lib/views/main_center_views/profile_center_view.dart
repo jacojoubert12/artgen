@@ -8,13 +8,11 @@ import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileCenterView extends StatefulWidget {
-  const ProfileCenterView({Key key, this.setViewMode,}) : super(key: key);
+  const ProfileCenterView({
+    Key key,
+    this.setViewMode,
+  }) : super(key: key);
   final Function setViewMode;
-// class ProfileCenterView extends StatefulWidget {
-//   // Press "Command + ."
-//   const ProfileCenterView({
-//     Key key,
-//   }) : super(key: key);
 
   @override
   _ProfileCenterViewState createState() => _ProfileCenterViewState();
@@ -78,64 +76,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                   ],
                 ),
               ),
-              // SizedBox(height: kDefaultPadding),
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-              //   child: Row(
-              //     children: [
-              //       WebsafeSvg.asset(
-              //         "assets/Icons/Angle down.svg",
-              //         width: 16,
-              //         color: Colors.black,
-              //       ),
-              //       SizedBox(width: 5),
-              //       Text(
-              //         "Sort by date",
-              //         style: TextStyle(fontWeight: FontWeight.w500),
-              //       ),
-              //       Spacer(),
-              //       MaterialButton(
-              //         minWidth: 20,
-              //         onPressed: () {},
-              //         child: WebsafeSvg.asset(
-              //           "assets/Icons/Sort.svg",
-              //           width: 16,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(height: kDefaultPadding),
-              // Expanded(
-              //   child: ListView.builder(
-              //     itemCount: alerts.length,
-              //     // On mobile this active dosen't mean anything
-              //     itemBuilder: (context, index) => AlertCard(
-              //       isActive: Responsive.isMobile(context) ? false : index == 0,
-              //       alert: alerts[index],
-              //       press: () {
-              //         widget.setSelectedAlert(alerts[index]);
-              //         Responsive.isMobile(context)
-              //             ? Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                   builder: (context) =>
-              //                       AlertDetailView(alert: alerts[index]),
-              //                   // Iframe(alerts[index]),
-              //                 ))
-              //             : true;
-              //         // Navigator.push(
-              //         //   context,
-              //         //   MaterialPageRoute(
-              //         //     builder: (context) =>
-              //         //         AlertDetailView(alert: alerts[index]),
-              //         //   ),
-              //         // );
-              //       },
-              //     ),
-              //   ),
-              // ),
+              SizedBox(height: kDefaultPadding),
             ],
           ),
         ),
