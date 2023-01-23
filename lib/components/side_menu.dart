@@ -56,7 +56,9 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.create);
                 },
                 title: "Create",
-                iconSrc: "assets/Icons/face_black_24dp.svg",
+                icon: Icon(
+                  Icons.create,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
@@ -65,7 +67,10 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.mygallary);
                 },
                 title: "My Gallary",
-                iconSrc: "assets/Icons/icons8-bookmark (1).svg",
+                // iconSrc: "assets/Icons/create_black_24dp.svg",
+                icon: Icon(
+                  Icons.collections,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
@@ -74,7 +79,9 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.explore);
                 },
                 title: "Explore",
-                iconSrc: "assets/Icons/icons8-bookmark (1).svg",
+                icon: Icon(
+                  Icons.explore,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
@@ -83,7 +90,9 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.likes);
                 },
                 title: "Likes",
-                iconSrc: "assets/Icons/icons8-bookmark (1).svg",
+                icon: Icon(
+                  Icons.favorite,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
@@ -92,7 +101,9 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.profile);
                 },
                 title: "Profile",
-                iconSrc: "assets/Icons/account circle.svg",
+                icon: Icon(
+                  Icons.face,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
@@ -101,7 +112,9 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.about);
                 },
                 title: "About",
-                iconSrc: "assets/Icons/about.svg",
+                icon: Icon(
+                  Icons.fingerprint,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
@@ -110,7 +123,9 @@ class SideMenu extends StatelessWidget {
                   Share.share('check out my website https://google.com');
                 },
                 title: "Share",
-                iconSrc: "assets/Icons/icons8-connect.svg",
+                icon: Icon(
+                  Icons.share,
+                ),
                 isActive: false,
                 showBorder: true,
               ),
