@@ -181,8 +181,8 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.pink,
-                                onPrimary: Colors.black,
+                                backgroundColor: Colors.pink,
+                                foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(32.0)),
                               ),

@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:artgen/components/horisontal_image_listview.dart';
-import 'package:artgen/components/mqtt_client.dart';
+import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mqtt_client/mqtt_server_client.dart';
 
 import '../../constants.dart';
 import 'components/header.dart';
@@ -13,7 +12,6 @@ import 'image_details_view.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 
 class CreateImgDetailView extends StatefulWidget {
   CreateImgDetailView(
@@ -34,7 +32,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Set<dynamic> _selectedImages;
   Set<String> _selectedImageUrls;
   List<String> generatedImgUrls = [
-    "http://localhost:5000/output/" + "output.png"
+    // "http://localhost:5000/output/" + "output.png"
+    "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
   ];
 
   bool loading = false;
@@ -50,18 +49,38 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   // double _batchCountSliderValue = 1;
   double _batchSizeSliderValue = 1;
 
-  final client = MqttServerClient('68.183.44.212', '');
-
-  // https://github.com/shamblett/mqtt_client/blob/master/example/mqtt_server_client.dart
-  Future<int> mqtt() async {
-    return mqtt_client_connections();
-  }
+  // MQTTClientManager mqttClientManager = MQTTClientManager();
+  final String pubTopic = "img_gen_requests";
 
   @override
   void initState() {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
+    // mqttClientManager.publishMessage(
+    // pubTopic, "Increment button pushed times.");
+  }
+
+  @override
+  void dispose() {
+    // mqttClientManager.disconnect();
+    super.dispose();
+  }
+
+  Future<void> setupMqttClient() async {
+    // await mqttClientManager.connect();
+    // mqttClientManager.subscribe(pubTopic);
+  }
+
+  void setupUpdatesListener() {
+    // mqttClientManager
+    //     .getMessagesStream()!
+    //     .listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+    //   final recMess = c![0].payload as MqttPublishMessage;
+    //   final pt =
+    //       MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+    //   print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+    // });
   }
 
   concatPrompts() {
