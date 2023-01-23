@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ImageListView extends StatefulWidget {
-  final Set<dynamic> selectedImages;
-  final Set<String> selectedImageUrls;
-  final Function updateSelectedImages;
+  final Set<dynamic>? selectedImages;
+  final Set<String>? selectedImageUrls;
+  final Function? updateSelectedImages;
 
   const ImageListView(
-      {Key key,
+      {Key? key,
       this.updateSelectedImages,
       this.selectedImages,
       this.selectedImageUrls})
@@ -17,8 +17,8 @@ class ImageListView extends StatefulWidget {
 }
 
 class _ImageListViewState extends State<ImageListView> {
-  Set<dynamic> _selectedImages;
-  Set<String> _selectedImageUrls;
+  Set<dynamic>? _selectedImages;
+  Set<String>? _selectedImageUrls;
   List<String> _imageUrls = [];
   List<dynamic> _images = [];
 
@@ -27,14 +27,14 @@ class _ImageListViewState extends State<ImageListView> {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    _imageUrls = _selectedImageUrls.toList();
-    _images = _selectedImages.toList();
+    _imageUrls = _selectedImageUrls!.toList();
+    _images = _selectedImages!.toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    _imageUrls = _selectedImageUrls.toList();
-    _images = _selectedImages.toList();
+    _imageUrls = _selectedImageUrls!.toList();
+    _images = _selectedImages!.toList();
     return Container(
       height: 100,
       child: ListView.builder(
@@ -44,7 +44,7 @@ class _ImageListViewState extends State<ImageListView> {
         itemBuilder: (BuildContext context, int index) {
           final imageUrl = _imageUrls[index];
           final imageFull = _images[index];
-          final isSelected = _selectedImageUrls.contains(imageUrl);
+          final isSelected = _selectedImageUrls!.contains(imageUrl);
 
           return Container(
             margin: EdgeInsets.all(1.0),
@@ -58,13 +58,13 @@ class _ImageListViewState extends State<ImageListView> {
               onTap: () {
                 setState(() {
                   if (isSelected) {
-                    _selectedImageUrls.remove(imageUrl);
-                    _selectedImages.remove(imageFull);
+                    _selectedImageUrls!.remove(imageUrl);
+                    _selectedImages!.remove(imageFull);
                   } else {
-                    _selectedImageUrls.add(imageUrl);
-                    _selectedImages.add(imageFull);
+                    _selectedImageUrls!.add(imageUrl);
+                    _selectedImages!.add(imageFull);
                   }
-                  widget.updateSelectedImages(
+                  widget.updateSelectedImages!(
                       _selectedImages, _selectedImageUrls);
                 });
               },

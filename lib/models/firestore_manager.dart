@@ -19,7 +19,7 @@ class FireStoreManager {
 
   Stream<List<Mood>> getUserMoods() => FirebaseFirestore.instance
       .collection("user_moods")
-      .where('uid', isEqualTo: user.uid)
+      .where('uid', isEqualTo: user!.uid)
       .snapshots()
       .map((snapshot) => Mood.moodListFromJson(snapshot));
 
@@ -36,14 +36,14 @@ class FireStoreManager {
             initDefaultMoods(listView);
           } else if (snapshot.hasData) {
             print("defaultMoods snapshot.hasData");
-            if (snapshot.data.length > 0) moods = snapshot.data;
-            if (moods.length == 0) {
+            if (snapshot.data!.length > 0) moods = snapshot.data;
+            if (moods!.length == 0) {
               return initDefaultMoods(listView);
             } else {
               return listView;
             }
           }
-          return moods.length == 0
+          return moods!.length == 0
               ? CircularProgressIndicator(color: Colors.red)
               : listView;
         });
@@ -63,21 +63,21 @@ class FireStoreManager {
             return CircularProgressIndicator(color: Colors.yellowAccent);
           } else if (snapshot.hasData) {
             print("getDefaultMoods snapshot.hasData");
-            if (snapshot.data.length > 0) moods = snapshot.data;
+            if (snapshot.data!.length > 0) moods = snapshot.data;
             print("snapshot:");
             print(snapshot.data);
             print("default moods:");
             print(moods);
             print("default moods len:");
-            print(moods.length);
-            if (moods.length == 0) {
+            print(moods!.length);
+            if (moods!.length == 0) {
               print("Error, should receive list of default moods");
             } else {
               print("going to instertDefaultMoods");
               insertDefaultMoods();
             }
           }
-          return moods.length == 0
+          return moods!.length == 0
               ? CircularProgressIndicator(color: Colors.red)
               : listView;
         });
@@ -85,13 +85,13 @@ class FireStoreManager {
 
   Future insertDefaultMoods() async {
     final userMoods =
-        FirebaseFirestore.instance.collection("user_moods").doc(user.uid);
+        FirebaseFirestore.instance.collection("user_moods").doc(user!.uid);
     List<Map<String, dynamic>> jsonMoods = [];
-    for (var mood in moods) {
+    for (var mood in moods!) {
       jsonMoods.add(mood.toJson());
     }
     print(jsonMoods);
-    await userMoods.set({'uid': user.uid, 'moods': jsonMoods});
+    await userMoods.set({'uid': user!.uid, 'moods': jsonMoods});
   }
 
   // Future isUserDefaultsSet() async {

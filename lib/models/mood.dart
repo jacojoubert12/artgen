@@ -1,9 +1,9 @@
 class Mood {
-  final int moodID;
-  final String moodName;
-  final String moodBest;
-  final String moodMid;
-  final String moodWorst;
+  final int? moodID;
+  final String? moodName;
+  final String? moodBest;
+  final String? moodMid;
+  final String? moodWorst;
   int moodValue = 0;
 
   Mood(
@@ -45,4 +45,4 @@ class Mood {
   }
 }
 
-List<Mood> moods = [];
+List<Mood>? moods = [];

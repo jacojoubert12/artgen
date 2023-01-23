@@ -1,6 +1,6 @@
 class Dream {
-  final String dreamName;
-  int dreamValue;
+  final String? dreamName;
+  int? dreamValue;
 
   Dream({this.dreamName});
 }

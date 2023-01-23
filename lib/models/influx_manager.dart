@@ -5,7 +5,7 @@ import 'package:artgen/models/mood.dart';
 class InfluxManager {
   InfluxManager();
 
-  void updateMoodValue(Mood mood, {DateTime backDate = null}) async {
+  void updateMoodValue(Mood mood, {DateTime? backDate = null}) async {
     var client = InfluxDBClient(
         url: 'http://68.183.44.212:8087',
         token:
@@ -18,7 +18,7 @@ class InfluxManager {
     var writeApi = WriteService(client);
 
     var point = Point('moodtracker')
-        .addTag('userID', user.uid)
+        .addTag('userID', user!.uid)
         .addTag('moodID', mood.moodID.toString())
         .addField("moodValue", mood.moodValue)
         .time(backDate);

@@ -10,10 +10,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MyGallaryCenterView extends StatefulWidget {
   const MyGallaryCenterView({
-    Key key,
+    Key? key,
     this.setViewMode,
   }) : super(key: key);
-  final Function setViewMode;
+  final Function? setViewMode;
 
   @override
   _MyGallaryCenterViewState createState() => _MyGallaryCenterViewState();
@@ -51,7 +51,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                       IconButton(
                         icon: Icon(Icons.menu),
                         onPressed: () {
-                          _scaffoldKey.currentState.openDrawer();
+                          _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),

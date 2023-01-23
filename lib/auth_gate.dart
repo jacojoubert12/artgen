@@ -7,14 +7,14 @@ import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/models/firestore_manager.dart';
 // import 'package:influxdb_client/api.dart';
 
-User user;
+User? user;
 
 class AuthGate extends StatelessWidget {
-  const AuthGate({Key key}) : super(key: key);
+  const AuthGate({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User>(
+    return StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

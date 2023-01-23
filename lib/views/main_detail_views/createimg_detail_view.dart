@@ -15,22 +15,22 @@ import 'package:mqtt_client/mqtt_client.dart';
 
 class CreateImgDetailView extends StatefulWidget {
   CreateImgDetailView(
-      {Key key,
+      {Key? key,
       this.selectedImages,
       this.selectedImageUrls,
       this.updateSelectedImages})
       : super(key: key);
   final selectedImages;
   final selectedImageUrls;
-  final Function updateSelectedImages;
+  final Function? updateSelectedImages;
 
   @override
   State<CreateImgDetailView> createState() => _CreateImgDetailViewState();
 }
 
 class _CreateImgDetailViewState extends State<CreateImgDetailView> {
-  Set<dynamic> _selectedImages;
-  Set<String> _selectedImageUrls;
+  Set<dynamic>? _selectedImages;
+  Set<String>? _selectedImageUrls;
   List<String> generatedImgUrls = [
     // "http://localhost:5000/output/" + "output.png"
     "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
@@ -49,7 +49,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   // double _batchCountSliderValue = 1;
   double _batchSizeSliderValue = 1;
 
-  // MQTTClientManager mqttClientManager = MQTTClientManager();
+  MQTTClientManager mqttClientManager = MQTTClientManager();
   final String pubTopic = "img_gen_requests";
 
   @override
@@ -57,35 +57,39 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    // mqttClientManager.publishMessage(
-    // pubTopic, "Increment button pushed times.");
+    setupMqttClient();
+    setupUpdatesListener();
   }
 
   @override
   void dispose() {
-    // mqttClientManager.disconnect();
+    mqttClientManager.disconnect();
     super.dispose();
   }
 
   Future<void> setupMqttClient() async {
-    // await mqttClientManager.connect();
-    // mqttClientManager.subscribe(pubTopic);
+    await mqttClientManager.connect();
+    mqttClientManager.subscribe(pubTopic);
+    // mqttClientManager.publishMessage(
+    //     pubTopic,
+    //     jsonEncode(
+    //         {"prompt": "My Prompt", "response_topic": "response_topic"}));
   }
 
   void setupUpdatesListener() {
-    // mqttClientManager
-    //     .getMessagesStream()!
-    //     .listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-    //   final recMess = c![0].payload as MqttPublishMessage;
-    //   final pt =
-    //       MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-    //   print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
-    // });
+    mqttClientManager
+        .getMessagesStream()!
+        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+      final recMess = c![0].payload as MqttPublishMessage;
+      final pt =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+    });
   }
 
   concatPrompts() {
     prompt = "";
-    for (var jsonString in _selectedImages) {
+    for (var jsonString in _selectedImages!) {
       if (jsonString != null) {
         var json = jsonEncode(jsonString['prompt']);
         prompt += jsonDecode(json) + " ";
@@ -108,29 +112,29 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "batch_size": _batchSizeSliderValue
     };
     print(query);
-    String topic = 'test-topic';
+    mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
 
-    final uri = Uri.http('localhost:5000', '/');
+    // final uri = Uri.http('localhost:5000', '/');
 
-    final response = await http.post(
-      uri,
-      body: jsonEncode(query),
-      headers: {'Content-Type': 'application/json'},
-    );
+    // final response = await http.post(
+    //   uri,
+    //   body: jsonEncode(query),
+    //   headers: {'Content-Type': 'application/json'},
+    // );
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      var images = data['images'];
-      print(images);
-      generatedImgUrls.clear();
-      setState(() {
-        for (img in images) {
-          generatedImgUrls.add("http://localhost:5000/" + img);
-        }
-      });
-    } else {
-      print("Request failed with status: ${response.statusCode}");
-    }
+    // if (response.statusCode == 200) {
+    //   var data = jsonDecode(response.body);
+    //   var images = data['images'];
+    //   print(images);
+    //   generatedImgUrls.clear();
+    //   setState(() {
+    //     for (img in images) {
+    //       generatedImgUrls.add("http://localhost:5000/" + img);
+    //     }
+    //   });
+    // } else {
+    //   print("Request failed with status: ${response.statusCode}");
+    // }
 
     setState(() {
       loading = false;
@@ -188,7 +192,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      height: _selectedImageUrls.length == 0
+                                      height: _selectedImageUrls!.length == 0
                                           ? 0
                                           : 100,
                                       child: ImageListView(

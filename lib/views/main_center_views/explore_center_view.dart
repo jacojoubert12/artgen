@@ -10,10 +10,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ExploreCenterView extends StatefulWidget {
   const ExploreCenterView({
-    Key key,
+    Key? key,
     this.setViewMode,
   }) : super(key: key);
-  final Function setViewMode;
+  final Function? setViewMode;
 
   @override
   _ExploreCenterViewState createState() => _ExploreCenterViewState();
@@ -52,7 +52,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                       IconButton(
                         icon: Icon(Icons.menu),
                         onPressed: () {
-                          _scaffoldKey.currentState.openDrawer();
+                          _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),

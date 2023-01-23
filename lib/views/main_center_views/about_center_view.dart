@@ -8,8 +8,8 @@ import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AboutCenterView extends StatefulWidget {
-  const AboutCenterView({Key key, this.setViewMode}) : super(key: key);
-  final Function setViewMode;
+  const AboutCenterView({Key? key, this.setViewMode}) : super(key: key);
+  final Function? setViewMode;
 
   @override
   _AboutCenterViewState createState() => _AboutCenterViewState();
@@ -47,7 +47,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                       IconButton(
                         icon: Icon(Icons.menu),
                         onPressed: () {
-                          _scaffoldKey.currentState.openDrawer();
+                          _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),

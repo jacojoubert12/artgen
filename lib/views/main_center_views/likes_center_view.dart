@@ -10,10 +10,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class LikesCenterView extends StatefulWidget {
   const LikesCenterView({
-    Key key,
+    Key? key,
     this.setViewMode,
   }) : super(key: key);
-  final Function setViewMode;
+  final Function? setViewMode;
 
   @override
   _LikesCenterViewState createState() => _LikesCenterViewState();
@@ -51,7 +51,7 @@ class _LikesCenterViewState extends State<LikesCenterView> {
                       IconButton(
                         icon: Icon(Icons.menu),
                         onPressed: () {
-                          _scaffoldKey.currentState.openDrawer();
+                          _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),

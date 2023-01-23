@@ -17,22 +17,21 @@ message = {"prompt" : "My Prompt", "response_topic" : response_topic}
 json_message = json.dumps(message)
 
 
-#def on_message(client, userdata, message): 
-#    msg = json.loads(message.payload.decode('utf-8')) 
-#    print("Received message", msg) 
-##    print("Received message", str(message.payload)) 
-#    print("Topic:", message.topic) 
-#    print("QoS:" + str(message.qos)) 
- 
+#def on_message(client, userdata, message):
+#    msg = json.loads(message.payload.decode('utf-8'))
+#    print("Received message", msg)
+##    print("Received message", str(message.payload))
+#    print("Topic:", message.topic)
+#    print("QoS:" + str(message.qos))
+
 
 #time.sleep(3)
 
-pub_client = mqtt.Client("pub_client", protocol=mqttv)
+pub_client = mqtt.Client("pub_client", protocol=mqttv, transport='websockets')
 pub_client.connect(host, port)
 pub_client.publish(topic, json_message, qos=1)
 
 pub_client.loop()
 
-#mqtt_sub.callback(on_message, response_topic, hostname=host, qos=1) 
-#mqtt_sub.loop() 
-
+#mqtt_sub.callback(on_message, response_topic, hostname=host, qos=1)
+#mqtt_sub.loop()

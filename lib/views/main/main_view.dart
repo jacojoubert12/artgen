@@ -18,7 +18,7 @@ enum ViewMode { create, mygallary, explore, likes, profile, about, share }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -33,10 +33,10 @@ class HomeScreen extends StatelessWidget {
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
-    Key key,
+    Key? key,
     this.user,
   }) : super(key: key);
-  final User user;
+  final User? user;
 
   @override
   State<MainScreen> createState() => _Mainviewstate();
@@ -47,8 +47,8 @@ class _Mainviewstate extends State<MainScreen> {
   var viewMode = ViewMode.create;
   // FireStoreManager fireStoreManager = FireStoreManager();
   // StreamBuilder<List<Mood>> moodsStreamBuilder;
-  ImgGridView createImgCenterView;
-  CreateImgDetailView createImgDetailView;
+  ImgGridView? createImgCenterView;
+  CreateImgDetailView? createImgDetailView;
   Set<dynamic> selectedImages = new Set<dynamic>();
   Set<String> selectedImageUrls = new Set<String>();
 
@@ -96,12 +96,12 @@ class _Mainviewstate extends State<MainScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => createImgDetailView,
+            builder: (context) => createImgDetailView!,
           ));
   }
 
-  StatefulWidget getViewModeCenterView() {
-    StatefulWidget centerView;
+  StatefulWidget? getViewModeCenterView() {
+    StatefulWidget? centerView;
     switch (viewMode) {
       case ViewMode.create:
         centerView = createImgCenterView;
@@ -127,7 +127,7 @@ class _Mainviewstate extends State<MainScreen> {
     return centerView;
   }
 
-  StatefulWidget getViewModeDetailView() {
+  StatefulWidget? getViewModeDetailView() {
     switch (viewMode) {
       case ViewMode.create:
         return this.createImgDetailView;
@@ -152,12 +152,12 @@ class _Mainviewstate extends State<MainScreen> {
           children: [
             Expanded(
               flex: 6,
-              child: getViewModeCenterView(),
+              child: getViewModeCenterView()!,
             ),
             shouldShowDetailView
                 ? Expanded(
                     flex: 9,
-                    child: getViewModeDetailView(),
+                    child: getViewModeDetailView()!,
                   )
                 : Expanded(
                     flex: 0,
@@ -175,11 +175,11 @@ class _Mainviewstate extends State<MainScreen> {
             ),
             Expanded(
                 flex: _size.width > 1340 ? 8 : 12,
-                child: getViewModeCenterView()),
+                child: getViewModeCenterView()!),
             shouldShowDetailView
                 ? Expanded(
                     flex: _size.width > 1340 ? 12 : 15,
-                    child: getViewModeDetailView(),
+                    child: getViewModeDetailView()!,
                   )
                 : Expanded(
                     flex: 0,
