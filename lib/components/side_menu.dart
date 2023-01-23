@@ -3,6 +3,7 @@ import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../constants.dart';
 import '../extensions.dart';
@@ -55,7 +56,7 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.create);
                 },
                 title: "Create",
-                iconSrc: "assets/Icons/icons8-ok.svg",
+                iconSrc: "assets/Icons/face_black_24dp.svg",
                 isActive: false,
                 showBorder: true,
               ),
@@ -63,7 +64,7 @@ class SideMenu extends StatelessWidget {
                 press: () {
                   this.setViewMode(ViewMode.mygallary);
                 },
-                title: "Browse",
+                title: "My Gallary",
                 iconSrc: "assets/Icons/icons8-bookmark (1).svg",
                 isActive: false,
                 showBorder: true,
@@ -72,7 +73,7 @@ class SideMenu extends StatelessWidget {
                 press: () {
                   this.setViewMode(ViewMode.explore);
                 },
-                title: "Browse",
+                title: "Explore",
                 iconSrc: "assets/Icons/icons8-bookmark (1).svg",
                 isActive: false,
                 showBorder: true,
@@ -81,7 +82,7 @@ class SideMenu extends StatelessWidget {
                 press: () {
                   this.setViewMode(ViewMode.likes);
                 },
-                title: "Browse",
+                title: "Likes",
                 iconSrc: "assets/Icons/icons8-bookmark (1).svg",
                 isActive: false,
                 showBorder: true,
@@ -91,7 +92,7 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.profile);
                 },
                 title: "Profile",
-                iconSrc: "assets/Icons/icons8-bookmark (1).svg",
+                iconSrc: "assets/Icons/account circle.svg",
                 isActive: false,
                 showBorder: true,
               ),
@@ -106,7 +107,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.share);
+                  Share.share('check out my website https://google.com');
                 },
                 title: "Share",
                 iconSrc: "assets/Icons/icons8-connect.svg",

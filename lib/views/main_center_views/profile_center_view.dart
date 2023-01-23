@@ -20,6 +20,15 @@ class ProfileCenterView extends StatefulWidget {
 
 class _ProfileCenterViewState extends State<ProfileCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String _backgroundImage =
+      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+  String _avatarImage =
+      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+  String _name = '';
+  String _surname = '';
+  String _email = '';
+  int _totalImagesGenerated = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,26 +60,127 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                    Expanded(
-                      child: TextField(
-                        onChanged: (value) {},
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          fillColor: kBgLightColor,
-                          filled: true,
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.all(
-                                kDefaultPadding * 0.75), //15
-                            child: WebsafeSvg.asset(
-                              "assets/Icons/Search.svg",
-                              width: 24,
+                    // Expanded(
+                    //   child: TextField(
+                    //     onChanged: (value) {},
+                    //     decoration: InputDecoration(
+                    //       hintText: "Search",
+                    //       fillColor: kBgLightColor,
+                    //       filled: true,
+                    //       suffixIcon: Padding(
+                    //         padding: const EdgeInsets.all(
+                    //             kDefaultPadding * 0.75), //15
+                    //         child: WebsafeSvg.asset(
+                    //           "assets/Icons/Search.svg",
+                    //           width: 24,
+                    //         ),
+                    //       ),
+                    //       border: OutlineInputBorder(
+                    //         borderRadius: BorderRadius.all(Radius.circular(10)),
+                    //         borderSide: BorderSide.none,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Stack(
+                  children: <Widget>[
+                    // Background image
+                    Container(
+                      height: 200,
+                      width: double.maxFinite,
+                      color: Color(0xFF),
+                      child: Image.network(_backgroundImage, fit: BoxFit.cover),
+                    ),
+
+                    // Avatar Image
+                    Positioned(
+                      top: MediaQuery.of(context).size.height / 8,
+                      left: MediaQuery.of(context).size.width / 2 - 50,
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(_avatarImage),
+                        ),
+                      ),
+                    ),
+                    // Positioned(
+                    //   top: MediaQuery.of(context).size.height / 8,
+                    //   left: MediaQuery.of(context).size.width / 2 - 50,
+                    //   right: 10,
+                    //   bottom: 4,
+
+                    //   child: Container(
+                    //     width: 40,
+                    //     height: 40,
+                    //     decoration: BoxDecoration(
+                    //         shape: BoxShape.circle, color: Colors.pink),
+                    //     child: IconButton(
+                    //       icon: Icon(Icons.edit),
+                    //       onPressed: () {
+                    //         // code to handle button press
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // Form
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: kDefaultPadding * 8),
+                          TextField(
+                            decoration: InputDecoration(labelText: 'Name'),
+                            onChanged: (value) {
+                              setState(() {
+                                _name = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: kDefaultPadding),
+                          TextField(
+                            decoration: InputDecoration(labelText: 'Surname'),
+                            onChanged: (value) {
+                              setState(() {
+                                _surname = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: kDefaultPadding),
+                          TextField(
+                            decoration: InputDecoration(labelText: 'Email'),
+                            onChanged: (value) {
+                              setState(() {
+                                _email = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 30.0),
+                          Text(
+                              'Total Images Generated: $_totalImagesGenerated'),
+                          SizedBox(height: kDefaultPadding * 3),
+                          SizedBox(
+                            height: 30.0,
+                            width: 250,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                //save profile
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.pink,
+                                onPrimary: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0)),
+                              ),
+                              child: Text('Save'),
                             ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
+                        ],
                       ),
                     ),
                   ],

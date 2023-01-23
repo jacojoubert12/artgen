@@ -17,6 +17,9 @@ class AboutCenterView extends StatefulWidget {
 
 class _AboutCenterViewState extends State<AboutCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String _backgroundImage =
+      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,32 +51,60 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                    Expanded(
-                      child: TextField(
-                        onChanged: (value) {},
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          fillColor: kBgLightColor,
-                          filled: true,
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.all(
-                                kDefaultPadding * 0.75), //15
-                            child: WebsafeSvg.asset(
-                              "assets/Icons/Search.svg",
-                              width: 24,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    // Background image
+                    Container(
+                      height: 200,
+                      width: double.maxFinite,
+                      color: Color.fromARGB(0, 0, 0, 0),
+                      child: Image.network(_backgroundImage, fit: BoxFit.cover),
+                    ),
+                    SizedBox(height: kDefaultPadding),
+                    Text(
+                      "About Us",
+                      style: TextStyle(
+                        fontFamily:
+                            'custom font', // remove this if don't have custom font
+                        fontSize: 20.0, // text size
+                        color: Colors.black, // text color
+                      ),
+                    ),
+                    Text(
+                      "About Us",
+                      style: TextStyle(
+                        fontFamily:
+                            'custom font', // remove this if don't have custom font
+                        fontSize: 15.0, // text size
+                        color: Colors.black, // text color
+                      ),
+                    ),
+                    SizedBox(height: kDefaultPadding),
+                    Text(
+                      "Contact Us",
+                      style: TextStyle(
+                        fontFamily:
+                            'custom font', // remove this if don't have custom font
+                        fontSize: 20.0, // text size
+                        color: Colors.black, // text color
+                      ),
+                    ),
+                    Text(
+                      "About Us",
+                      style: TextStyle(
+                        fontFamily:
+                            'custom font', // remove this if don't have custom font
+                        fontSize: 15.0, // text size
+                        color: Colors.black, // text color
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

@@ -159,7 +159,10 @@ class _Mainviewstate extends State<MainScreen> {
                     flex: 9,
                     child: getViewModeDetailView(),
                   )
-                : null,
+                : Expanded(
+                    flex: 0,
+                    child: Text(""),
+                  ),
           ],
         ),
         desktop: Row(
@@ -178,7 +181,10 @@ class _Mainviewstate extends State<MainScreen> {
                     flex: _size.width > 1340 ? 12 : 15,
                     child: getViewModeDetailView(),
                   )
-                : null,
+                : Expanded(
+                    flex: 0,
+                    child: Text(""),
+                  ),
           ],
         ),
       ),

@@ -20,6 +20,7 @@ const kWhite = Color.fromARGB(255, 255, 255, 255);
 const kCyan = Color.fromARGB(255, 96, 101, 255);
 // const kPrimaryColor = Color(0xFF6F35A5);
 const kPrimaryLightColor = Color(0xFFF1E6FF);
+const kBackgroundPrimColor = Color(0xFF292a34);
 
 const kDefaultPadding = 20.0;
 const kDefaultWidth = 10.0;
