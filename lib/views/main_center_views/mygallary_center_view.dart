@@ -1,3 +1,4 @@
+import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -20,6 +21,9 @@ class MyGallaryCenterView extends StatefulWidget {
 
 class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<String> imgUrls = [
+    "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +81,33 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
+              Container(
+                padding: EdgeInsets.all(kDefaultPadding),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: imgUrls.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    childAspectRatio: 1,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ImageDetailsModal();
+                            },
+                          );
+                          setState(() {});
+                        },
+                        child: Image.network(imgUrls[index]),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),

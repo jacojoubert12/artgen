@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/models/firestore_manager.dart';
+// import 'package:influxdb_client/api.dart';
 
 User user;
 
@@ -26,6 +27,7 @@ class AuthGate extends StatelessWidget {
             ]);
           }
           user = snapshot.data;
+
           return HomeScreen();
         });
   }

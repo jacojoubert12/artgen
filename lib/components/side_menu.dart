@@ -62,6 +62,24 @@ class SideMenu extends StatelessWidget {
                   ),
                 ],
               ),
+              Text(
+                "User Name",
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Colors.black, // text color
+                ),
+              ),
+              Text(
+                "User Plan",
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 10.0, // text size
+                  color: Colors.black, // text color
+                ),
+              ),
               // Menu Items
               SideMenuItem(
                 press: () {
@@ -148,6 +166,15 @@ class SideMenu extends StatelessWidget {
               // SizedBox(height: kDefaultPadding * 2),
               // Tags
               // Tags(),
+              // Text(
+              //   "ART GEN Powerd By Enginosoft",
+              //   style: TextStyle(
+              //     fontFamily:
+              //         'custom font', // remove this if don't have custom font
+              //     fontSize: 10.0, // text size
+              //     color: Colors.black, // text color
+              //   ),
+              // ),
             ],
           ),
         ),

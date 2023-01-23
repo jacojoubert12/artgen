@@ -2,10 +2,14 @@ import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/constants.dart';
 import 'package:artgen/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ImageDetailsModal extends StatefulWidget {
+  const ImageDetailsModal({Key key, this.icon}) : super(key: key);
+
   @override
   _ImageDetailsModalState createState() => _ImageDetailsModalState();
+  final Icon icon;
 }
 
 class _ImageDetailsModalState extends State<ImageDetailsModal> {
@@ -50,6 +54,111 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                 ],
               ),
             ),
+
+            // 2 Buttons next to each other
+            Expanded(
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: 50,
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Share.share(
+                            'check out the Image I have generated with Art Gen https://google.com');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(90)),
+                      ),
+                      child: Text('Share'),
+                    ),
+                  ),
+                  // Expanded(
+                  //   child: RoundedButton(
+                  //     press: () {},
+                  //     text: 'Button 2',
+                  //   ),
+                  // ),
+                  // SizedBox(width: kDefaultPadding),
+                  // SizedBox(width: kDefaultPadding),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    height: 35.0,
+                    width: 350,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
+                      child: Text('Enhance'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    height: 35.0,
+                    width: 155,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
+                      child: Text('Rerun'),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 35.0,
+                    width: 155,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
+                      child: Text('Remix'),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 35.0,
+                    width: 155,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
+                      child: Text('Reimage'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               flex: 1,
               child: Column(
@@ -63,62 +172,39 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                 ],
               ),
             ),
-
-            // 2 Buttons next to each other
             Expanded(
               flex: 1,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(width: kDefaultPadding),
-                  SizedBox(width: kDefaultPadding),
-                  Expanded(
-                    child: RoundedButton(
-                      press: () {},
-                      text: 'Button 1',
+                  SizedBox(
+                    height: 35.0,
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
+                      child: Text('Make Privte'),
                     ),
                   ),
-                  SizedBox(width: kDefaultPadding),
-                  Expanded(
-                    child: RoundedButton(
-                      press: () {},
-                      text: 'Button 2',
+                  SizedBox(
+                    height: 35.0,
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pink,
+                        onPrimary: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                      ),
+                      child: Text('Delete'),
                     ),
                   ),
-                  SizedBox(width: kDefaultPadding),
-                  SizedBox(width: kDefaultPadding),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(width: kDefaultPadding),
-                  SizedBox(width: kDefaultPadding),
-                  Expanded(
-                    child: RoundedButton(
-                      press: () {},
-                      text: 'Button 3',
-                    ),
-                  ),
-                  SizedBox(width: kDefaultPadding),
-                  Expanded(
-                    child: RoundedButton(
-                      press: () {},
-                      text: 'Button 4',
-                    ),
-                  ),
-                  SizedBox(width: kDefaultPadding),
-                  Expanded(
-                    child: RoundedButton(
-                      press: () {},
-                      text: 'Button 5',
-                    ),
-                  ),
-                  SizedBox(width: kDefaultPadding),
-                  SizedBox(width: kDefaultPadding),
                 ],
               ),
             ),

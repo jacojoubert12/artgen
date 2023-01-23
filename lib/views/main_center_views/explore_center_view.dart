@@ -1,3 +1,4 @@
+import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -20,6 +21,10 @@ class ExploreCenterView extends StatefulWidget {
 
 class _ExploreCenterViewState extends State<ExploreCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<String> imgUrls = [
+    "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+  ];
+  String _isLiked = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +82,53 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
+              Container(
+                padding: EdgeInsets.all(kDefaultPadding),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: imgUrls.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 1,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ImageDetailsModal();
+                            },
+                          );
+                          setState(() {});
+                        },
+                        child: Image.network(imgUrls[index]),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Heart button
+              // Positioned(
+              //   child: IconButton(
+              //     icon: Icon(
+              //       Icons.favorite,
+              //       color: _isLiked != null ? Colors.red : Colors.black,
+              //     ),
+              // onPressed: () {
+              // setState(() {
+              // _isLiked = !_isLiked;
+              // });
+              // write to Firebase database
+              // FirebaseDatabase.instance
+              //     .reference()
+              //     .child("likes")
+              //     .push()
+              //     .set({'image_url': imgUrls[index]});
+              // },
+              // ),
+              // ),
             ],
           ),
         ),
