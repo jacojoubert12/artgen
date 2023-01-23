@@ -1,14 +1,19 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
 import 'package:artgen/components/horisontal_image_listview.dart';
+import 'package:artgen/components/mqtt_client.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:influxdb_client/api.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 
 import '../../constants.dart';
 import 'components/header.dart';
 import 'image_details_view.dart';
+
+import 'dart:async';
+import 'dart:io';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 
 class CreateImgDetailView extends StatefulWidget {
   CreateImgDetailView(
@@ -45,6 +50,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   // double _batchCountSliderValue = 1;
   double _batchSizeSliderValue = 1;
 
+  final client = MqttServerClient('68.183.44.212', '');
+
+  // https://github.com/shamblett/mqtt_client/blob/master/example/mqtt_server_client.dart
+  Future<int> mqtt() async {
+    return mqtt_client_connections();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +89,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "batch_size": _batchSizeSliderValue
     };
     print(query);
+    String topic = 'test-topic';
+
     final uri = Uri.http('localhost:5000', '/');
 
     final response = await http.post(
