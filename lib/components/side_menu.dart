@@ -31,26 +31,38 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: double.infinity,
-      padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
+      // padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
       color: kBgLightColor,
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          // padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
           child: Column(
             children: [
+              Image.asset(
+                "assets/images/flower.png",
+                // width: 46,
+                fit: BoxFit.fill,
+              ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    "assets/images/monkey.jpg",
-                    width: 46,
+                  SizedBox(height: kDefaultPadding * 6),
+                  // Avatar Image
+                  Positioned(
+                    // top: MediaQuery.of(context).size.height / 8,
+                    // left: MediaQuery.of(context).size.width / 2 - 50,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg'),
+                      ),
+                    ),
                   ),
-                  Spacer(),
-                  // We don't want to show this close button on Desktop mood
-                  if (!Responsive.isDesktop(context)) CloseButton(),
                 ],
               ),
               // Menu Items
-
               SideMenuItem(
                 press: () {
                   this.setViewMode(ViewMode.create);
@@ -67,7 +79,6 @@ class SideMenu extends StatelessWidget {
                   this.setViewMode(ViewMode.mygallary);
                 },
                 title: "My Gallary",
-                // iconSrc: "assets/Icons/create_black_24dp.svg",
                 icon: Icon(
                   Icons.collections,
                 ),
