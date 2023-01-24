@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import jsonify #replace with json dumps/loads?
+from flask import jsonify #TODO replace with json dumps/loads?
 import paho.mqtt.subscribe as mqtt
 import json
 import requests
@@ -9,9 +9,23 @@ import base64
 from PIL import Image, PngImagePlugin
 import uuid
 import random
+import firebase_admin
+# from firebase_admin import db
+from firebase_admin import storage
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+
+#TODO Cleanup, break up in classes, error checks and debugging
 
 host = "68.183.44.212"
 topic = "$share/img_gen_workers/img_gen_requests"
+
+cred = credentials.Certificate("artgen-66569-firebase-adminsdk-lsnbw-ff55e7971b.json")
+app = firebase_admin.initialize_app(cred, options={'storageBucket': 'image_gen_requests'})
+firestore_db = firestore.client()
+cloud_storage = storage.bucket()
+
 
 def getServerURL(dmodel, speed):
     url = "http://einstein:7860"
@@ -118,11 +132,11 @@ def generate_image(prompt, negprompt, steps, guidance, width, height, batch_size
     #if URL is down we need a faster way to detect and use different url, not just except the try
     response = requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload)
 
-    print(response)
+    # print(response)
     r = response.json()
-    print(r)
+    # print(r)
 
-    filenames = []
+    image_urls = []
     for i in r['images']:
         image = Image.open(io.BytesIO(base64.b64decode(i.split(",",1)[0])))
 
@@ -130,18 +144,25 @@ def generate_image(prompt, negprompt, steps, guidance, width, height, batch_size
             "image": "data:image/png;base64," + i
         }
         response2 = requests.post(url=f'{url}/sdapi/v1/png-info', json=png_payload)
-        print(response2)
+        # print(response2)
 
         pnginfo = PngImagePlugin.PngInfo()
         pnginfo.add_text("parameters", response2.json().get("info"))
 
-        filename = 'output/' + str(uuid.uuid1()) + '.png'
-        print("Filename:", filename)
-        image.save(filename, pnginfo=pnginfo)
+        # filename = 'output/' + str(uuid.uuid1()) + '.png'
+        # print("Filename:", filename)
+        # image.save(filename, pnginfo=pnginfo)
 
-        filenames.append(filename)
-        print(filenames)
-    return filenames
+        image_bytes = io.BytesIO()
+        image.save(image_bytes, format='JPEG')
+        image_bytes.seek(0)
+        image_id = str(uuid.uuid1())
+        blob = cloud_storage.blob(f'images/{image_id}')
+        blob.upload_from_file(image_bytes)
+        image_url = blob.public_url
+        image_urls.append(image_url)
+
+    return image_urls
 
 
 def gen_img(request):
@@ -153,9 +174,10 @@ def gen_img(request):
     height = request['height']
     batch_size = request['batch_size']
 
-    filenames = generate_image(prompt, negprompt, steps, guidance, width, height, batch_size)
-    image_data = {'images': filenames}
-    return jsonify(image_data)
+    image_urls = generate_image(prompt, negprompt, steps, guidance, width, height, batch_size)
+    # image_data = {'images': filenames}
+    # return jsonify(image_data)
+    return image_urls
 
 
 
@@ -175,7 +197,8 @@ def on_message(client, userdata, message):
         return
 
     try:
-        gen_img(msg) 
+        image_urls = gen_img(msg)
+        client.publish('response_topic', image_urls, qos=1)
     except:
         #Add retry mechanism with a limit
         print("Error generating img")
@@ -183,5 +206,3 @@ def on_message(client, userdata, message):
 
 mqtt.callback(on_message, topic, hostname=host, qos=1, transport='websockets')
 mqtt.loop()
-
-

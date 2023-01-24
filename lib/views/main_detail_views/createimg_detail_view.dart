@@ -51,6 +51,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
   final String pubTopic = "img_gen_requests";
+  final String subTopic = "response_topic"; //TODO Make custom topic
 
   @override
   void initState() {
@@ -69,7 +70,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   Future<void> setupMqttClient() async {
     await mqttClientManager.connect();
-    mqttClientManager.subscribe(pubTopic);
+    mqttClientManager.subscribe(subTopic);
     // mqttClientManager.publishMessage(
     //     pubTopic,
     //     jsonEncode(
