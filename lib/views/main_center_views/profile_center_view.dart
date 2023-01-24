@@ -1,3 +1,4 @@
+import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -163,13 +164,21 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                           SizedBox(height: 30.0),
                           Text(
                               'Total Images Generated: $_totalImagesGenerated'),
-                          SizedBox(height: kDefaultPadding * 3),
+                          SizedBox(height: 30.0),
+                          Text('Subscription Plan:'),
+                          SizedBox(height: kDefaultPadding * 2),
                           SizedBox(
                             height: 30.0,
                             width: 250,
                             child: ElevatedButton(
                               onPressed: () {
                                 //save profile
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return SubscriptionView();
+                                  },
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 primary: Colors.pink,

@@ -3,6 +3,7 @@ import 'package:artgen/constants.dart';
 import 'package:artgen/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
 class ImageDetailsModal extends StatefulWidget {
   const ImageDetailsModal({Key key, this.icon}) : super(key: key);
@@ -75,6 +76,26 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                       ),
                       child: Text('Share'),
                     ),
+                  ),
+                  SizedBox(
+                    child: Text('Safe For Work'),
+                  ),
+                  LiteRollingSwitch(
+                    //initial value
+                    value: false,
+                    textOn: 'Yes',
+                    textOff: 'No',
+                    colorOn: Colors.greenAccent[700],
+                    colorOff: Colors.redAccent[700],
+                    iconOn: Icons.done,
+                    iconOff: Icons.remove_circle_outline,
+                    textSize: 10.0,
+
+                    onSwipe: (bool state) {},
+                    // onChanged: (bool state) {
+                    //   //Use it to manage the different states
+                    //   print('Current State of SWITCH IS: $state');
+                    // },
                   ),
                   // Expanded(
                   //   child: RoundedButton(
