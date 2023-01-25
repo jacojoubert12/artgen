@@ -22,3 +22,5 @@ doc/api/
 
 node_modules/
 api/output/
+.flutter-plugins-dependencie
+.flutter-plugins

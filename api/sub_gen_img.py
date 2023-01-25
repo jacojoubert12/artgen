@@ -157,8 +157,11 @@ def generate_image(prompt, negprompt, steps, guidance, width, height, batch_size
         image.save(image_bytes, format='JPEG')
         image_bytes.seek(0)
         image_id = str(uuid.uuid1())
+        print("before blob")
         blob = cloud_storage.blob(f'images/{image_id}')
+        print("before upload")
         blob.upload_from_file(image_bytes)
+        print("before getting url")
         image_url = blob.public_url
         image_urls.append(image_url)
 
