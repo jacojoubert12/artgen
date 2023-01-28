@@ -54,15 +54,12 @@ dependencies:
   share_plus: ^6.3.0
   lite_rolling_switch: ^1.0.0
   mqtt_client: ^9.7.4
-<<<<<<< HEAD
-=======
   device_info_plus: ^8.0.0
   platform_device_id: ^1.0.1
   localstorage: ^4.0.0+1
   file_picker: ^5.2.5
   firebase_storage: ^11.0.10
 
->>>>>>> 860e2f5 (firebase images loading)
 dev_dependencies:
   flutter_test:
     sdk: flutter

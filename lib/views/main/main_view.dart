@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:artgen/views/main_center_views/createimg_center_view.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:device_uuid/device_uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -13,6 +16,7 @@ import 'package:artgen/views/main_center_views/profile_center_view.dart';
 import 'package:artgen/views/main_center_views/about_center_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:artgen/auth_gate.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 enum ViewMode { create, mygallary, explore, likes, profile, about, share }
 
@@ -67,6 +71,32 @@ class _Mainviewstate extends State<MainScreen> {
         selectedImages: selectedImages,
         selectedImageUrls: selectedImageUrls,
         updateSelectedImages: this.updateSelectedImages);
+
+    getDeviceInfo();
+  }
+
+  getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo1 = DeviceInfoPlugin();
+
+    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+
+    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    // print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
+
+    WebBrowserInfo webBrowserInfo = await deviceInfo1.webBrowserInfo;
+    print('Running on ${webBrowserInfo.userAgent}');
+
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    final deviceInfo = await deviceInfoPlugin.deviceInfo;
+    final allInfo = deviceInfo.data;
+    final result = await PlatformDeviceId.getDeviceId;
+
+    // String uid = await DeviceId.getID!;
+    print(allInfo);
+    print(result);
+
+    print(user?.isAnonymous);
   }
 
   setViewMode(viewMode) {

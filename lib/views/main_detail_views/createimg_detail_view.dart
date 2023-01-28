@@ -3,6 +3,7 @@ import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -73,6 +74,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
+    _getInfo();
+
     setupMqttClient();
     setupUpdatesListener();
   }
@@ -85,15 +88,25 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   void _getInfo() async {
     // Get device id
-    String? result = await PlatformDeviceId.getDeviceId;
+    // String? result = await PlatformDeviceId.getDeviceId;
+
+    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+
+    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    // print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
+
+    // WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+    // print('Running on ${webBrowserInfo.userAgent}');
 
     // Update the UI
     setState(() {
-      deviceId = result!;
-      print(deviceId);
+      // deviceId = result!;
+      // print(deviceId);
     });
   }
 
+  //TODO Reconnections and Timeouts on requests
   Future<void> setupMqttClient() async {
     subTopic += "deviceId!";
     await mqttClientManager.connect();
@@ -476,7 +489,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                                       showDialog(
                                                         context: context,
                                                         builder: (context) {
-                                                          return ImageDetailsModal();
+                                                          return ImageDetailsModal(
+                                                            selectedImageUrl:
+                                                                generatedImgUrls[
+                                                                    index],
+                                                          );
                                                         },
                                                       );
                                                       setState(() {});
@@ -500,6 +517,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                             loading = true;
                                           });
                                           generateImage();
+                                          // AuthGate();
                                         },
                                       ),
                                     ),

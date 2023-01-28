@@ -6,7 +6,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
 class ImageDetailsModal extends StatefulWidget {
-  const ImageDetailsModal({Key key, this.icon}) : super(key: key);
+  ImageDetailsModal({Key? key, this.selectedImageUrl}) : super(key: key);
+  final selectedImageUrl;
 
   @override
   _ImageDetailsModalState createState() => _ImageDetailsModalState();
@@ -38,7 +39,7 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
               child: Stack(
                 children: [
                   Image.network(
-                    "http://localhost:5000/output/" + "output.png",
+                    widget.selectedImageUrl,
                     // width: 400,
                     // height: 400,
                     fit: BoxFit.cover,
