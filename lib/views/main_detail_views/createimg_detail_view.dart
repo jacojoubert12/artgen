@@ -3,6 +3,7 @@ import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
+import 'package:artgen/views/main/main_view.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
@@ -153,7 +154,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   generateImage() async {
     // final response = await http.get('http://localhost:5000?name=John');
-    String img;
     final query = {
       'prompt': prompt + " ((" + _promptTxt + "))",
       "negprompt": negprompt + " " + _negpromptTxt,
@@ -512,6 +512,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       child: RoundedButton(
                                         text: "Generate",
                                         press: () {
+                                          user.images_generated +=
+                                              (_batchSizeSliderValue as int?)!;
+                                          user.showLogin(context);
                                           concatPrompts();
                                           setState(() {
                                             loading = true;
