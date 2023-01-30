@@ -1,7 +1,14 @@
 import 'dart:convert';
+import 'dart:html';
+import 'dart:io';
 
+import 'package:artgen/main.dart';
+import 'package:artgen/models/my_user.dart';
 import 'package:artgen/views/main_center_views/createimg_center_view.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_uuid/device_uuid.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -13,30 +20,33 @@ import 'package:artgen/views/main_center_views/profile_center_view.dart';
 import 'package:artgen/views/main_center_views/about_center_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:artgen/auth_gate.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 enum ViewMode { create, mygallary, explore, likes, profile, about, share }
 
+MyUser user = MyUser();
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(title: const Text("artgen")),
-      body: MainScreen(user: user),
-      // body: TempScreen(),
+      // body: MainScreen(user: user),
+      body: MainScreen(),
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
-    Key key,
-    this.user,
+    Key? key,
+    // this.user,
   }) : super(key: key);
-  final User user;
+  // final MyUser? user;
 
   @override
   State<MainScreen> createState() => _Mainviewstate();
@@ -45,10 +55,8 @@ class MainScreen extends StatefulWidget {
 class _Mainviewstate extends State<MainScreen> {
   // View Mode: Menue select om die center view te kies
   var viewMode = ViewMode.create;
-  // FireStoreManager fireStoreManager = FireStoreManager();
-  // StreamBuilder<List<Mood>> moodsStreamBuilder;
-  ImgGridView createImgCenterView;
-  CreateImgDetailView createImgDetailView;
+  ImgGridView? createImgCenterView;
+  CreateImgDetailView? createImgDetailView;
   Set<dynamic> selectedImages = new Set<dynamic>();
   Set<String> selectedImageUrls = new Set<String>();
 
@@ -67,6 +75,34 @@ class _Mainviewstate extends State<MainScreen> {
         selectedImages: selectedImages,
         selectedImageUrls: selectedImageUrls,
         updateSelectedImages: this.updateSelectedImages);
+
+    getDeviceInfo();
+    // user = MyUser();
+    user.initMyUser();
+  }
+
+  getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo1 = DeviceInfoPlugin();
+
+    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+
+    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    // print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
+
+    WebBrowserInfo webBrowserInfo = await deviceInfo1.webBrowserInfo;
+    print('Running on ${webBrowserInfo.userAgent}');
+
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    final deviceInfo = await deviceInfoPlugin.deviceInfo;
+    final allInfo = deviceInfo.data;
+    final result = await PlatformDeviceId.getDeviceId;
+
+    // String uid = await DeviceId.getID!;
+    print(allInfo);
+    print(result);
+
+    // print(user?.isAnonymous);
   }
 
   setViewMode(viewMode) {
@@ -96,12 +132,12 @@ class _Mainviewstate extends State<MainScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => createImgDetailView,
+            builder: (context) => createImgDetailView!,
           ));
   }
 
-  StatefulWidget getViewModeCenterView() {
-    StatefulWidget centerView;
+  StatefulWidget? getViewModeCenterView() {
+    StatefulWidget? centerView;
     switch (viewMode) {
       case ViewMode.create:
         centerView = createImgCenterView;
@@ -127,11 +163,10 @@ class _Mainviewstate extends State<MainScreen> {
     return centerView;
   }
 
-  StatefulWidget getViewModeDetailView() {
+  StatefulWidget? getViewModeDetailView() {
     switch (viewMode) {
       case ViewMode.create:
         return this.createImgDetailView;
-        break;
       // case ViewMode.mygallary:
       //   return mygallaryDetailView;
       //   break;
@@ -141,8 +176,12 @@ class _Mainviewstate extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // It provide us the width and height
     Size _size = MediaQuery.of(context).size;
     return Scaffold(
       body: Responsive(
@@ -152,12 +191,12 @@ class _Mainviewstate extends State<MainScreen> {
           children: [
             Expanded(
               flex: 6,
-              child: getViewModeCenterView(),
+              child: getViewModeCenterView()!,
             ),
             shouldShowDetailView
                 ? Expanded(
                     flex: 9,
-                    child: getViewModeDetailView(),
+                    child: getViewModeDetailView()!,
                   )
                 : Expanded(
                     flex: 0,
@@ -175,11 +214,11 @@ class _Mainviewstate extends State<MainScreen> {
             ),
             Expanded(
                 flex: _size.width > 1340 ? 8 : 12,
-                child: getViewModeCenterView()),
+                child: getViewModeCenterView()!),
             shouldShowDetailView
                 ? Expanded(
                     flex: _size.width > 1340 ? 12 : 15,
-                    child: getViewModeDetailView(),
+                    child: getViewModeDetailView()!,
                   )
                 : Expanded(
                     flex: 0,

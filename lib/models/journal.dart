@@ -1,5 +1,5 @@
 class Journal {
-  final String journalName;
+  final String? journalName;
 
   const Journal({this.journalName});
 }

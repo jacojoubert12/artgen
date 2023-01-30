@@ -1,38 +1,54 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
+import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
+import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
+import 'package:artgen/views/main/main_view.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:influxdb_client/api.dart';
+import 'package:platform_device_id/platform_device_id.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../constants.dart';
 import 'components/header.dart';
 import 'image_details_view.dart';
 
+import 'dart:async';
+import 'dart:io';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
+
 class CreateImgDetailView extends StatefulWidget {
   CreateImgDetailView(
-      {Key key,
+      {Key? key,
       this.selectedImages,
       this.selectedImageUrls,
       this.updateSelectedImages})
       : super(key: key);
   final selectedImages;
   final selectedImageUrls;
-  final Function updateSelectedImages;
+  final Function? updateSelectedImages;
 
   @override
   State<CreateImgDetailView> createState() => _CreateImgDetailViewState();
 }
 
 class _CreateImgDetailViewState extends State<CreateImgDetailView> {
-  Set<dynamic> _selectedImages;
-  Set<String> _selectedImageUrls;
+  Set<dynamic>? _selectedImages;
+  Set<String>? _selectedImageUrls;
   List<String> generatedImgUrls = [
-    "http://localhost:5000/output/" + "output.png"
+    // "http://localhost:5000/output/" + "output.png"
+    "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
   ];
 
   bool loading = false;
+  bool uploading = false;
   String prompt = "";
   String negprompt = "";
   String _promptTxt = "";
@@ -44,17 +60,90 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   double _guidanceScaleSliderValue = 15;
   // double _batchCountSliderValue = 1;
   double _batchSizeSliderValue = 1;
+  String deviceId = "";
+
+  MQTTClientManager mqttClientManager = MQTTClientManager();
+  final String pubTopic = "img_gen_requests";
+  String subTopic = "img_gen_response_";
+  // + user!.uid; //TODO Make custom topic
+
+  final firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
 
   @override
   void initState() {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
+    _getInfo();
+
+    setupMqttClient();
+    setupUpdatesListener();
+  }
+
+  @override
+  void dispose() {
+    mqttClientManager.disconnect();
+    super.dispose();
+  }
+
+  void _getInfo() async {
+    // Get device id
+    // String? result = await PlatformDeviceId.getDeviceId;
+
+    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    // print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+
+    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    // print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
+
+    // WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+    // print('Running on ${webBrowserInfo.userAgent}');
+
+    // Update the UI
+    setState(() {
+      // deviceId = result!;
+      // print(deviceId);
+    });
+  }
+
+  //TODO Reconnections and Timeouts on requests
+  Future<void> setupMqttClient() async {
+    subTopic += "deviceId!";
+    await mqttClientManager.connect();
+    mqttClientManager.subscribe(subTopic);
+  }
+
+  void setupUpdatesListener() {
+    mqttClientManager
+        .getMessagesStream()!
+        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) async {
+      final recMess = c![0].payload as MqttPublishMessage;
+      final pt =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+      //   generatedImgUrls.clear();
+      print(jsonDecode(pt));
+      final List<String> imageUrls = [];
+      for (var url in jsonDecode(pt)) {
+        String urlString = url.toString();
+        String filename = urlString.substring(urlString.length - 40);
+        ;
+        print(filename);
+        String storage_ref =
+            await storage.ref('images/$filename').getDownloadURL();
+        imageUrls.add(storage_ref);
+      }
+      setState(() {
+        generatedImgUrls = imageUrls;
+        loading = false;
+      });
+    });
   }
 
   concatPrompts() {
     prompt = "";
-    for (var jsonString in _selectedImages) {
+    for (var jsonString in _selectedImages!) {
       if (jsonString != null) {
         var json = jsonEncode(jsonString['prompt']);
         prompt += jsonDecode(json) + " ";
@@ -65,7 +154,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   generateImage() async {
     // final response = await http.get('http://localhost:5000?name=John');
-    String img;
     final query = {
       'prompt': prompt + " ((" + _promptTxt + "))",
       "negprompt": negprompt + " " + _negpromptTxt,
@@ -74,33 +162,100 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "width": _widthliderValue,
       "height": _heightSliderValue,
       // "batch_count": _batchCountSliderValue;
-      "batch_size": _batchSizeSliderValue
+      "batch_size": _batchSizeSliderValue,
+      "response_topic": subTopic
     };
     print(query);
-    final uri = Uri.http('localhost:5000', '/');
-
-    final response = await http.post(
-      uri,
-      body: jsonEncode(query),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      var images = data['images'];
-      print(images);
-      generatedImgUrls.clear();
-      setState(() {
-        for (img in images) {
-          generatedImgUrls.add("http://localhost:5000/" + img);
-        }
-      });
-    } else {
-      print("Request failed with status: ${response.statusCode}");
-    }
+    mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
 
     setState(() {
-      loading = false;
+      loading = true;
+    });
+  }
+
+  Future<void> uploadFile() async {
+    String filename = "";
+    if (kIsWeb) {
+      final result = await FilePickerWeb.platform
+          .pickFiles(allowMultiple: false, type: FileType.image);
+
+      if (result == null) {
+        setState(() {
+          uploading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("No file was selected"),
+          ),
+        );
+      } else {
+        Uint8List uploadfile = result.files.single.bytes!;
+        filename = result.files.single.name;
+        if (uploadfile.length / 1000.0 / 1000.0 > 3) {
+          setState(() {
+            uploading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Upload file too large. Max size = 3MB"),
+            ),
+          );
+          print("upload size too large");
+        }
+
+        try {
+          await storage
+              .ref('uploads/$filename')
+              .putData(uploadfile, SettableMetadata(contentType: 'image/png'));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Upload completed")),
+          );
+          print("Upload done");
+        } on firebase_core.FirebaseException catch (e) {
+          print(e);
+        }
+      }
+    } else {
+      final result = await FilePicker.platform
+          .pickFiles(allowMultiple: false, type: FileType.image);
+
+      if (result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("No file was selected"),
+          ),
+        );
+      } else {
+        final path = result.files.single.path!;
+        filename = result.files.single.name;
+        File file = File(path);
+        int len = await file.length();
+        if (len / 1000.0 / 1000.0 > 3) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Upload file too large. Max size = 3MB"),
+            ),
+          );
+        }
+
+        try {
+          await storage.ref('uploads/$filename').putFile(file);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Upload completed")),
+          );
+          print("Upload done");
+        } on firebase_core.FirebaseException catch (e) {
+          print(e);
+        }
+      }
+    }
+
+    String url = await storage.ref('uploads/$filename').getDownloadURL();
+
+    setState(() {
+      _selectedImageUrls!.add(url);
+      _selectedImages!.add(url);
+      uploading = false;
     });
   }
 
@@ -120,32 +275,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // CircleAvatar(
-                      // maxRadius: 24,
-                      // backgroundColor: Colors.transparent,
-                      // backgroundImage: AssetImage(emails[1].image),
-                      // ),
-                      // SizedBox(width: kDefaultPadding),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Row(
-                            //   children: [
-                            //     Expanded(
-                            //       child: Column(
-                            //         crossAxisAlignment:
-                            //             CrossAxisAlignment.start,
-                            //       ),
-                            //     ),
-                            //     SizedBox(width: kDefaultPadding / 2),
-                            //     Text(
-                            //       DateTime.now().toString(),
-                            //       style: Theme.of(context).textTheme.caption,
-                            //     ),
-                            //   ],
-                            // ),
-                            // SizedBox(height: kDefaultPadding),
                             LayoutBuilder(
                               builder: (context, constraints) => SizedBox(
                                 width: constraints.maxWidth > 850
@@ -155,14 +288,16 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      height: _selectedImageUrls.length == 0
+                                      height: _selectedImageUrls!.length == 0
                                           ? 0
                                           : 100,
-                                      child: ImageListView(
-                                        updateSelectedImages:
-                                            widget.updateSelectedImages,
-                                        selectedImages: _selectedImages,
-                                        selectedImageUrls: _selectedImageUrls,
+                                      child: Expanded(
+                                        child: ImageListView(
+                                          updateSelectedImages:
+                                              widget.updateSelectedImages,
+                                          selectedImages: _selectedImages,
+                                          selectedImageUrls: _selectedImageUrls,
+                                        ),
                                       ),
                                     ),
                                     // SizedBox(height: kDefaultPadding),
@@ -354,7 +489,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                                       showDialog(
                                                         context: context,
                                                         builder: (context) {
-                                                          return ImageDetailsModal();
+                                                          return ImageDetailsModal(
+                                                            selectedImageUrl:
+                                                                generatedImgUrls[
+                                                                    index],
+                                                          );
                                                         },
                                                       );
                                                       setState(() {});
@@ -373,13 +512,31 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       child: RoundedButton(
                                         text: "Generate",
                                         press: () {
+                                          user.images_generated +=
+                                              (_batchSizeSliderValue as int?)!;
+                                          user.showLogin(context);
                                           concatPrompts();
                                           setState(() {
                                             loading = true;
                                           });
                                           generateImage();
+                                          // AuthGate();
                                         },
                                       ),
+                                    ),
+                                    Container(
+                                      height: 80,
+                                      child: uploading
+                                          ? CircularProgressIndicator()
+                                          : RoundedButton(
+                                              text: "Upload",
+                                              press: () async {
+                                                setState(() {
+                                                  uploading = true;
+                                                });
+                                                uploadFile();
+                                              },
+                                            ),
                                     ),
                                   ],
                                 ),

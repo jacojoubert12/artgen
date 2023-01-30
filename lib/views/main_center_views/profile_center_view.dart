@@ -10,10 +10,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileCenterView extends StatefulWidget {
   const ProfileCenterView({
-    Key key,
+    Key? key,
     this.setViewMode,
   }) : super(key: key);
-  final Function setViewMode;
+  final Function? setViewMode;
 
   @override
   _ProfileCenterViewState createState() => _ProfileCenterViewState();
@@ -57,7 +57,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                       IconButton(
                         icon: Icon(Icons.menu),
                         onPressed: () {
-                          _scaffoldKey.currentState.openDrawer();
+                          _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
@@ -181,8 +181,8 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.pink,
-                                onPrimary: Colors.black,
+                                backgroundColor: Colors.pink,
+                                foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(32.0)),
                               ),

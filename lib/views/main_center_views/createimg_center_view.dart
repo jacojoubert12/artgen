@@ -14,16 +14,16 @@ import 'package:http/http.dart' as http;
 
 class ImgGridView extends StatefulWidget {
   ImgGridView(
-      {Key key,
+      {Key? key,
       this.setViewMode,
       this.selectedImages,
       this.selectedImageUrls,
       this.updateSelectedImages,
       this.showDetailView})
       : super(key: key);
-  final Function setViewMode;
-  final Function updateSelectedImages;
-  final Function showDetailView;
+  final Function? setViewMode;
+  final Function? updateSelectedImages;
+  final Function? showDetailView;
   final selectedImages;
   final selectedImageUrls;
   List<String> imageUrls = [];
@@ -35,10 +35,10 @@ class ImgGridView extends StatefulWidget {
 
 class _ImgGridViewState extends State<ImgGridView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Set<dynamic> _selectedImages;
-  Set<String> _selectedImageUrls;
-  List<String> _imageUrls;
-  List<dynamic> _images;
+  Set<dynamic>? _selectedImages;
+  Set<String>? _selectedImageUrls;
+  List<String>? _imageUrls;
+  List<dynamic>? _images;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     getImageUrls();
   }
 
-  Future<List<String>> getImageUrls([String q = "random"]) async {
+  Future<List<String>?> getImageUrls([String q = "random"]) async {
     final uri = Uri.https('lexica.art', '/api/v1/search', {'q': q});
     final response = await http.get(uri);
 
@@ -78,7 +78,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     setState(() {
       _selectedImages = widget.selectedImages;
       _selectedImageUrls = widget.selectedImageUrls;
-      widget.updateSelectedImages(_selectedImages, _selectedImageUrls);
+      widget.updateSelectedImages!(_selectedImages, _selectedImageUrls);
     });
   }
 
@@ -109,7 +109,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                       IconButton(
                         icon: Icon(Icons.menu),
                         onPressed: () {
-                          _scaffoldKey.currentState.openDrawer();
+                          _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
@@ -167,7 +167,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                   child: RoundedButton(
                     text: "Create",
                     press: () {
-                      widget.showDetailView();
+                      widget.showDetailView!();
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -202,15 +202,15 @@ class _ImgGridViewState extends State<ImgGridView> {
 }
 
 class ImageGridView extends StatefulWidget {
-  final Set<dynamic> selectedImages;
-  final Set<String> selectedImageUrls;
-  final Function updateSelectedImages;
-  final Function showDetailView;
-  final List<String> imageUrls;
-  final List<dynamic> images;
+  final Set<dynamic>? selectedImages;
+  final Set<String>? selectedImageUrls;
+  final Function? updateSelectedImages;
+  final Function? showDetailView;
+  final List<String>? imageUrls;
+  final List<dynamic>? images;
 
   const ImageGridView(
-      {Key key,
+      {Key? key,
       this.updateSelectedImages,
       this.selectedImageUrls,
       this.selectedImages,
@@ -224,10 +224,10 @@ class ImageGridView extends StatefulWidget {
 }
 
 class _ImageGridViewState extends State<ImageGridView> {
-  Set<String> _selectedImageUrls;
-  Set<dynamic> _selectedImages;
-  List<String> _imageUrls; // = [];
-  List<dynamic> _images; // = [];
+  Set<String>? _selectedImageUrls;
+  Set<dynamic>? _selectedImages;
+  List<String>? _imageUrls; // = [];
+  List<dynamic>? _images; // = [];
 
   @override
   void initState() {
@@ -244,15 +244,15 @@ class _ImageGridViewState extends State<ImageGridView> {
     _imageUrls = widget.imageUrls;
     return GridView.builder(
       shrinkWrap: true,
-      itemCount: _imageUrls.length,
+      itemCount: _imageUrls!.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         childAspectRatio: 1,
       ),
       itemBuilder: (BuildContext context, int index) {
-        final imageUrl = _imageUrls[index];
-        final imageFull = _images[index];
-        final isSelected = _selectedImageUrls.contains(imageUrl);
+        final imageUrl = _imageUrls![index];
+        final imageFull = _images![index];
+        final isSelected = _selectedImageUrls!.contains(imageUrl);
 
         return Container(
           decoration: BoxDecoration(
@@ -265,14 +265,14 @@ class _ImageGridViewState extends State<ImageGridView> {
             onTap: () {
               setState(() {
                 if (isSelected) {
-                  _selectedImageUrls.remove(imageUrl);
-                  _selectedImages.remove(imageFull);
+                  _selectedImageUrls!.remove(imageUrl);
+                  _selectedImages!.remove(imageFull);
                 } else {
-                  _selectedImageUrls.add(imageUrl);
-                  _selectedImages.add(imageFull);
+                  _selectedImageUrls!.add(imageUrl);
+                  _selectedImages!.add(imageFull);
                   // print(_selectedImages);
                 }
-                widget.updateSelectedImages(
+                widget.updateSelectedImages!(
                     _selectedImages, _selectedImageUrls);
               });
             },

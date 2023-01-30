@@ -23,9 +23,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 // );
 
 class SideMenu extends StatelessWidget {
-  const SideMenu({Key key, this.setViewMode}) : super(key: key);
+  const SideMenu({Key? key, this.setViewMode}) : super(key: key);
 
-  final Function setViewMode;
+  final Function? setViewMode;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +83,7 @@ class SideMenu extends StatelessWidget {
               // Menu Items
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.create);
+                  this.setViewMode!(ViewMode.create);
                 },
                 title: "Create",
                 icon: Icon(
@@ -94,7 +94,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.mygallary);
+                  this.setViewMode!(ViewMode.mygallary);
                 },
                 title: "My Gallary",
                 icon: Icon(
@@ -105,7 +105,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.explore);
+                  this.setViewMode!(ViewMode.explore);
                 },
                 title: "Explore",
                 icon: Icon(
@@ -116,7 +116,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.likes);
+                  this.setViewMode!(ViewMode.likes);
                 },
                 title: "Likes",
                 icon: Icon(
@@ -127,7 +127,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.profile);
+                  this.setViewMode!(ViewMode.profile);
                 },
                 title: "Profile",
                 icon: Icon(
@@ -138,7 +138,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode(ViewMode.about);
+                  this.setViewMode!(ViewMode.about);
                 },
                 title: "About",
                 icon: Icon(

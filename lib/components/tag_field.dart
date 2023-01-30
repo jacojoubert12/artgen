@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class TagField extends StatefulWidget {
-  const TagField({Key key}) : super(key: key);
+  const TagField({Key? key}) : super(key: key);
 
   @override
   State<TagField> createState() => _TagFieldState();
 }
 
 class _TagFieldState extends State<TagField> {
-  double _distanceToField;
-  TextfieldTagsController _controller;
+  late double _distanceToField;
+  TextfieldTagsController? _controller;
 
   @override
   void didChangeDependencies() {
@@ -21,7 +21,7 @@ class _TagFieldState extends State<TagField> {
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _controller!.dispose();
   }
 
   @override
@@ -46,7 +46,7 @@ class _TagFieldState extends State<TagField> {
       validator: (String tag) {
         if (tag == 'php') {
           return 'No, please just no';
-        } else if (_controller.getTags.contains(tag)) {
+        } else if (_controller!.getTags!.contains(tag)) {
           return 'you already entered that';
         }
         return null;
@@ -76,7 +76,7 @@ class _TagFieldState extends State<TagField> {
                 helperStyle: const TextStyle(
                   color: Color.fromARGB(255, 74, 137, 92),
                 ),
-                hintText: _controller.hasTags ? '' : "Enter tag...",
+                hintText: _controller!.hasTags ? '' : "Enter tag...",
                 errorText: error,
                 prefixIconConstraints:
                     BoxConstraints(maxWidth: _distanceToField * 0.74),

@@ -6,18 +6,18 @@ import 'counter_badge.dart';
 
 class SideMenuItem extends StatelessWidget {
   const SideMenuItem({
-    Key key,
+    Key? key,
     this.isActive,
     this.isHover = false,
     this.itemCount,
     this.showBorder = true,
-    @required this.icon,
-    @required this.title,
-    @required this.press,
+    required this.icon,
+    required this.title,
+    required this.press,
   }) : super(key: key);
 
-  final bool isActive, isHover, showBorder;
-  final int itemCount;
+  final bool? isActive, isHover, showBorder;
+  final int? itemCount;
   final String title;
   final Icon icon;
   final VoidCallback press;
@@ -30,7 +30,7 @@ class SideMenuItem extends StatelessWidget {
         onTap: press,
         child: Row(
           children: [
-            (isActive || isHover)
+            (isActive! || isHover!)
                 ? Icon(
                     Icons.create,
                   )
@@ -43,7 +43,7 @@ class SideMenuItem extends StatelessWidget {
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(bottom: 15, right: 5),
-                decoration: showBorder
+                decoration: showBorder!
                     ? BoxDecoration(
                         border: Border(
                           bottom: BorderSide(color: Color(0xFFDFE2EF)),
@@ -61,9 +61,9 @@ class SideMenuItem extends StatelessWidget {
                     SizedBox(width: kDefaultPadding * 0.75),
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.button.copyWith(
+                      style: Theme.of(context).textTheme.button!.copyWith(
                             color:
-                                (isActive || isHover) ? kTextColor : kGrayColor,
+                                (isActive! || isHover!) ? kTextColor : kGrayColor,
                           ),
                     ),
                     Spacer(),

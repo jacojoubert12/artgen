@@ -10,7 +10,6 @@ import 'firebase_options.dart';
 // void main() {
 //   runApp(MyApp());
 // }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -23,14 +22,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'ArtGen.fun',
       theme: ThemeData(
         inputDecorationTheme: MyInputTheme().theme(),
       ),
       // home: WelcomeScreen(),
-      home: HomeScreen(),
+      // home: HomeScreen(),
       // home: MainScreen(),
-      // home: AuthGate(),
+      home: HomeScreen(),
     );
   }
 }
