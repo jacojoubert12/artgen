@@ -23,6 +23,6 @@ doc/api/
 node_modules/
 api/output/
 api/__pycache__
-.flutter-plugins-dependencie
+.flutter-plugins-dependencies
 .flutter-plugins
 .vscode/settings.json
