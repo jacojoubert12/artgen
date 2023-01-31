@@ -57,21 +57,21 @@ class FirebaseClient:
         # queusize_ref.update({"f222": firestore.Increment(1)})
         pass
 
-        image_urls = []
-        for i in r:
-            image = Image.open(io.BytesIO(base64.b64decode(i.split(",",1)[0])))
-            image_bytes = io.BytesIO()
-            image.save(image_bytes, format='JPEG')
-            image_bytes.seek(0)
-            # Generate a unique ID for the image
-            image_id = str(uuid.uuid1())
-            # Create a new blob in the 'images' bucket with the ID
-            blob = self.storage.blob(f'images/{image_id}')
-            # Upload the image data to the blob
-            blob.upload_from_file(image_bytes)
-            # Get the public URL of the image
-            image_url = blob.public_url
-            image_urls.append(image_url)
+        # image_urls = []
+        # for i in r:
+        #     image = Image.open(io.BytesIO(base64.b64decode(i.split(",",1)[0])))
+        #     image_bytes = io.BytesIO()
+        #     image.save(image_bytes, format='JPEG')
+        #     image_bytes.seek(0)
+        #     # Generate a unique ID for the image
+        #     image_id = str(uuid.uuid1())
+        #     # Create a new blob in the 'images' bucket with the ID
+        #     blob = self.storage.blob(f'images/{image_id}')
+        #     # Upload the image data to the blob
+        #     blob.upload_from_file(image_bytes)
+        #     # Get the public URL of the image
+        #     image_url = blob.public_url
+        #     image_urls.append(image_url)
 
 
             # file_path = "sample_image_file.jpg"
@@ -83,3 +83,24 @@ class FirebaseClient:
 
 if __name__ == '__main__':
     fbc = FirebaseClient()
+
+
+
+#Delete all inactive anonamous user
+# import firebase_admin
+# from firebase_admin import auth
+# from firebase_admin import firestore
+# from datetime import datetime, timedelta
+
+# def delete_inactive_anonymous_users():
+#     now = datetime.utcnow()
+#     week_ago = now - timedelta(days=7)
+#     users = auth.list_users().iterate_all()
+#     for user in users:
+#         if user.last_sign_in_time and user.provider_data[0].provider_id == 'anonymous':
+#             last_sign_in_time = datetime.fromtimestamp(user.last_sign_in_time / 1000)
+#             if last_sign_in_time < week_ago:
+#                 auth.delete_user(user.uid)
+
+# firebase_admin.initialize_app()
+# delete_inactive_anonymous_users()

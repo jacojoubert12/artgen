@@ -118,7 +118,12 @@ class MyUser {
 
   Future<int?> getIntData(String key) async {
     if (kIsWeb) {
-      int? value = _localStorage[key] as int;
+      print("Nulll yet?");
+      String strValue = _localStorage[key]!;
+      print("Null now?");
+      int? value = int.tryParse(strValue) ?? 0;
+      print("getIntData");
+      print(value);
       return value;
     } else {
       final prefs = await SharedPreferences.getInstance();
@@ -128,6 +133,8 @@ class MyUser {
 
   Future<void> storeIntData(String key, int? value) async {
     if (kIsWeb) {
+      print("storeIntData");
+      print(value);
       _localStorage[key] = value.toString();
     } else {
       final prefs = await SharedPreferences.getInstance();
@@ -169,7 +176,7 @@ class MyUser {
       shouldLogin = false;
       shouldShowPackages = false;
     }
-    storeIntData("imagesGenerated", imagesGenerated);
+    storeIntData("images_generated", imagesGenerated);
     //only update every 5 images... does this save firebase writes? TODO How much does it cost?
     // imagesGenerated % 5 == 0 ?
     updateImagesGenerated();
@@ -199,6 +206,8 @@ class MyUser {
         print(activePackage);
         print("packageMap[activePackage]['img_limit']");
         print(packageMap[activePackage]['img_limit']);
+        print("app_id");
+        print(app_id);
         print("imageLimit");
         print(imageLimit);
         print("imagesGenerated");
@@ -226,11 +235,11 @@ class MyUser {
         activePackage = 0;
         user = userCredentials.user;
         app_id = await getStrData("app_id");
-        int? stored_imagesGenerated = (await getIntData("imagesGenerated"));
+        int? stored_imagesGenerated = (await getIntData("images_generated"));
         if (app_id == null || stored_imagesGenerated == null) {
           app_id = user?.uid;
           storeStrData("app_id", app_id);
-          storeIntData("imagesGenerated", 0);
+          storeIntData("images_generated", 0);
           print("app_id");
           print(app_id);
         } else {
@@ -243,12 +252,32 @@ class MyUser {
         print("NOT ANONaMOUSES");
         shouldLogin = false;
       } else {
+        var appIdTmp = await getStrData("app_id");
+        if (appIdTmp == null) {
+          storeStrData("app_id", user!.uid);
+          app_id = user!.uid;
+        }
+        var generatedImgsTmp = await getIntData("images_generated");
+        if (generatedImgsTmp == null) {
+          print("generatedImgsTmp == null");
+          storeIntData("images_generated", imagesGenerated);
+        } else {
+          imagesGenerated = generatedImgsTmp;
+        }
         print("ANONaMOUSES");
+        print("appIdTmp");
+        print(appIdTmp);
+        appIdTmp = await getStrData("app_id");
+        print("appIdTmp Now?");
+        print(appIdTmp);
+        print(user!.uid);
+        print("images_generated");
+        print(imagesGenerated);
       }
     }
   }
 
-  Future<void> showLogin(BuildContext context) async {
+  bool showLogin(BuildContext context) {
     shouldGetPackages ? getPackages() : print('Already got packages?');
     shouldGetCurrentPackage
         ? getCurrentPackage()
@@ -260,26 +289,33 @@ class MyUser {
     print(imageLimit);
     print("ShouldLogin");
     print(shouldLogin);
+    print("app_id");
+    print(app_id);
 
-    shouldLogin
-        ? {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AuthGate();
-              },
-            ),
-            shouldGetCurrentPackage = true,
-            shouldGetPackages = true
-          }
-        : print("user logged in");
-    shouldShowPackages
-        ? showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return SubscriptionView();
-            },
-          )
-        : print("user packages still valid");
+    if (shouldLogin) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AuthGate();
+        },
+      );
+      shouldGetCurrentPackage = true;
+      shouldGetPackages = true;
+      return false;
+    } else {
+      print("user logged in");
+    }
+    if (shouldShowPackages) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SubscriptionView();
+        },
+      );
+      return false;
+    } else {
+      print("user packages still valid");
+    }
+    return true;
   }
 }

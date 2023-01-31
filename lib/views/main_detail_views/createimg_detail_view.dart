@@ -64,7 +64,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
   final String pubTopic = "img_gen_requests";
-  String subTopic = "img_gen_response_" + user.user!.uid;
+  String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -108,7 +108,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   //TODO Reconnections and Timeouts on requests
   Future<void> setupMqttClient() async {
-    subTopic += "deviceId!";
+    // subTopic += "deviceId!";
     await mqttClientManager.connect();
     mqttClientManager.subscribe(subTopic);
   }
@@ -291,12 +291,16 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                           ? 0
                                           : 100,
                                       child: Expanded(
-                                        child: ImageListView(
-                                          updateSelectedImages:
-                                              widget.updateSelectedImages,
-                                          selectedImages: _selectedImages,
-                                          selectedImageUrls: _selectedImageUrls,
-                                        ),
+                                        child: (_selectedImageUrls!.length > 0)
+                                            ? ImageListView(
+                                                updateSelectedImages:
+                                                    widget.updateSelectedImages,
+                                                selectedImages: _selectedImages,
+                                                selectedImageUrls:
+                                                    _selectedImageUrls,
+                                              )
+                                            : Text(
+                                                "Select images in search view if you would like to make use of their prompts"),
                                       ),
                                     ),
                                     // SizedBox(height: kDefaultPadding),
@@ -511,15 +515,43 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       child: RoundedButton(
                                         text: "Generate",
                                         press: () {
-                                          //TODO Moved to response on
-                                          user.imagesToGenerate =
-                                              (_batchSizeSliderValue as int?)!;
-                                          user.showLogin(context);
-                                          concatPrompts();
-                                          setState(() {
-                                            loading = true;
-                                          });
-                                          // generateImage();
+                                          user.showLogin(context)
+                                              ? {
+                                                  //Move to response on success
+                                                  user.imagesToGenerate =
+                                                      (_batchSizeSliderValue
+                                                          as int?)!,
+                                                  concatPrompts(),
+                                                  setState(() {
+                                                    loading = true;
+                                                  }),
+                                                  // generateImage() //Put back!
+                                                }
+                                              : showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title:
+                                                          Text("Popup title"),
+                                                      content: Text(
+                                                          "You have reached your limit"),
+                                                      actions: <Widget>[
+                                                        Container(
+                                                          height: 80,
+                                                          width: 500,
+                                                          child: RoundedButton(
+                                                            text: "OK",
+                                                            press: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  });
                                         },
                                       ),
                                     ),
