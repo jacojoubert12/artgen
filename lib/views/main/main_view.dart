@@ -77,8 +77,8 @@ class _Mainviewstate extends State<MainScreen> {
         updateSelectedImages: this.updateSelectedImages);
 
     getDeviceInfo();
-    // user = MyUser();
     user.initMyUser();
+    // user = MyUser();
   }
 
   getDeviceInfo() async {

@@ -64,8 +64,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
   final String pubTopic = "img_gen_requests";
-  String subTopic = "img_gen_response_";
-  // + user!.uid; //TODO Make custom topic
+  String subTopic = "img_gen_response_" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -512,15 +511,15 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       child: RoundedButton(
                                         text: "Generate",
                                         press: () {
-                                          user.images_generated +=
+                                          //TODO Moved to response on
+                                          user.imagesToGenerate =
                                               (_batchSizeSliderValue as int?)!;
                                           user.showLogin(context);
                                           concatPrompts();
                                           setState(() {
                                             loading = true;
                                           });
-                                          generateImage();
-                                          // AuthGate();
+                                          // generateImage();
                                         },
                                       ),
                                     ),

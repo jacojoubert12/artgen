@@ -3,6 +3,7 @@ import 'dart:html';
 import 'dart:io';
 
 import 'package:artgen/auth_gate.dart';
+import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +17,14 @@ class MyUser {
   String? app_id;
   bool shouldLogin = true;
   bool shouldShowPackages = false;
-  int images_generated = 0;
+  bool shouldGetPackages = true;
+  bool shouldGetCurrentPackage = true;
+  int imagesGenerated = 0;
+  int imagesToGenerate = 0;
   int activePackage = 0;
-  List<DocumentSnapshot> packages = [];
-  Map<String, dynamic> user_info = {};
+  int imageLimit = 5;
+  Map<int, dynamic> packageMap = {};
+  Map<String, dynamic> userInfo = {};
   final Storage _localStorage = window.localStorage;
 
   MyUser() {}
@@ -42,6 +47,23 @@ class MyUser {
         FirebaseFirestore.instance.collection(collectionName).doc(documentId);
     DocumentSnapshot documentSnapshot = await documentReference.get();
     return documentSnapshot;
+  }
+
+  void getIntValueFromDoc(String collectionName, String documentId,
+      String field, dynamic varToSet) async {
+    FirebaseFirestore.instance
+        .collection(collectionName)
+        .doc(documentId)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        var value = (documentSnapshot.data() as Map<String, dynamic>)[field];
+        varToSet = value;
+      } else {
+        print("Value not found!!!");
+        return 0;
+      }
+    });
   }
 
   Future<DocumentReference<Map<String, dynamic>>> getSingleDocRefFromCollection(
@@ -68,9 +90,17 @@ class MyUser {
     });
   }
 
+  Future<void> incrementValue(
+      String collection, String documentId, String field, int value) async {
+    DocumentReference ref =
+        FirebaseFirestore.instance.collection(collection).doc(documentId);
+    await ref.update({field: FieldValue.increment(value)});
+  }
+
   Future<String?> getStrData(String key) async {
     if (kIsWeb) {
-      return _localStorage[key];
+      String? value = _localStorage[key];
+      return value;
     } else {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(key);
@@ -88,7 +118,8 @@ class MyUser {
 
   Future<int?> getIntData(String key) async {
     if (kIsWeb) {
-      return _localStorage[key] as int;
+      int? value = _localStorage[key] as int;
+      return value;
     } else {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getInt(key);
@@ -97,100 +128,120 @@ class MyUser {
 
   Future<void> storeIntData(String key, int? value) async {
     if (kIsWeb) {
-      _localStorage[key] = (value as String);
+      _localStorage[key] = value.toString();
     } else {
       final prefs = await SharedPreferences.getInstance();
       prefs.setInt(key, value!);
     }
   }
 
+  updateImagesGenerated() {
+    !user!.isAnonymous
+        ? incrementValue(
+            "users", user!.uid, "images_generated", imagesToGenerate)
+        : print("User anonamous");
+    imagesGenerated += imagesToGenerate;
+    imagesToGenerate = 0;
+  }
+
   getPackages() async {
-    Map<int, dynamic> packageMap = {};
-    packages = await getDocumentsFromCollection("packages");
+    var packages = await getDocumentsFromCollection("packages");
     // print(packages);
     packages.forEach((element) {
       var package = element.data() as Map<String, dynamic>;
       packageMap[package['id']] = package;
-      // print(package);
+      print(package);
     });
+    shouldGetPackages = false;
+  }
 
-    if (images_generated > packageMap[0]['img_limit'] &&
+  Future<void> packageCheck() async {
+    if (imagesGenerated > imageLimit &&
         activePackage == packageMap[0]['id'] &&
         user!.isAnonymous) {
       FirebaseAuth.instance.signOut();
       shouldLogin = true;
-    } else if (images_generated > packageMap[1]['img_limit'] &&
-        activePackage == packageMap[1]['id']) {
+      // shouldShowPackages = false;
+    } else if (imagesGenerated > imageLimit) {
+      shouldLogin = false;
       shouldShowPackages = true;
-    } else if (images_generated > packageMap[2]['img_limit'] &&
-        activePackage == packageMap[2]['id']) {
-      shouldShowPackages = true;
-    } else if (images_generated > packageMap[3]['img_limit'] &&
-        activePackage == packageMap[3]['id']) {
-      shouldShowPackages = true;
-    } else if (images_generated > packageMap[4]['img_limit'] &&
-        activePackage == packageMap[4]['id']) {
-      shouldShowPackages = true;
+    } else {
+      shouldLogin = false;
+      shouldShowPackages = false;
     }
+    storeIntData("imagesGenerated", imagesGenerated);
+    //only update every 5 images... does this save firebase writes? TODO How much does it cost?
+    // imagesGenerated % 5 == 0 ?
+    updateImagesGenerated();
+    getIntValueFromDoc('users', user!.uid, 'images_generated', imagesGenerated);
+    print("In packageCheck: imagesGenerated:");
+    print(imagesGenerated);
+    // : print("will update later");
   }
 
   void getCurrentPackage() async {
-    // DocumentReference<Map<String, dynamic>> user_info_doc =
-    // await getSingleDocRefFromCollection("users", user!.uid);
-    // CollectionReference users = FirebaseFirestore.instance.collection('users');
-    // FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(user!.uid)
-    //     .get()
-    //     .then((DocumentSnapshot documentSnapshot) {
-    //   if (documentSnapshot.exists) {
-    //     print('Document exists on the database');
-    //   }
-    // });
-
     FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)
         .get()
-        .then((DocumentSnapshot documentSnapshot) {
+        .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-        user_info = documentSnapshot.data() as Map<String, dynamic>;
+        userInfo = documentSnapshot.data() as Map<String, dynamic>;
         // print('Document data: ${documentSnapshot.data()}');
-        print(user_info['package']);
-        activePackage = user_info["package"];
+        print("userInfo");
+        print(userInfo);
+        print("userInfo['package']");
+        print(userInfo['package']);
+        activePackage = userInfo['package'];
+        imageLimit = packageMap[activePackage]['img_limit'];
+        imagesGenerated = userInfo['images_generated'];
+        print("activePackage");
+        print(activePackage);
+        print("packageMap[activePackage]['img_limit']");
+        print(packageMap[activePackage]['img_limit']);
+        print("imageLimit");
+        print(imageLimit);
+        print("imagesGenerated");
+        print(imagesGenerated);
+        print("uuid");
+        print(user?.uid);
       } else {
         activePackage = 0;
-        documentSnapshot.reference.set({"package": 0});
+        !user!.isAnonymous
+            ? documentSnapshot.reference.set({'package': 1})
+            : print("Anonamous user");
         // print('Document does not exist on the database');
       }
     });
+    shouldGetCurrentPackage = false;
   }
 
   void guestLogin() async {
     user = FirebaseAuth.instance.currentUser;
+    getPackages();
+    getCurrentPackage();
     if (user == null) {
       // Sign in anonymously
       FirebaseAuth.instance.signInAnonymously().then((userCredentials) async {
         activePackage = 0;
         user = userCredentials.user;
         app_id = await getStrData("app_id");
-        int? stored_images_generated = (await getIntData("images_generated"));
-        if (app_id == null || stored_images_generated == null) {
+        int? stored_imagesGenerated = (await getIntData("imagesGenerated"));
+        if (app_id == null || stored_imagesGenerated == null) {
           app_id = user?.uid;
           storeStrData("app_id", app_id);
-          storeIntData("images_generated", 0);
+          storeIntData("imagesGenerated", 0);
           print("app_id");
           print(app_id);
         } else {
-          images_generated = stored_images_generated;
+          imagesGenerated = stored_imagesGenerated;
         }
       });
     }
     if (user != null) {
-      getPackages();
       if (!user!.isAnonymous) {
         print("NOT ANONaMOUSES");
-        getCurrentPackage();
+        shouldLogin = false;
       } else {
         print("ANONaMOUSES");
       }
@@ -198,34 +249,37 @@ class MyUser {
   }
 
   Future<void> showLogin(BuildContext context) async {
-    (shouldLogin && images_generated > 5)
+    shouldGetPackages ? getPackages() : print('Already got packages?');
+    shouldGetCurrentPackage
+        ? getCurrentPackage()
+        : print("Already got current package?");
+    packageCheck();
+    print("imagesGenerated");
+    print(imagesGenerated);
+    print("imageLimit");
+    print(imageLimit);
+    print("ShouldLogin");
+    print(shouldLogin);
+
+    shouldLogin
+        ? {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AuthGate();
+              },
+            ),
+            shouldGetCurrentPackage = true,
+            shouldGetPackages = true
+          }
+        : print("user logged in");
+    shouldShowPackages
         ? showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AuthGate();
+              return SubscriptionView();
             },
           )
-        : null;
+        : print("user packages still valid");
   }
-
-  // void guestLogin() async {
-  //   user?.app_id = await getStrData("app_id");
-  //   user?.images_generated = (await getIntData("images_generated")) as int?;
-  //   if (user?.app_id == null) {
-  //     user?.user = FirebaseAuth.instance.currentUser;
-  //     if (user?.user == null) {
-  //       // Sign in anonymously
-  //       FirebaseAuth.instance.signInAnonymously().then((userCredentials) {
-  //         user?.user = userCredentials.user;
-  //         user?.app_id = user!.user?.uid;
-  //         storeStrData("app_id", user?.app_id);
-  //         storeIntData("images_generated", 0);
-  //       });
-  //     }
-  //   } else {
-  //     if (user!.images_generated! > 5) {
-  //       FirebaseAuth.instance.signOut();
-  //     }
-  //   }
-  // }
 }
