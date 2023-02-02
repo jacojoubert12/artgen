@@ -19,7 +19,7 @@ class MyUser {
   bool shouldShowPackages = false;
   bool shouldGetPackages = true;
   bool shouldGetCurrentPackage = true;
-  int imagesGenerated = 0;
+  int imagesGenerated = 2;
   int imagesToGenerate = 0;
   int activePackage = 0;
   int imageLimit = 5;
@@ -98,57 +98,65 @@ class MyUser {
   }
 
   Future<String?> getStrData(String key) async {
-    if (kIsWeb) {
-      String? value = _localStorage[key];
-      return value;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(key);
-    }
+    // if (kIsWeb) {
+    //   String? value = _localStorage[key];
+    //   return value;
+    // } else {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   return prefs.getString(key);
+    // }
   }
 
   Future<void> storeStrData(String key, String? value) async {
-    if (kIsWeb) {
-      _localStorage[key] = value!;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString(key, value!);
-    }
+    // if (kIsWeb) {
+    //   _localStorage[key] = value!;
+    // } else {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   prefs.setString(key, value!);
+    // }
   }
 
   Future<int?> getIntData(String key) async {
-    if (kIsWeb) {
-      print("Nulll yet?");
-      String strValue = _localStorage[key]!;
-      print("Null now?");
-      int? value = int.tryParse(strValue) ?? 0;
-      print("getIntData");
-      print(value);
-      return value;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getInt(key);
-    }
+    // if (kIsWeb) {
+    //   print("Nulll yet?");
+    //   String? strValue = _localStorage[key];
+    //   if (strValue == null) {
+    //     return 0;
+    //   }
+    //   int? value;
+    //   try {
+    //     value = int.tryParse(strValue);
+    //   } catch (_) {
+    //     value = 0;
+    //   }
+    //   print("getIntData");
+    //   print(value);
+    //   return value;
+    // } else {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   return prefs.getInt(key) ?? 0;
+    // }
   }
 
   Future<void> storeIntData(String key, int? value) async {
-    if (kIsWeb) {
-      print("storeIntData");
-      print(value);
-      _localStorage[key] = value.toString();
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setInt(key, value!);
-    }
+    // if (kIsWeb) {
+    //   print("storeIntData");
+    //   print(value);
+    //   _localStorage[key] = value.toString();
+    // } else {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   prefs.setInt(key, value!);
+    // }
   }
 
   updateImagesGenerated() {
+    print("updateImagesGenerated");
+    imagesGenerated += imagesToGenerate;
+    imagesToGenerate = 0;
     !user!.isAnonymous
         ? incrementValue(
             "users", user!.uid, "images_generated", imagesToGenerate)
         : print("User anonamous");
-    imagesGenerated += imagesToGenerate;
-    imagesToGenerate = 0;
   }
 
   getPackages() async {
@@ -163,30 +171,38 @@ class MyUser {
   }
 
   Future<void> packageCheck() async {
-    if (imagesGenerated > imageLimit &&
+    var tmpImageLimit = imageLimit - 2;
+    if (imagesGenerated > tmpImageLimit &&
         activePackage == packageMap[0]['id'] &&
         user!.isAnonymous) {
       FirebaseAuth.instance.signOut();
       shouldLogin = true;
       // shouldShowPackages = false;
-    } else if (imagesGenerated > imageLimit) {
+    } else if (imagesGenerated > tmpImageLimit) {
       shouldLogin = false;
       shouldShowPackages = true;
     } else {
       shouldLogin = false;
       shouldShowPackages = false;
+
+      storeIntData("images_generated", imagesGenerated);
+      //only update every 5 images... does this save firebase writes? TODO How much does it cost?
+      // imagesGenerated % 5 == 0 ?
+      updateImagesGenerated();
+      getIntValueFromDoc(
+          'users', user!.uid, 'images_generated', imagesGenerated);
+      // : print("will update later");
     }
-    storeIntData("images_generated", imagesGenerated);
-    //only update every 5 images... does this save firebase writes? TODO How much does it cost?
-    // imagesGenerated % 5 == 0 ?
-    updateImagesGenerated();
-    getIntValueFromDoc('users', user!.uid, 'images_generated', imagesGenerated);
     print("In packageCheck: imagesGenerated:");
     print(imagesGenerated);
-    // : print("will update later");
+  }
+
+  void logImgGenRequest(Map<String, dynamic> query) {
+    writeToCollection("image_gen_queries", query);
   }
 
   void getCurrentPackage() async {
+    if (!user) return;
     FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)
@@ -234,16 +250,18 @@ class MyUser {
       FirebaseAuth.instance.signInAnonymously().then((userCredentials) async {
         activePackage = 0;
         user = userCredentials.user;
-        app_id = await getStrData("app_id");
-        int? stored_imagesGenerated = (await getIntData("images_generated"));
-        if (app_id == null || stored_imagesGenerated == null) {
-          app_id = user?.uid;
-          storeStrData("app_id", app_id);
-          storeIntData("images_generated", 0);
-          print("app_id");
-          print(app_id);
+        var appIdTmp = await getStrData("app_id");
+        if (appIdTmp == null) {
+          storeStrData("app_id", user!.uid);
+          app_id = user!.uid;
+        }
+        var generatedImgsTmp = await getIntData("images_generated");
+        if (generatedImgsTmp == null) {
+          print("generatedImgsTmp == null");
+          storeIntData("images_generated", imagesGenerated);
         } else {
-          imagesGenerated = stored_imagesGenerated;
+          imagesGenerated = generatedImgsTmp;
+          print("generatedImgsTmp not null");
         }
       });
     }
@@ -263,6 +281,7 @@ class MyUser {
           storeIntData("images_generated", imagesGenerated);
         } else {
           imagesGenerated = generatedImgsTmp;
+          print("generatedImgsTmp not null");
         }
         print("ANONaMOUSES");
         print("appIdTmp");
@@ -277,11 +296,12 @@ class MyUser {
     }
   }
 
-  bool showLogin(BuildContext context) {
+  bool showLogin(BuildContext context, Map<String, dynamic> query) {
     shouldGetPackages ? getPackages() : print('Already got packages?');
-    shouldGetCurrentPackage
-        ? getCurrentPackage()
-        : print("Already got current package?");
+    // shouldGetCurrentPackage //Optimise later
+    // ? getCurrentPackage()
+    // : print("Already got current package?");
+    getCurrentPackage();
     packageCheck();
     print("imagesGenerated");
     print(imagesGenerated);
@@ -314,6 +334,7 @@ class MyUser {
       );
       return false;
     } else {
+      logImgGenRequest(query);
       print("user packages still valid");
     }
     return true;

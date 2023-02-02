@@ -61,6 +61,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   // double _batchCountSliderValue = 1;
   double _batchSizeSliderValue = 1;
   String deviceId = "";
+  Map<String, dynamic> query = {};
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
   final String pubTopic = "img_gen_requests";
@@ -142,19 +143,24 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   concatPrompts() {
     prompt = "";
+    negprompt = "";
     for (var jsonString in _selectedImages!) {
       if (jsonString != null) {
         var json = jsonEncode(jsonString['prompt']);
         prompt += jsonDecode(json) + " ";
+
+        //Null checks etc?
+        // json = jsonEncode(jsonString['negprompt']);
+        // negprompt += jsonDecode(json) + " ";
       }
     }
+    prompt += " ((" + _promptTxt + "))";
+    negprompt += " ((" + _negpromptTxt + "))";
     print(prompt);
-  }
+    print(negprompt);
 
-  generateImage() async {
-    // final response = await http.get('http://localhost:5000?name=John');
-    final query = {
-      'prompt': prompt + " ((" + _promptTxt + "))",
+    query = {
+      'prompt': prompt, // + " ((" + _promptTxt + "))",
       "negprompt": negprompt + " " + _negpromptTxt,
       "steps": _samplingStepsSliderValue,
       "guidance": _guidanceScaleSliderValue,
@@ -162,8 +168,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "height": _heightSliderValue,
       // "batch_count": _batchCountSliderValue;
       "batch_size": _batchSizeSliderValue,
-      "response_topic": subTopic
+      "response_topic": subTopic,
+      "user": user.user?.uid,
     };
+  }
+
+  generateImage() async {
+    // final response = await http.get('http://localhost:5000?name=John');
     print(query);
     mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
 
@@ -515,13 +526,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       child: RoundedButton(
                                         text: "Generate",
                                         press: () {
-                                          user.showLogin(context)
+                                          concatPrompts();
+                                          user.showLogin(context, query)
                                               ? {
                                                   //Move to response on success
                                                   user.imagesToGenerate =
                                                       (_batchSizeSliderValue
                                                           as int?)!,
-                                                  concatPrompts(),
+                                                  // concatPrompts(),
                                                   setState(() {
                                                     loading = true;
                                                   }),
