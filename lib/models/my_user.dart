@@ -202,7 +202,7 @@ class MyUser {
   }
 
   void getCurrentPackage() async {
-    if (!user) return;
+    if (user == null) return;
     FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)

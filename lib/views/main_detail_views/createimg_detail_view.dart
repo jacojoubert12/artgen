@@ -64,7 +64,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Map<String, dynamic> query = {};
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
-  final String pubTopic = "img_gen_requests";
+  final String pubTopic = "img_gen_requests/f222";
   String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
@@ -75,7 +75,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    _getInfo();
 
     setupMqttClient();
     setupUpdatesListener();
@@ -85,26 +84,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   void dispose() {
     mqttClientManager.disconnect();
     super.dispose();
-  }
-
-  void _getInfo() async {
-    // Get device id
-    // String? result = await PlatformDeviceId.getDeviceId;
-
-    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    // print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
-
-    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    // print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
-
-    // WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-    // print('Running on ${webBrowserInfo.userAgent}');
-
-    // Update the UI
-    setState(() {
-      // deviceId = result!;
-      // print(deviceId);
-    });
   }
 
   //TODO Reconnections and Timeouts on requests
@@ -537,7 +516,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                                   setState(() {
                                                     loading = true;
                                                   }),
-                                                  // generateImage() //Put back!
+                                                  generateImage() //Put back!
                                                 }
                                               : showDialog(
                                                   context: context,
