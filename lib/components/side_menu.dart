@@ -181,9 +181,9 @@ class SideMenu extends StatelessWidget {
                 showBorder: true,
               ),
 
-              SizedBox(height: kDefaultPadding),
-              SignOutButton(),
-              SizedBox(height: kDefaultPadding),
+              // SizedBox(height: kDefaultPadding),
+              // SignOutButton(),
+              // SizedBox(height: kDefaultPadding),
 
               // SizedBox(height: kDefaultPadding * 2),
               // Tags

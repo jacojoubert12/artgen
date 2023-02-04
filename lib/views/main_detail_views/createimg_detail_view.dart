@@ -55,11 +55,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   String _promptTxt = "";
   String _negpromptTxt = "";
   String deviceId = "";
+  Map<String, dynamic> query = {};
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
-  final String pubTopic = "img_gen_requests";
-  String subTopic = "img_gen_response_";
-  // + user!.uid; //TODO Make custom topic
+  final String pubTopic = "img_gen_requests/f222";
+  String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -69,7 +69,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    _getInfo();
 
     setupMqttClient();
     setupUpdatesListener();
@@ -81,29 +80,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     super.dispose();
   }
 
-  void _getInfo() async {
-    // Get device id
-    // String? result = await PlatformDeviceId.getDeviceId;
-
-    // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    // print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
-
-    // IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    // print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
-
-    // WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-    // print('Running on ${webBrowserInfo.userAgent}');
-
-    // Update the UI
-    setState(() {
-      // deviceId = result!;
-      // print(deviceId);
-    });
-  }
-
   //TODO Reconnections and Timeouts on requests
   Future<void> setupMqttClient() async {
-    subTopic += "deviceId!";
+    // subTopic += "deviceId!";
     await mqttClientManager.connect();
     mqttClientManager.subscribe(subTopic);
   }
@@ -137,19 +116,24 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   concatPrompts() {
     prompt = "";
+    negprompt = "";
     for (var jsonString in _selectedImages!) {
       if (jsonString != null) {
         var json = jsonEncode(jsonString['prompt']);
         prompt += jsonDecode(json) + " ";
+
+        //Null checks etc?
+        // json = jsonEncode(jsonString['negprompt']);
+        // negprompt += jsonDecode(json) + " ";
       }
     }
+    prompt += " ((" + _promptTxt + "))";
+    negprompt += " ((" + _negpromptTxt + "))";
     print(prompt);
-  }
+    print(negprompt);
 
-  generateImage() async {
-    // final response = await http.get('http://localhost:5000?name=John');
-    final query = {
-      'prompt': prompt + " ((" + _promptTxt + "))",
+    query = {
+      'prompt': prompt, // + " ((" + _promptTxt + "))",
       "negprompt": negprompt + " " + _negpromptTxt,
       "steps": user.samplingStepsSliderValue,
       "guidance": user.guidanceScaleSliderValue,
@@ -157,8 +141,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "height": user.heightSliderValue,
       // "batch_count": _batchCountSliderValue;
       "batch_size": user.batchSizeSliderValue,
-      "response_topic": subTopic
+      "response_topic": subTopic,
+      "user": user.user?.uid,
     };
+  }
+
+  generateImage() async {
+    // final response = await http.get('http://localhost:5000?name=John');
     print(query);
     mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
 
@@ -286,12 +275,16 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                           ? 0
                                           : 100,
                                       child: Expanded(
-                                        child: ImageListView(
-                                          updateSelectedImages:
-                                              widget.updateSelectedImages,
-                                          selectedImages: _selectedImages,
-                                          selectedImageUrls: _selectedImageUrls,
-                                        ),
+                                        child: (_selectedImageUrls!.length > 0)
+                                            ? ImageListView(
+                                                updateSelectedImages:
+                                                    widget.updateSelectedImages,
+                                                selectedImages: _selectedImages,
+                                                selectedImageUrls:
+                                                    _selectedImageUrls,
+                                              )
+                                            : Text(
+                                                "Select images in search view if you would like to make use of their prompts"),
                                       ),
                                     ),
                                     // SizedBox(height: kDefaultPadding),
@@ -430,15 +423,44 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         ),
                                         child: Text('Generate'),
                                         onPressed: () {
-                                          user.images_generated += (user
-                                              .batchSizeSliderValue as int?)!;
-                                          user.showLogin(context);
                                           concatPrompts();
-                                          setState(() {
-                                            loading = true;
-                                          });
-                                          generateImage();
-                                          // AuthGate();
+                                          user.showLogin(context, query)
+                                              ? {
+                                                  //Move to response on success
+                                                  user.imagesToGenerate =
+                                                      (user.batchSizeSliderValue
+                                                          as int?)!,
+                                                  // concatPrompts(),
+                                                  setState(() {
+                                                    loading = true;
+                                                  }),
+                                                  generateImage() //Put back!
+                                                }
+                                              : showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title:
+                                                          Text("Popup title"),
+                                                      content: Text(
+                                                          "You have reached your limit"),
+                                                      actions: <Widget>[
+                                                        Container(
+                                                          height: 80,
+                                                          width: 500,
+                                                          child: RoundedButton(
+                                                            text: "OK",
+                                                            press: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  });
                                         },
                                       ),
                                     ),

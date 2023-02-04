@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
       // home: HomeScreen(),
       // home: MainScreen(),
       home: HomeScreen(),
+      // home: AuthGate(),
     );
   }
 }

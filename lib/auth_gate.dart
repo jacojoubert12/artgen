@@ -20,6 +20,7 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
+    // user.initMyUser();
     return StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -33,7 +34,8 @@ class _AuthGateState extends State<AuthGate> {
             ]);
           }
           user.user = snapshot.data;
-          return HomeScreen();
+          // user.initMyUser(); //HomeScreen() does this... consider adding it back if below TODO is done
+          return HomeScreen(); //TODO: Pass in where to return to
         });
   }
 }
