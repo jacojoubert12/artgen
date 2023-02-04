@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterfire_ui/auth.dart';
 
 import '../constants.dart';
 import '../extensions.dart';
@@ -26,6 +29,25 @@ class SideMenu extends StatelessWidget {
   const SideMenu({Key? key, this.setViewMode}) : super(key: key);
 
   final Function? setViewMode;
+  // String _name = '';
+  // String _surname = '';
+
+  // Future _getDataFromDatabase() async {
+  //   await FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .get()
+  //       .then((snapshot) async {
+  //     if (snapshot.exists) {
+  //       setState(() {
+  //         _name = snapshot.data()!["_name"];
+  //         _surname = snapshot.data()!["_surname"];
+  //         // _email = snapshot.data()!["_email"];
+  //         // snapshot.data()!["_profileImg"];
+  //       });
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

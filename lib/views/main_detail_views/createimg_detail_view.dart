@@ -3,6 +3,7 @@ import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
+import 'package:artgen/components/settings_navigation_drawer.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
@@ -53,13 +54,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   String negprompt = "";
   String _promptTxt = "";
   String _negpromptTxt = "";
-  double _samplingStepsSliderValue = 20;
-  double _resolutionSliderValue = 20;
-  double _widthliderValue = 512;
-  double _heightSliderValue = 512;
-  double _guidanceScaleSliderValue = 15;
-  // double _batchCountSliderValue = 1;
-  double _batchSizeSliderValue = 1;
   String deviceId = "";
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
@@ -157,12 +151,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     final query = {
       'prompt': prompt + " ((" + _promptTxt + "))",
       "negprompt": negprompt + " " + _negpromptTxt,
-      "steps": _samplingStepsSliderValue,
-      "guidance": _guidanceScaleSliderValue,
-      "width": _widthliderValue,
-      "height": _heightSliderValue,
+      "steps": user.samplingStepsSliderValue,
+      "guidance": user.guidanceScaleSliderValue,
+      "width": user.widthliderValue,
+      "height": user.heightSliderValue,
       // "batch_count": _batchCountSliderValue;
-      "batch_size": _batchSizeSliderValue,
+      "batch_size": user.batchSizeSliderValue,
       "response_topic": subTopic
     };
     print(query);
@@ -285,7 +279,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                     ? 800
                                     : constraints.maxWidth,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
                                       height: _selectedImageUrls!.length == 0
@@ -358,114 +352,30 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       ),
                                     ),
                                     SizedBox(height: kDefaultPadding),
-                                    Text("Sampling Steps"),
-                                    Slider(
-                                      value: _samplingStepsSliderValue,
-                                      max: 150,
-                                      min: 1,
-                                      divisions: 149,
-                                      label: _samplingStepsSliderValue
-                                          .round()
-                                          .toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _samplingStepsSliderValue = value;
-                                        });
-                                      },
-                                    ),
-                                    // SizedBox(height: kDefaultPadding),
-                                    Text("Resolution"),
-                                    Slider(
-                                      value: _resolutionSliderValue,
-                                      max: 150,
-                                      min: 1,
-                                      divisions: 149,
-                                      label: _resolutionSliderValue
-                                          .round()
-                                          .toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _resolutionSliderValue = value;
-                                        });
-                                      },
-                                    ),
-                                    // SizedBox(height: kDefaultPadding),
-                                    Text("Width"),
-                                    Slider(
-                                      value: _widthliderValue,
-                                      max: 2048,
-                                      min: 64,
-                                      divisions: 1984,
-                                      label:
-                                          _widthliderValue.round().toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _widthliderValue = value;
-                                        });
-                                      },
-                                    ),
-                                    // SizedBox(height: kDefaultPadding),
-                                    Text("Height"),
-                                    Slider(
-                                      value: _heightSliderValue,
-                                      max: 2048,
-                                      min: 64,
-                                      divisions: 1984,
-                                      label:
-                                          _heightSliderValue.round().toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _heightSliderValue = value;
-                                        });
-                                      },
-                                    ),
-                                    // SizedBox(height: kDefaultPadding),
-                                    Text("Guidance Scale"),
-                                    Slider(
-                                      value: _guidanceScaleSliderValue,
-                                      max: 30,
-                                      min: 1,
-                                      divisions: 29,
-                                      label: _guidanceScaleSliderValue
-                                          .round()
-                                          .toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _guidanceScaleSliderValue = value;
-                                        });
-                                      },
-                                    ),
-                                    // SizedBox(height: kDefaultPadding),
-                                    // Text("Batch Count"),
-                                    // Slider(
-                                    //   value: _batchCountSliderValue,
-                                    //   max: 100,
-                                    //   min: 1,
-                                    //   divisions: 99,
-                                    //   label: _batchCountSliderValue
-                                    //       .round()
-                                    //       .toString(),
-                                    //   onChanged: (double value) {
-                                    //     setState(() {
-                                    //       _batchCountSliderValue = value;
-                                    //     });
-                                    //   },
-                                    // ),
-                                    // SizedBox(height: kDefaultPadding),
-                                    Text("Number of Images"),
-                                    Slider(
-                                      value: _batchSizeSliderValue,
-                                      max: 100,
-                                      min: 1,
-                                      divisions: 99,
-                                      label: _batchSizeSliderValue
-                                          .round()
-                                          .toString(),
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          _batchSizeSliderValue = value;
-                                        });
-                                      },
+                                    SizedBox(
+                                      // height: 35.0,
+                                      // width: 50,
+                                      child: Align(
+                                        alignment: Alignment.topRight,
+                                        child: ElevatedButton(
+                                          child: Icon(
+                                            Icons.settings,
+                                            size: 30.0,
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return SettingNavigationDrawer();
+                                              },
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.pink,
+                                              onPrimary: Colors.black,
+                                              shape: CircleBorder()),
+                                        ),
+                                      ),
                                     ),
                                     SizedBox(height: kDefaultPadding),
                                     loading
@@ -508,12 +418,20 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                           ),
                                     SizedBox(height: kDefaultPadding),
                                     Container(
-                                      height: 80,
-                                      child: RoundedButton(
-                                        text: "Generate",
-                                        press: () {
-                                          user.images_generated +=
-                                              (_batchSizeSliderValue as int?)!;
+                                      height: 40,
+                                      width: 400,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.pink,
+                                          onPrimary: Colors.black,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0)),
+                                        ),
+                                        child: Text('Generate'),
+                                        onPressed: () {
+                                          user.images_generated += (user
+                                              .batchSizeSliderValue as int?)!;
                                           user.showLogin(context);
                                           concatPrompts();
                                           setState(() {
@@ -524,13 +442,23 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         },
                                       ),
                                     ),
+                                    SizedBox(height: kDefaultPadding),
                                     Container(
-                                      height: 80,
+                                      height: 40,
+                                      width: 400,
                                       child: uploading
                                           ? CircularProgressIndicator()
-                                          : RoundedButton(
-                                              text: "Upload",
-                                              press: () async {
+                                          : ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                primary: Colors.pink,
+                                                onPrimary: Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0)),
+                                              ),
+                                              child: Text('Upload'),
+                                              onPressed: () async {
                                                 setState(() {
                                                   uploading = true;
                                                 });
@@ -538,6 +466,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                               },
                                             ),
                                     ),
+                                    SizedBox(height: kDefaultPadding),
                                   ],
                                 ),
                               ),

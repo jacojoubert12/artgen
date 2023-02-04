@@ -163,36 +163,51 @@ class _ImgGridViewState extends State<ImgGridView> {
               SizedBox(height: kDefaultPadding),
               if (Responsive.isMobile(context))
                 Container(
-                  height: 80,
-                  child: RoundedButton(
-                    text: "Create",
-                    press: () {
+                  height: 35.0,
+                  width: 350,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.pink,
+                      onPrimary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0)),
+                    ),
+                    child: Text('Create'),
+                    onPressed: () {
                       widget.showDetailView!();
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("Popup title"),
-                            content: Text(
-                                "This is the message displayed in the popup"),
-                            actions: <Widget>[
-                              Container(
-                                height: 80,
-                                width: 500,
-                                child: RoundedButton(
-                                  text: "OK",
-                                  press: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return AlertDialog(
+                      //       title: Text("Popup title"),
+                      //       content: Text(
+                      //           "This is the message displayed in the popup"),
+                      //       actions: <Widget>[
+                      //         Container(
+                      //           height: 40,
+                      //           width: 500,
+                      //           child: ElevatedButton(
+                      //             style: ElevatedButton.styleFrom(
+                      //               primary: Colors.pink,
+                      //               onPrimary: Colors.black,
+                      //               shape: RoundedRectangleBorder(
+                      //                   borderRadius:
+                      //                       BorderRadius.circular(5.0)),
+                      //             ),
+                      //             child: Text('OK'),
+                      //             onPressed: () {
+                      //               Navigator.of(context).pop();
+                      //             },
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      // );
                     },
                   ),
                 ),
+              SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

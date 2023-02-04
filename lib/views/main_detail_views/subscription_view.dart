@@ -254,6 +254,10 @@ class SubscriptionView extends StatelessWidget {
           ],
         ),
       ),
+      SizedBox(
+        //Use of SizedBox
+        height: 30,
+      ),
     ];
   }
 }

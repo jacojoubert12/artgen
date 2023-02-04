@@ -1,8 +1,12 @@
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:websafe_svg/websafe_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterfire_ui/auth.dart';
 
 import '../../../constants.dart';
 
@@ -28,7 +32,25 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   String _name = '';
   String _surname = '';
   String _email = '';
+  String _profileImg = '';
   int _totalImagesGenerated = 0;
+
+  Future _getDataFromDatabase() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          _name = snapshot.data()!["_name"];
+          _surname = snapshot.data()!["_surname"];
+          _email = snapshot.data()!["_email"];
+          // snapshot.data()!["_profileImg"];
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +156,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          SizedBox(height: kDefaultPadding * 8),
+                          SizedBox(height: kDefaultPadding * 10),
                           TextField(
                             decoration: InputDecoration(labelText: 'Name'),
                             onChanged: (value) {
@@ -166,7 +188,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                               'Total Images Generated: $_totalImagesGenerated'),
                           SizedBox(height: 30.0),
                           Text('Subscription Plan:'),
-                          SizedBox(height: kDefaultPadding * 2),
+                          SizedBox(height: 30.0),
                           SizedBox(
                             height: 30.0,
                             width: 250,
@@ -186,6 +208,29 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(32.0)),
                               ),
+                              child: Text('Subscription Plans'),
+                            ),
+                          ),
+                          SizedBox(height: kDefaultPadding),
+                          SizedBox(
+                            height: 30.0,
+                            width: 250,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                //save profile
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (context) {
+                                //     return SubscriptionView();
+                                //   },
+                                // );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.pink,
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0)),
+                              ),
                               child: Text('Save'),
                             ),
                           ),
@@ -195,7 +240,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                   ],
                 ),
               ),
-              SizedBox(height: kDefaultPadding),
+              // SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

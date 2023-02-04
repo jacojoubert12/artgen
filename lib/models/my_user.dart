@@ -22,6 +22,15 @@ class MyUser {
   Map<String, dynamic> user_info = {};
   final Storage _localStorage = window.localStorage;
 
+  //ImgGen Settings
+  double samplingStepsSliderValue = 20;
+  double resolutionSliderValue = 20;
+  double widthliderValue = 512;
+  double heightSliderValue = 512;
+  double guidanceScaleSliderValue = 15;
+  // double batchCountSliderValue = 1;
+  double batchSizeSliderValue = 1;
+
   MyUser() {}
 
   initMyUser() {
