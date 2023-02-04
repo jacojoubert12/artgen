@@ -58,7 +58,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Map<String, dynamic> query = {};
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
-  final String pubTopic = "img_gen_requests/f222";
+  String pubTopic = "mdjrny_v4";
   String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
@@ -82,7 +82,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   //TODO Reconnections and Timeouts on requests
   Future<void> setupMqttClient() async {
-    // subTopic += "deviceId!";
     await mqttClientManager.connect();
     mqttClientManager.subscribe(subTopic);
   }

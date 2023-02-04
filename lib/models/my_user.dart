@@ -22,7 +22,7 @@ class MyUser {
   int imagesGenerated = 2;
   int imagesToGenerate = 0;
   int activePackage = 0;
-  int imageLimit = 5;
+  int imageLimit = 500;
   Map<int, dynamic> packageMap = {};
   Map<String, dynamic> userInfo = {};
   final Storage _localStorage = window.localStorage;
