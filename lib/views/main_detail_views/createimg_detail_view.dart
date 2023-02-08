@@ -58,7 +58,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Map<String, dynamic> query = {};
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
-  String pubTopic = user.pubTopic; // : "mdjrny_v4";
+  // String pubTopic = user.pubTopic; // : "mdjrny_v4";
   String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
@@ -113,6 +113,20 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     });
   }
 
+  String escapeDangerousCharacters(String input) {
+    return input
+        .replaceAll('\\', '\\\\')
+        .replaceAll('\n', '\\n')
+        .replaceAll('\r', '\\r')
+        .replaceAll('\t', '\\t')
+        .replaceAll('"', '\\"')
+        .replaceAll('“', '"')
+        .replaceAll('”', '"')
+        .replaceAll('”', '"')
+        .replaceAll('“', '"')
+        .replaceAll('”', '"');
+  }
+
   concatPrompts() {
     prompt = "";
     negprompt = "";
@@ -132,8 +146,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     print(negprompt);
 
     query = {
-      'prompt': prompt, // + " ((" + _promptTxt + "))",
-      "negprompt": negprompt + " " + _negpromptTxt,
+      'prompt': escapeDangerousCharacters(prompt),
+      "negprompt": escapeDangerousCharacters(negprompt),
       "steps": user.samplingStepsSliderValue,
       "guidance": user.guidanceScaleSliderValue,
       "width": user.widthliderValue,
@@ -146,9 +160,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   generateImage() async {
-    // final response = await http.get('http://localhost:5000?name=John');
-    print(query);
-    mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
+    mqttClientManager.publishMessage(user.pubTopic, jsonEncode(query));
+    print("JSON Encoded query:");
+    print(jsonEncode(query));
 
     setState(() {
       loading = true;
