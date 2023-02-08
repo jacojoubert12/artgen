@@ -14,35 +14,24 @@ class SettingNavigationDrawer extends StatefulWidget {
 }
 
 class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
-  _SettingNavigationDrawerState() {
-    getModels();
-  }
-
-  String dropdownValue = "";
+  String dropdownValue = '';
   List<String> modelList = [];
 
-  void getModels() async {
-    modelList = await getUniqueCheckpointFiles();
-    print(modelList);
-  }
-
-  // Stream<List<Model >> readActiveWorkers() =>
-  //     FirebaseFirestore.instance.collection('active_workers')
-  //     .snapshots()
-  //     .map((snapshot) => snapshot.docs.map((doc) =>ActiveWorkers.fromJason(doc.data())) .toList());
-
   Future<List<String>> getUniqueCheckpointFiles() async {
-    final firestore = FirebaseFirestore.instance;
-    final workersCollection = firestore.collection('active_workers');
-    final snapshot = await workersCollection.get();
-    final uniqueCheckpointFiles = <String>{};
-    print("GET VALUESSS");
-    for (var worker in snapshot.docs) {
-      print(worker);
-      final checkpointFile = worker.data()['checkpoint_file'];
-      uniqueCheckpointFiles.add(checkpointFile);
-    }
-    return uniqueCheckpointFiles.toList();
+    Set<String> uniqueFiles = Set();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection("active_workers").get();
+    querySnapshot.docs.forEach((document) {
+      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+      data.forEach((key, value) {
+        uniqueFiles.add(value["checkpoint_file"]);
+      });
+    });
+    modelList = uniqueFiles.toList();
+    dropdownValue == ''
+        ? dropdownValue = modelList[0]
+        : dropdownValue = dropdownValue;
+    return modelList;
   }
 
   @override
@@ -151,37 +140,46 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             //Dropdown
             SizedBox(height: kDefaultPadding),
             Container(
-              child: Container(
-                // padding: EdgeInsets.only(left: 30, right: 30),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
+              // height: 40,
+              child: FutureBuilder(
+                future: getUniqueCheckpointFiles(),
+                builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      // padding: EdgeInsets.only(left: 30, right: 30),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
 
-                      // color: Color.fromARGB(44, 215, 4, 170),
-                      ),
-                  child: DropdownButton<String>(
-                    value: dropdownValue,
-                    borderRadius: BorderRadius.circular(20),
-                    itemHeight: 50,
-                    items:
-                        modelList.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: TextStyle(fontSize: 20),
+                            // color: Color.fromARGB(44, 215, 4, 170),
+                            ),
+                        child: DropdownButton<String>(
+                          value: dropdownValue,
+                          borderRadius: BorderRadius.circular(20),
+                          itemHeight: 50,
+                          items: modelList
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownValue = newValue!;
+                            });
+                          },
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
-                    },
-                  ),
-                ),
+                      ),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
               ),
             ),
-
             SizedBox(height: kDefaultPadding),
 
             //Save Button

@@ -58,7 +58,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Map<String, dynamic> query = {};
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
-  String pubTopic = "mdjrny_v4";
+  String pubTopic = user.pubTopic; // : "mdjrny_v4";
   String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
