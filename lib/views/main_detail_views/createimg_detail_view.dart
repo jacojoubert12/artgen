@@ -383,7 +383,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                                   generatedImgUrls.length,
                                               gridDelegate:
                                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount: 5,
+                                                crossAxisCount:
+                                                    generatedImgUrls.length < 3
+                                                        ? 1
+                                                        : 3,
                                                 childAspectRatio: 1,
                                               ),
                                               itemBuilder:
