@@ -23,6 +23,7 @@ class MyUser {
   int imagesToGenerate = 0;
   int activePackage = 0;
   int imageLimit = 500;
+  String pubTopic = "mdjrny_v4";
   Map<int, dynamic> packageMap = {};
   Map<String, dynamic> userInfo = {};
   final Storage _localStorage = window.localStorage;
