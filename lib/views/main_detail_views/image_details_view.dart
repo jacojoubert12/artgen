@@ -24,7 +24,7 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
             : MediaQuery.of(context).size.width * 0.95,
         height: MediaQuery.of(context).size.height * 0.95,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: kBgDarkColor,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -61,19 +61,25 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
             Expanded(
               child: Row(
                 children: [
-                  SizedBox(
+                  Container(
                     height: 50,
                     width: 100,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
                       onPressed: () {
                         Share.share(
                             'check out the Image I have generated with Art Gen https://google.com');
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.pink,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(90)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Share'),
                     ),
@@ -114,18 +120,24 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
+                  Container(
                     height: 35.0,
                     width: 350,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
-                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.pink,
-                        onPrimary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Enhance'),
+                      onPressed: () {},
                     ),
                   ),
                 ],
@@ -137,46 +149,64 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
+                  Container(
                     height: 35.0,
                     width: 155,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
-                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.pink,
-                        onPrimary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Rerun'),
+                      onPressed: () {},
                     ),
                   ),
-                  SizedBox(
+                  Container(
                     height: 35.0,
                     width: 155,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
-                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.pink,
-                        onPrimary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Remix'),
+                      onPressed: () {},
                     ),
                   ),
-                  SizedBox(
+                  Container(
                     height: 35.0,
                     width: 155,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
-                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.pink,
-                        onPrimary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Reimage'),
+                      onPressed: () {},
                     ),
                   ),
                 ],
@@ -200,32 +230,44 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
+                  Container(
                     height: 35.0,
                     width: 200,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
-                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.pink,
-                        onPrimary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Make Privte'),
+                      onPressed: () {},
                     ),
                   ),
-                  SizedBox(
+                  Container(
                     height: 35.0,
                     width: 200,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
                     child: ElevatedButton(
-                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.pink,
-                        onPrimary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
+                            borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text('Delete'),
+                      onPressed: () {},
                     ),
                   ),
                 ],

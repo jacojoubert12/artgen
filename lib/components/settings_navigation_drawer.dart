@@ -54,7 +54,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             : MediaQuery.of(context).size.width * 0.95,
         height: MediaQuery.of(context).size.height * 0.95,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: kBgDarkColor,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -185,9 +185,15 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             SizedBox(height: kDefaultPadding),
 
             //Save Button
-            SizedBox(
+            Container(
               height: 30.0,
               width: 250,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(colors: [
+                    Color.fromARGB(255, 61, 2, 50),
+                    Color.fromARGB(255, 10, 6, 20)
+                  ])),
               child: ElevatedButton(
                 onPressed: () {
                   //save profile
@@ -199,10 +205,10 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink,
-                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+                      borderRadius: BorderRadius.circular(10)),
                 ),
                 child: Text('Save'),
               ),

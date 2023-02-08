@@ -245,7 +245,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white,
+        color: kBgDarkColor,
         child: SafeArea(
           child: Column(
             children: [
@@ -348,7 +348,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       ),
                                     ),
                                     SizedBox(height: kDefaultPadding),
-                                    SizedBox(
+                                    Container(
                                       // height: 35.0,
                                       // width: 50,
                                       child: Align(
@@ -367,7 +367,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                             );
                                           },
                                           style: ElevatedButton.styleFrom(
-                                              primary: Colors.pink,
+                                              primary: Color.fromARGB(
+                                                  255, 61, 2, 50),
                                               onPrimary: Colors.black,
                                               shape: CircleBorder()),
                                         ),
@@ -416,13 +417,20 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                     Container(
                                       height: 40,
                                       width: 400,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          gradient: LinearGradient(colors: [
+                                            Color.fromARGB(255, 61, 2, 50),
+                                            Color.fromARGB(255, 10, 6, 20)
+                                          ])),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          primary: Colors.pink,
-                                          onPrimary: Colors.black,
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(5.0)),
+                                                  BorderRadius.circular(10)),
                                         ),
                                         child: Text('Generate'),
                                         onPressed: () {
@@ -471,16 +479,24 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                     Container(
                                       height: 40,
                                       width: 400,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          gradient: LinearGradient(colors: [
+                                            Color.fromARGB(255, 61, 2, 50),
+                                            Color.fromARGB(255, 10, 6, 20)
+                                          ])),
                                       child: uploading
                                           ? CircularProgressIndicator()
                                           : ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                primary: Colors.pink,
-                                                onPrimary: Colors.black,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                shadowColor: Colors.transparent,
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            5.0)),
+                                                            10)),
                                               ),
                                               child: Text('Upload'),
                                               onPressed: () async {

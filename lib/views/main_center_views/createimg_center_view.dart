@@ -165,12 +165,19 @@ class _ImgGridViewState extends State<ImgGridView> {
                 Container(
                   height: 35.0,
                   width: 350,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(colors: [
+                        Color.fromARGB(255, 61, 2, 50),
+                        Color.fromARGB(255, 10, 6, 20)
+                      ])),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.pink,
-                      onPrimary: Colors.black,
+                      // shadowColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                     child: Text('Create'),
                     onPressed: () {

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 const kPrimaryColor = Color(0xFF366CF6);
 const kSecondaryColor = Color(0xFFF5F6FC);
 const kBgLightColor = Color(0xFFF2F4FC);
-const kBgDarkColor = Color(0xFFEBEDFA);
+const kBgDarkColor = Color.fromARGB(255, 26, 27, 26);
 const kBadgeColor = Color(0xFFEE376E);
 const kGrayColor = Color(0xFF8793B2);
 const kTitleTextColor = Color(0xFF30384D);
@@ -21,6 +21,8 @@ const kCyan = Color.fromARGB(255, 96, 101, 255);
 // const kPrimaryColor = Color(0xFF6F35A5);
 const kPrimaryLightColor = Color(0xFFF1E6FF);
 const kBackgroundPrimColor = Color(0xFF292a34);
+const kSideMenuIconsColor = Color.fromARGB(255, 118, 12, 87);
+const kButtonPurple = Color.fromARGB(255, 15, 11, 22);
 
 const kDefaultPadding = 20.0;
 const kDefaultWidth = 10.0;

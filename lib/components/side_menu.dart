@@ -54,7 +54,7 @@ class SideMenu extends StatelessWidget {
     return Container(
       height: double.infinity,
       // padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
-      color: kBgLightColor,
+      color: kBgDarkColor,
       child: SafeArea(
         child: SingleChildScrollView(
           // padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
@@ -90,7 +90,7 @@ class SideMenu extends StatelessWidget {
                   fontFamily:
                       'custom font', // remove this if don't have custom font
                   fontSize: 20.0, // text size
-                  color: Colors.black, // text color
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
                 ),
               ),
               Text(
@@ -99,7 +99,7 @@ class SideMenu extends StatelessWidget {
                   fontFamily:
                       'custom font', // remove this if don't have custom font
                   fontSize: 10.0, // text size
-                  color: Colors.black, // text color
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
                 ),
               ),
               // Menu Items
@@ -110,6 +110,7 @@ class SideMenu extends StatelessWidget {
                 title: "Create",
                 icon: Icon(
                   Icons.create,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -121,6 +122,7 @@ class SideMenu extends StatelessWidget {
                 title: "My Gallary",
                 icon: Icon(
                   Icons.collections,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -132,6 +134,7 @@ class SideMenu extends StatelessWidget {
                 title: "Explore",
                 icon: Icon(
                   Icons.explore,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -143,6 +146,7 @@ class SideMenu extends StatelessWidget {
                 title: "Likes",
                 icon: Icon(
                   Icons.favorite,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -154,6 +158,7 @@ class SideMenu extends StatelessWidget {
                 title: "Profile",
                 icon: Icon(
                   Icons.face,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -165,6 +170,7 @@ class SideMenu extends StatelessWidget {
                 title: "About",
                 icon: Icon(
                   Icons.fingerprint,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -176,14 +182,15 @@ class SideMenu extends StatelessWidget {
                 title: "Share",
                 icon: Icon(
                   Icons.share,
+                  color: kSideMenuIconsColor,
                 ),
                 isActive: false,
                 showBorder: true,
               ),
 
-              // SizedBox(height: kDefaultPadding),
-              // SignOutButton(),
-              // SizedBox(height: kDefaultPadding),
+              SizedBox(height: kDefaultPadding),
+              SignOutButton(),
+              SizedBox(height: kDefaultPadding),
 
               // SizedBox(height: kDefaultPadding * 2),
               // Tags

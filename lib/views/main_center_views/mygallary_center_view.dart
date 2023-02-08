@@ -55,28 +55,28 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                    Expanded(
-                      child: TextField(
-                        onChanged: (value) {},
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          fillColor: kBgLightColor,
-                          filled: true,
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.all(
-                                kDefaultPadding * 0.75), //15
-                            child: WebsafeSvg.asset(
-                              "assets/Icons/Search.svg",
-                              width: 24,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: TextField(
+                    //     onChanged: (value) {},
+                    //     decoration: InputDecoration(
+                    //       hintText: "Search",
+                    //       fillColor: kBgLightColor,
+                    //       filled: true,
+                    //       suffixIcon: Padding(
+                    //         padding: const EdgeInsets.all(
+                    //             kDefaultPadding * 0.75), //15
+                    //         child: WebsafeSvg.asset(
+                    //           "assets/Icons/Search.svg",
+                    //           width: 24,
+                    //         ),
+                    //       ),
+                    //       border: OutlineInputBorder(
+                    //         borderRadius: BorderRadius.all(Radius.circular(10)),
+                    //         borderSide: BorderSide.none,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
