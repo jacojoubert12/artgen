@@ -295,6 +295,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         _promptTxt = value;
                                       },
                                       decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 30),
                                         label: Text.rich(
                                           TextSpan(
                                             children: <InlineSpan>[
@@ -323,6 +325,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         _negpromptTxt = value;
                                       },
                                       decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 20),
                                         label: Text.rich(
                                           TextSpan(
                                             children: <InlineSpan>[

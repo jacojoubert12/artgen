@@ -1,6 +1,7 @@
 import 'package:artgen/constants.dart';
 import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../views/main/main_view.dart';
@@ -13,7 +14,37 @@ class SettingNavigationDrawer extends StatefulWidget {
 }
 
 class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
-  String dropdownValue = 'Dog';
+  _SettingNavigationDrawerState() {
+    getModels();
+  }
+
+  String dropdownValue = "";
+  List<String> modelList = [];
+
+  void getModels() async {
+    modelList = await getUniqueCheckpointFiles();
+    print(modelList);
+  }
+
+  // Stream<List<Model >> readActiveWorkers() =>
+  //     FirebaseFirestore.instance.collection('active_workers')
+  //     .snapshots()
+  //     .map((snapshot) => snapshot.docs.map((doc) =>ActiveWorkers.fromJason(doc.data())) .toList());
+
+  Future<List<String>> getUniqueCheckpointFiles() async {
+    final firestore = FirebaseFirestore.instance;
+    final workersCollection = firestore.collection('active_workers');
+    final snapshot = await workersCollection.get();
+    final uniqueCheckpointFiles = <String>{};
+    print("GET VALUESSS");
+    for (var worker in snapshot.docs) {
+      print(worker);
+      final checkpointFile = worker.data()['checkpoint_file'];
+      uniqueCheckpointFiles.add(checkpointFile);
+    }
+    return uniqueCheckpointFiles.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,21 +152,23 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             SizedBox(height: kDefaultPadding),
             Container(
               child: Container(
+                // padding: EdgeInsets.only(left: 30, right: 30),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(44, 215, 4, 170),
-                  ),
+
+                      // color: Color.fromARGB(44, 215, 4, 170),
+                      ),
                   child: DropdownButton<String>(
                     value: dropdownValue,
                     borderRadius: BorderRadius.circular(20),
                     itemHeight: 50,
-                    items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items:
+                        modelList.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
                           value,
-                          style: TextStyle(fontSize: 30),
+                          style: TextStyle(fontSize: 20),
                         ),
                       );
                     }).toList(),
