@@ -45,7 +45,10 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                     // Also we want to hide this menu icon on desktop
                     if (!Responsive.isDesktop(context))
                       IconButton(
-                        icon: Icon(Icons.menu),
+                        icon: Icon(
+                          Icons.menu,
+                          color: kButtonLightPurple,
+                        ),
                         onPressed: () {
                           _scaffoldKey.currentState!.openDrawer();
                         },

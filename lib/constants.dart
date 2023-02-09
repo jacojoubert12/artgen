@@ -23,6 +23,7 @@ const kPrimaryLightColor = Color(0xFFF1E6FF);
 const kBackgroundPrimColor = Color(0xFF292a34);
 const kSideMenuIconsColor = Color.fromARGB(255, 118, 12, 87);
 const kButtonPurple = Color.fromARGB(255, 15, 11, 22);
+const kButtonLightPurple = Color.fromARGB(255, 181, 9, 130);
 
 const kDefaultPadding = 20.0;
 const kDefaultWidth = 10.0;

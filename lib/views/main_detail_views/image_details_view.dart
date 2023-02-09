@@ -11,7 +11,6 @@ class ImageDetailsModal extends StatefulWidget {
 
   @override
   _ImageDetailsModalState createState() => _ImageDetailsModalState();
-  // final Icon icon;
 }
 
 class _ImageDetailsModalState extends State<ImageDetailsModal> {
@@ -34,6 +33,28 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: kDefaultPadding),
+            Container(
+              // height: 35.0,
+              // width: 50,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: ElevatedButton(
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 30.0,
+                    color: kButtonLightPurple,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(0, 181, 9, 129),
+                      onPrimary: Colors.black,
+                      shape: CircleBorder()),
+                ),
+              ),
+            ),
+            SizedBox(height: kDefaultPadding),
             Expanded(
               flex: 5,
               child: Stack(
@@ -44,15 +65,6 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                     // height: 400,
                     fit: BoxFit.cover,
                   ),
-                  // Positioned(
-                  //   top: 10,
-                  //   right: 10,
-                  //   child: IconButton(
-                  //     icon: Icon(Icons.favorite),
-                  //     onPressed: () {},
-                  //     color: Colors.red,
-                  //   ),
-                  // ),
                 ],
               ),
             ),

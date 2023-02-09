@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
 import '../extensions.dart';
@@ -29,6 +30,7 @@ class SideMenu extends StatelessWidget {
   const SideMenu({Key? key, this.setViewMode}) : super(key: key);
 
   final Function? setViewMode;
+
   // String _name = '';
   // String _surname = '';
 
@@ -60,30 +62,25 @@ class SideMenu extends StatelessWidget {
           // padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
           child: Column(
             children: [
-              Image.asset(
-                "assets/images/flower.png",
-                // width: 46,
-                fit: BoxFit.fill,
+              Container(
+                width: double.maxFinite,
+                color: Color(0xFF),
+                child: Image.network("assets/images/flower.png",
+                    fit: BoxFit.fitWidth),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: kDefaultPadding * 6),
-                  // Avatar Image
-                  Positioned(
-                    // top: MediaQuery.of(context).size.height / 8,
-                    // left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg'),
-                      ),
-                    ),
+              Positioned(
+                top: MediaQuery.of(context).size.height / 2,
+                left: MediaQuery.of(context).size.width / 2 - 50,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  child: CircleAvatar(
+                    // backgroundImage: NetworkImage(_avatarImage),
+                    child: Image.network("assets/images/flower.png"),
                   ),
-                ],
+                ),
               ),
+              SizedBox(height: kDefaultPadding),
               Text(
                 "User Name",
                 style: TextStyle(
@@ -110,7 +107,7 @@ class SideMenu extends StatelessWidget {
                 title: "Create",
                 icon: Icon(
                   Icons.create,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -122,7 +119,7 @@ class SideMenu extends StatelessWidget {
                 title: "My Gallary",
                 icon: Icon(
                   Icons.collections,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -134,7 +131,7 @@ class SideMenu extends StatelessWidget {
                 title: "Explore",
                 icon: Icon(
                   Icons.explore,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -146,19 +143,23 @@ class SideMenu extends StatelessWidget {
                 title: "Likes",
                 icon: Icon(
                   Icons.favorite,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
               ),
               SideMenuItem(
                 press: () {
+                  print("Before");
+                  print(ViewMode.profile);
+                  print("object");
                   this.setViewMode!(ViewMode.profile);
+                  print("After");
                 },
                 title: "Profile",
                 icon: Icon(
                   Icons.face,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -170,7 +171,7 @@ class SideMenu extends StatelessWidget {
                 title: "About",
                 icon: Icon(
                   Icons.fingerprint,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
@@ -182,13 +183,31 @@ class SideMenu extends StatelessWidget {
                 title: "Share",
                 icon: Icon(
                   Icons.share,
-                  color: kSideMenuIconsColor,
+                  color: kButtonLightPurple,
                 ),
                 isActive: false,
                 showBorder: true,
               ),
+              SizedBox(height: 5),
+              InkWell(
+                onTap: () => launchUrl(Uri.parse('https://www.google.com')),
+                child: Text(
+                  'Terms and Conditions',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline, color: Colors.blue),
+                ),
+              ),
+              SizedBox(height: 5),
+              InkWell(
+                onTap: () => launchUrl(Uri.parse('https://www.google.com')),
+                child: Text(
+                  'Privacy Policy',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline, color: Colors.blue),
+                ),
+              ),
 
-              SizedBox(height: kDefaultPadding),
+              SizedBox(height: 5),
               SignOutButton(),
               SizedBox(height: kDefaultPadding),
 

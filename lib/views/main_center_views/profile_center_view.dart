@@ -77,7 +77,10 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                     // Also we want to hide this menu icon on desktop
                     if (!Responsive.isDesktop(context))
                       IconButton(
-                        icon: Icon(Icons.menu),
+                        icon: Icon(
+                          Icons.menu,
+                          color: kButtonLightPurple,
+                        ),
                         onPressed: () {
                           _scaffoldKey.currentState!.openDrawer();
                         },
@@ -131,26 +134,6 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                         ),
                       ),
                     ),
-                    // Positioned(
-                    //   top: MediaQuery.of(context).size.height / 8,
-                    //   left: MediaQuery.of(context).size.width / 2 - 50,
-                    //   right: 10,
-                    //   bottom: 4,
-
-                    //   child: Container(
-                    //     width: 40,
-                    //     height: 40,
-                    //     decoration: BoxDecoration(
-                    //         shape: BoxShape.circle, color: Colors.pink),
-                    //     child: IconButton(
-                    //       icon: Icon(Icons.edit),
-                    //       onPressed: () {
-                    //         // code to handle button press
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // Form
                     Padding(
                       padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 10.0),
                       child: Column(

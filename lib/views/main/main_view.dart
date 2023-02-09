@@ -74,7 +74,8 @@ class _Mainviewstate extends State<MainScreen> {
     createImgDetailView = CreateImgDetailView(
         selectedImages: selectedImages,
         selectedImageUrls: selectedImageUrls,
-        updateSelectedImages: this.updateSelectedImages);
+        updateSelectedImages: this.updateSelectedImages,
+        setViewMode: this.setViewMode);
 
     getDeviceInfo();
     user.initMyUser();
@@ -106,6 +107,8 @@ class _Mainviewstate extends State<MainScreen> {
   }
 
   setViewMode(viewMode) {
+    if (Responsive.isMobile(context)) Navigator.pop(context);
+    if (Responsive.isMobile(context)) Navigator.pop(context);
     setState(() {
       viewMode == ViewMode.create
           ? shouldShowDetailView = true
@@ -122,7 +125,8 @@ class _Mainviewstate extends State<MainScreen> {
         createImgDetailView = CreateImgDetailView(
             selectedImages: selectedImages,
             selectedImageUrls: selectedImageUrls,
-            updateSelectedImages: this.updateSelectedImages);
+            updateSelectedImages: this.updateSelectedImages,
+            setViewMode: this.setViewMode);
       }
     });
   }

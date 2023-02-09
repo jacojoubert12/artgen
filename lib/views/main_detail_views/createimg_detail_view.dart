@@ -15,7 +15,9 @@ import 'package:http/http.dart' as http;
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import '../../components/side_menu.dart';
 import '../../constants.dart';
+import '../../responsive.dart';
 import 'components/header.dart';
 import 'image_details_view.dart';
 
@@ -26,21 +28,26 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 class CreateImgDetailView extends StatefulWidget {
-  CreateImgDetailView(
-      {Key? key,
-      this.selectedImages,
-      this.selectedImageUrls,
-      this.updateSelectedImages})
-      : super(key: key);
+  CreateImgDetailView({
+    Key? key,
+    this.setViewMode,
+    this.selectedImages,
+    this.selectedImageUrls,
+    this.updateSelectedImages,
+    this.showDetailView,
+  }) : super(key: key);
   final selectedImages;
   final selectedImageUrls;
   final Function? updateSelectedImages;
+  final Function? showDetailView;
+  final Function? setViewMode;
 
   @override
   State<CreateImgDetailView> createState() => _CreateImgDetailViewState();
 }
 
 class _CreateImgDetailViewState extends State<CreateImgDetailView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Set<dynamic>? _selectedImages;
   Set<String>? _selectedImageUrls;
   List<String> generatedImgUrls = [
@@ -249,6 +256,30 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         child: SafeArea(
           child: Column(
             children: [
+              SizedBox(height: kDefaultPadding),
+              Container(
+                // height: 35.0,
+                // width: 50,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: ElevatedButton(
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 30.0,
+                      color: kButtonLightPurple,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(0, 181, 9, 129),
+                        onPrimary: Colors.black,
+                        shape: CircleBorder()),
+                  ),
+                ),
+              ),
+              // This is our Seearch bar
+
               // Header(),
               // Divider(thickness: 1),
               Expanded(
@@ -368,7 +399,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                           },
                                           style: ElevatedButton.styleFrom(
                                               primary: Color.fromARGB(
-                                                  255, 61, 2, 50),
+                                                  255, 181, 9, 130),
                                               onPrimary: Colors.black,
                                               shape: CircleBorder()),
                                         ),

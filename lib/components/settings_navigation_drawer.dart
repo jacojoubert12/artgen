@@ -3,17 +3,35 @@ import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:artgen/components/side_menu.dart';
 
 import '../views/main/main_view.dart';
 import '../views/main_detail_views/subscription_view.dart';
 
 class SettingNavigationDrawer extends StatefulWidget {
+  SettingNavigationDrawer(
+      {Key? key,
+      this.setViewMode,
+      this.selectedImages,
+      this.selectedImageUrls,
+      this.updateSelectedImages,
+      this.showDetailView})
+      : super(key: key);
+  final Function? setViewMode;
+  final Function? updateSelectedImages;
+  final Function? showDetailView;
+  final selectedImages;
+  final selectedImageUrls;
+  List<String> imageUrls = [];
+  List<dynamic> images = [];
+
   @override
   State<SettingNavigationDrawer> createState() =>
       _SettingNavigationDrawerState();
 }
 
 class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String dropdownValue = '';
   List<String> modelList = [];
 
@@ -37,7 +55,9 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
+        // alignment: Alignment.center,
         width: Responsive.isDesktop(context)
             ? MediaQuery.of(context).size.width * 0.6
             : MediaQuery.of(context).size.width * 0.95,
@@ -49,10 +69,37 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                 topRight: Radius.circular(20),
                 bottomRight: Radius.circular(20),
                 bottomLeft: Radius.circular(20))),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: kDefaultPadding),
+            Container(
+              // height: 35.0,
+              // width: 50,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: ElevatedButton(
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 30.0,
+                    color: kButtonLightPurple,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(0, 181, 9, 129),
+                      onPrimary: Colors.black,
+                      shape: CircleBorder()),
+                ),
+              ),
+            ),
+            // SizedBox(),
+
+            SizedBox(height: kDefaultPadding),
+
+            // Container(),
             Text("Sampling Steps"),
             Slider(
               value: user.samplingStepsSliderValue,
@@ -192,15 +239,10 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                     Color.fromARGB(255, 61, 2, 50),
                     Color.fromARGB(255, 10, 6, 20)
                   ])),
+              //Save Button
               child: ElevatedButton(
                 onPressed: () {
-                  //save profile
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return CreateImgDetailView();
-                    },
-                  );
+                  Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -213,6 +255,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             ),
           ],
         ),
+        // ),
       ),
     );
   }

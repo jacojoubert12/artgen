@@ -107,7 +107,10 @@ class _ImgGridViewState extends State<ImgGridView> {
                     // Also we want to hide this menu icon on desktop
                     if (!Responsive.isDesktop(context))
                       IconButton(
-                        icon: Icon(Icons.menu),
+                        icon: Icon(
+                          Icons.menu,
+                          color: kButtonLightPurple,
+                        ),
                         onPressed: () {
                           _scaffoldKey.currentState!.openDrawer();
                         },
@@ -182,35 +185,6 @@ class _ImgGridViewState extends State<ImgGridView> {
                     child: Text('Create'),
                     onPressed: () {
                       widget.showDetailView!();
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     return AlertDialog(
-                      //       title: Text("Popup title"),
-                      //       content: Text(
-                      //           "This is the message displayed in the popup"),
-                      //       actions: <Widget>[
-                      //         Container(
-                      //           height: 40,
-                      //           width: 500,
-                      //           child: ElevatedButton(
-                      //             style: ElevatedButton.styleFrom(
-                      //               primary: Colors.pink,
-                      //               onPrimary: Colors.black,
-                      //               shape: RoundedRectangleBorder(
-                      //                   borderRadius:
-                      //                       BorderRadius.circular(5.0)),
-                      //             ),
-                      //             child: Text('OK'),
-                      //             onPressed: () {
-                      //               Navigator.of(context).pop();
-                      //             },
-                      //           ),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      // );
                     },
                   ),
                 ),
