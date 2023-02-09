@@ -7,6 +7,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:artgen/views/main/main_view.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
 
@@ -16,7 +17,7 @@ class MQTTClientManager {
 
   Future<int> connect() async {
     client.logging(on: true);
-    client.keepAlivePeriod = 60;
+    client.keepAlivePeriod = 600000;
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
     client.onSubscribed = onSubscribed;

@@ -216,6 +216,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                           onChanged: (String? newValue) {
                             setState(() {
                               dropdownValue = newValue!;
+                              user.pubTopic = dropdownValue;
                             });
                           },
                         ),
