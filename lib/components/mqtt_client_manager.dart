@@ -17,7 +17,7 @@ class MQTTClientManager {
 
   Future<int> connect() async {
     client.logging(on: true);
-    client.keepAlivePeriod = 600000;
+    client.keepAlivePeriod = 99999999;
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
     client.onSubscribed = onSubscribed;

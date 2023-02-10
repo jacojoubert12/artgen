@@ -32,25 +32,6 @@ class SettingNavigationDrawer extends StatefulWidget {
 
 class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String dropdownValue = '';
-  List<String> modelList = [];
-
-  Future<List<String>> getUniqueCheckpointFiles() async {
-    Set<String> uniqueFiles = Set();
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection("active_workers").get();
-    querySnapshot.docs.forEach((document) {
-      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-      data.forEach((key, value) {
-        uniqueFiles.add(value["checkpoint_file"]);
-      });
-    });
-    modelList = uniqueFiles.toList();
-    dropdownValue == ''
-        ? dropdownValue = modelList[0]
-        : dropdownValue = dropdownValue;
-    return modelList;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,44 +169,32 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             SizedBox(height: kDefaultPadding),
             Container(
               // height: 40,
-              child: FutureBuilder(
-                future: getUniqueCheckpointFiles(),
-                builder: (context, AsyncSnapshot<List<String>> snapshot) {
-                  if (snapshot.hasData) {
-                    return Container(
-                      // padding: EdgeInsets.only(left: 30, right: 30),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
 
-                            // color: Color.fromARGB(44, 215, 4, 170),
-                            ),
-                        child: DropdownButton<String>(
-                          value: dropdownValue,
-                          borderRadius: BorderRadius.circular(20),
-                          itemHeight: 50,
-                          items: modelList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownValue = newValue!;
-                              user.pubTopic = dropdownValue;
-                            });
-                          },
-                        ),
+                    // color: Color.fromARGB(44, 215, 4, 170),
+                    ),
+                child: DropdownButton<String>(
+                  value: user.selectedModel,
+                  borderRadius: BorderRadius.circular(20),
+                  itemHeight: 50,
+                  items: user.modelList
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(fontSize: 20),
                       ),
                     );
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      user.selectedModel = newValue!;
+                      user.pubTopic = user.selectedModel;
+                    });
+                  },
+                ),
               ),
             ),
             SizedBox(height: kDefaultPadding),
