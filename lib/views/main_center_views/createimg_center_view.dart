@@ -1,9 +1,12 @@
+import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:websafe_svg/websafe_svg.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../../constants.dart';
 
@@ -20,7 +23,9 @@ class ImgGridView extends StatefulWidget {
       this.selectedImageUrls,
       this.updateSelectedImages,
       this.showDetailView})
-      : super(key: key);
+      : super(key: key) {
+    // _initAd();
+  }
   final Function? setViewMode;
   final Function? updateSelectedImages;
   final Function? showDetailView;
@@ -28,6 +33,26 @@ class ImgGridView extends StatefulWidget {
   final selectedImageUrls;
   List<String> imageUrls = [];
   List<dynamic> images = [];
+
+  // late InterstitialAd _interstitialAd;
+  // bool _isAdLoaded = false;
+
+  // void _initAd() {
+  //   InterstitialAd.load(
+  //     adUnitId: '<ad unit id>',
+  //     request: AdRequest(),
+  //     adLoadCallback: InterstitialAdLoadCallback(
+  //         onAdLoaded: onAdLoaded,
+  //         onAdFailedToLoad: (error) {
+  //           print('InterstitialAd failed to load: $error');
+  //         }),
+  //   );
+  // }
+
+  // void onAdLoaded(InterstitialAd ad) {
+  //   _interstitialAd = ad;
+  //   _isAdLoaded = true;
+  // }
 
   @override
   State<ImgGridView> createState() => _ImgGridViewState();
@@ -189,12 +214,42 @@ class _ImgGridViewState extends State<ImgGridView> {
                   ),
                 ),
               SizedBox(height: kDefaultPadding),
+              Container(
+                height: 35.0,
+                width: 350,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: LinearGradient(colors: [
+                      Color.fromARGB(255, 61, 2, 50),
+                      Color.fromARGB(255, 10, 6, 20)
+                    ])),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    // shadowColor: Colors.transparent,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: Text('Adds'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AdMob();
+                      },
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  void onAdLoaded(InterstitialAd ad) {}
 }
 
 class ImageGridView extends StatefulWidget {

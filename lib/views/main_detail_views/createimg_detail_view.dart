@@ -293,9 +293,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                 ),
               ),
               // This is our Seearch bar
-
-              // Header(),
-              // Divider(thickness: 1),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(kDefaultPadding),
@@ -340,6 +337,27 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         _promptTxt = value;
                                       },
                                       decoration: InputDecoration(
+                                        filled: true, //<-- SEE HERE
+                                        fillColor:
+                                            Color.fromARGB(81, 226, 223, 234),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3,
+                                              color: Color.fromARGB(
+                                                  189, 215, 188, 211)),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3,
+                                              color: Color.fromARGB(
+                                                  137, 217, 64, 107)),
+                                        ),
+                                        // errorBorder: OutlineInputBorder(
+                                        //   borderSide: BorderSide(
+                                        //       width: 3,
+                                        //       color: Color.fromARGB(
+                                        //           255, 66, 125, 145)),
+                                        // ),
                                         contentPadding:
                                             EdgeInsets.symmetric(vertical: 30),
                                         label: Text.rich(
@@ -348,13 +366,18 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                               WidgetSpan(
                                                 child: Text(
                                                   'Prompt',
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 255, 255, 255),
+                                                      fontSize: 20),
                                                 ),
                                               ),
                                               WidgetSpan(
                                                 child: Text(
                                                   '',
                                                   style: TextStyle(
-                                                      color: Colors.red),
+                                                      color: Color.fromARGB(
+                                                          255, 255, 255, 255)),
                                                 ),
                                               ),
                                             ],
@@ -370,6 +393,21 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         _negpromptTxt = value;
                                       },
                                       decoration: InputDecoration(
+                                        filled: true, //<-- SEE HERE
+                                        fillColor:
+                                            Color.fromARGB(81, 226, 223, 234),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3,
+                                              color: Color.fromARGB(
+                                                  189, 215, 188, 211)),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3,
+                                              color: Color.fromARGB(
+                                                  137, 217, 64, 107)),
+                                        ),
                                         contentPadding:
                                             EdgeInsets.symmetric(vertical: 20),
                                         label: Text.rich(
@@ -378,13 +416,22 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                               WidgetSpan(
                                                 child: Text(
                                                   'Negative Prompt',
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                        255,
+                                                        255,
+                                                        255,
+                                                        255,
+                                                      ),
+                                                      fontSize: 20),
                                                 ),
                                               ),
                                               WidgetSpan(
                                                 child: Text(
                                                   '',
                                                   style: TextStyle(
-                                                      color: Colors.red),
+                                                      color: Color.fromARGB(
+                                                          255, 255, 255, 255)),
                                                 ),
                                               ),
                                             ],
@@ -392,34 +439,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: kDefaultPadding),
-                                    Container(
-                                      // height: 35.0,
-                                      // width: 50,
-                                      child: Align(
-                                        alignment: Alignment.topRight,
-                                        child: ElevatedButton(
-                                          child: Icon(
-                                            Icons.settings,
-                                            size: 30.0,
-                                          ),
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return SettingNavigationDrawer();
-                                              },
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              primary: Color.fromARGB(
-                                                  255, 181, 9, 130),
-                                              onPrimary: Colors.black,
-                                              shape: CircleBorder()),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: kDefaultPadding),
+                                    // SizedBox(height: kDefaultPadding),
                                     loading
                                         ? CircularProgressIndicator()
                                         : Container(
@@ -556,6 +576,32 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                             ),
                                     ),
                                     SizedBox(height: kDefaultPadding),
+                                    Container(
+                                      // height: 35.0,
+                                      // width: 50,
+                                      child: Align(
+                                        alignment: Alignment.topRight,
+                                        child: ElevatedButton(
+                                          child: Icon(
+                                            Icons.settings,
+                                            size: 30.0,
+                                          ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return SettingNavigationDrawer();
+                                              },
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Color.fromARGB(
+                                                  255, 181, 9, 130),
+                                              onPrimary: Colors.black,
+                                              shape: CircleBorder()),
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
