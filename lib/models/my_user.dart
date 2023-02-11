@@ -94,9 +94,11 @@ class MyUser {
       });
     });
     modelList = uniqueFiles.toList();
-    selectedModel == ''
-        ? selectedModel = modelList[0]
-        : selectedModel = selectedModel;
+    modelList.length == 0
+        ? {modelList.add("no available models"), selectedModel = modelList[0]}
+        : selectedModel == ''
+            ? selectedModel = modelList[0]
+            : selectedModel = selectedModel;
     return modelList;
   }
 
