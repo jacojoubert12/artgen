@@ -482,67 +482,74 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                             ),
                                           ),
                                     SizedBox(height: kDefaultPadding),
-                                    Container(
-                                      height: 40,
-                                      width: 400,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          gradient: LinearGradient(colors: [
-                                            Color.fromARGB(255, 61, 2, 50),
-                                            Color.fromARGB(255, 10, 6, 20)
-                                          ])),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          shadowColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                        ),
-                                        child: Text('Generate'),
-                                        onPressed: () {
-                                          concatPrompts();
-                                          user.showLogin(context, query)
-                                              ? {
-                                                  //Move to response on success
-                                                  user.imagesToGenerate =
-                                                      (user.batchSizeSliderValue
-                                                          as int?)!,
-                                                  // concatPrompts(),
-                                                  setState(() {
-                                                    loading = true;
-                                                  }),
-                                                  generateImage() //Put back!
-                                                }
-                                              : showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title:
-                                                          Text("Popup title"),
-                                                      content: Text(
-                                                          "You have reached your limit"),
-                                                      actions: <Widget>[
-                                                        Container(
-                                                          height: 80,
-                                                          width: 500,
-                                                          child: RoundedButton(
-                                                            text: "OK",
-                                                            press: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  });
-                                        },
-                                      ),
-                                    ),
+                                    loading
+                                        ? Text('')
+                                        : Container(
+                                            height: 40,
+                                            width: 400,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                gradient:
+                                                    LinearGradient(colors: [
+                                                  Color.fromARGB(
+                                                      255, 61, 2, 50),
+                                                  Color.fromARGB(255, 10, 6, 20)
+                                                ])),
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                shadowColor: Colors.transparent,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                              ),
+                                              child: Text('Generate'),
+                                              onPressed: () {
+                                                concatPrompts();
+                                                user.showLogin(context, query)
+                                                    ? {
+                                                        //Move to response on success
+                                                        user.imagesToGenerate =
+                                                            (user.batchSizeSliderValue
+                                                                as int?)!,
+                                                        // concatPrompts(),
+                                                        setState(() {
+                                                          loading = true;
+                                                        }),
+                                                        generateImage() //Put back!
+                                                      }
+                                                    : showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            title: Text(
+                                                                "Popup title"),
+                                                            content: Text(
+                                                                "You have reached your limit"),
+                                                            actions: <Widget>[
+                                                              Container(
+                                                                height: 80,
+                                                                width: 500,
+                                                                child:
+                                                                    RoundedButton(
+                                                                  text: "OK",
+                                                                  press: () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        });
+                                              },
+                                            ),
+                                          ),
                                     SizedBox(height: kDefaultPadding),
                                     Container(
                                       height: 40,

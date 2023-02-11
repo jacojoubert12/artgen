@@ -27,6 +27,8 @@ class MyUser {
   Map<int, dynamic> packageMap = {};
   Map<String, dynamic> userInfo = {};
   final Storage _localStorage = window.localStorage;
+  List<String> modelList = [];
+  String selectedModel = '';
 
   //ImgGen Settings
   double samplingStepsSliderValue = 20;
@@ -41,6 +43,7 @@ class MyUser {
 
   initMyUser() {
     guestLogin();
+    getUniqueCheckpointFiles();
   }
 
   Future<List<DocumentSnapshot>> getDocumentsFromCollection(
@@ -74,6 +77,27 @@ class MyUser {
         return 0;
       }
     });
+  }
+
+  Future<List<String>> getUniqueCheckpointFiles() async {
+    Set<String> uniqueFiles = Set();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection("active_workers").get();
+    querySnapshot.docs.forEach((document) {
+      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+      var dateUtc = DateTime.now().toUtc();
+      data.forEach((key, value) {
+        var now = Timestamp.fromDate(dateUtc);
+        Timestamp activeTime = value['active'];
+        if ((now.seconds - activeTime.seconds) < 180)
+          uniqueFiles.add(value["checkpoint_file"]);
+      });
+    });
+    modelList = uniqueFiles.toList();
+    selectedModel == ''
+        ? selectedModel = modelList[0]
+        : selectedModel = selectedModel;
+    return modelList;
   }
 
   Future<DocumentReference<Map<String, dynamic>>> getSingleDocRefFromCollection(
@@ -350,3 +374,59 @@ class MyUser {
     return true;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+//Futurebuilder Example
+
+// Container(
+//               // height: 40,
+//               child: FutureBuilder(
+//                 future: getUniqueCheckpointFiles(),
+//                 builder: (context, AsyncSnapshot<List<String>> snapshot) {
+//                   if (snapshot.hasData) {
+//                     return Container(
+//                       // padding: EdgeInsets.only(left: 30, right: 30),
+//                       child: DecoratedBox(
+//                         decoration: BoxDecoration(
+
+//                             // color: Color.fromARGB(44, 215, 4, 170),
+//                             ),
+//                         child: DropdownButton<String>(
+//                           value: user.selectedModel,
+//                           borderRadius: BorderRadius.circular(20),
+//                           itemHeight: 50,
+//                           items: user.modelList
+//                               .map<DropdownMenuItem<String>>((String value) {
+//                             return DropdownMenuItem<String>(
+//                               value: value,
+//                               child: Text(
+//                                 value,
+//                                 style: TextStyle(fontSize: 20),
+//                               ),
+//                             );
+//                           }).toList(),
+//                           onChanged: (String? newValue) {
+//                             setState(() {
+//                               user.selectedModel = newValue!;
+//                               user.pubTopic = user.selectedModel;
+//                             });
+//                           },
+//                         ),
+//                       ),
+//                     );
+//                   } else {
+//                     return CircularProgressIndicator();
+//                   }
+//                 },
+//               ),
+//             ),
