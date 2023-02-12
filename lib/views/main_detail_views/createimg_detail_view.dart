@@ -107,7 +107,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       for (var url in jsonDecode(pt)) {
         String urlString = url.toString();
         String filename = urlString.substring(urlString.length - 40);
-        ;
         print(filename);
         String storage_ref =
             await storage.ref('images/$filename').getDownloadURL();
