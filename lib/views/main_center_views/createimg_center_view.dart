@@ -64,6 +64,8 @@ class _ImgGridViewState extends State<ImgGridView> {
   Set<String>? _selectedImageUrls;
   List<String>? _imageUrls;
   List<dynamic>? _images;
+  final pink = const Color(0xFFFACCCC);
+  final grey = const Color(0xFFF2F2F7);
 
   @override
   void initState() {
@@ -141,28 +143,39 @@ class _ImgGridViewState extends State<ImgGridView> {
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                    Expanded(
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 300,
+                      height: 35,
                       child: TextField(
+                        textAlign: TextAlign.center,
                         onSubmitted: (value) {
                           setState(() {
                             getImageUrls(value);
                           });
                         },
                         decoration: InputDecoration(
-                          hintText: "Search",
-                          fillColor: kBgLightColor,
+                          hintStyle: TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(255, 144, 142, 142),
+                          ),
+                          hintText: "Search for specific topics",
+                          fillColor: kTextFieldBackgroundColor,
                           filled: true,
                           suffixIcon: Padding(
-                            padding: const EdgeInsets.all(
-                                kDefaultPadding * 0.75), //15
-                            child: WebsafeSvg.asset(
-                              "assets/Icons/Search.svg",
-                              width: 24,
+                            padding: const EdgeInsets.only(right: 20),
+                            child: Icon(
+                              Icons.search,
+                              color: kButtonLightPurple,
                             ),
+                            // child: WebsafeSvg.asset(
+                            //   "assets/Icons/Search.svg",
+                            //   width: 15,
+                            // ),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                                color: kTextFieldBackgroundColor, width: 2),
                           ),
                         ),
                       ),
@@ -172,12 +185,55 @@ class _ImgGridViewState extends State<ImgGridView> {
               ),
               SizedBox(height: kDefaultPadding),
               if (Responsive.isMobile(context))
-                ImageListView(
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Text(
+                    "Selected images",
+                    style: TextStyle(
+                      fontFamily:
+                          'custom font', // remove this if don't have custom font
+                      fontSize: 15.0, // text size
+                      color: Color.fromARGB(255, 144, 142, 142),
+                      // text color
+                    ),
+                  ),
+                ),
+
+              SizedBox(height: kDefaultPadding / 2),
+              Container(
+                width: double.infinity,
+                height: 80,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Color.fromARGB(255, 77, 75, 75),
+                      width: 2.0,
+                      style: BorderStyle.solid),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: ImageListView(
                   updateSelectedImages: widget.updateSelectedImages,
                   selectedImages: _selectedImages,
                   selectedImageUrls: _selectedImageUrls,
                 ),
-              SizedBox(height: kDefaultPadding),
+              ),
+
+              SizedBox(height: kDefaultPadding / 2),
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Text(
+                  "Select up to 5 Images",
+                  style: TextStyle(
+                    fontFamily:
+                        'custom font', // remove this if don't have custom font
+                    fontSize: 15.0, // text size
+                    color: Color.fromARGB(255, 144, 142, 142), // text color
+                  ),
+                ),
+              ),
+
+              SizedBox(height: kDefaultPadding / 2),
               Expanded(
                 child: ImageGridView(
                     selectedImages: _selectedImages,
@@ -231,7 +287,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: Text('Adds'),
+                  child: Text('Addds'),
                   onPressed: () {
                     showDialog(
                       context: context,

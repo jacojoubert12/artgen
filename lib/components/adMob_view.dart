@@ -55,7 +55,7 @@ class AdMobView extends StatefulWidget {
 class _AdMobViewState extends State<AdMobView> {
   //Members
   //ad
-  late final InterstitialAd interstitialAd;
+  // late final InterstitialAd interstitialAd;
   final String interstitialAdUnitId = 'ca-app-pub-9114002398812345/6628994086';
 
   @override
@@ -67,7 +67,7 @@ class _AdMobViewState extends State<AdMobView> {
     _loadInterstitialAd();
   }
 
-  InterstitialAd? _interstitialAd;
+  InterstitialAd? interstitialAd;
 
   void _loadInterstitialAd() {
     InterstitialAd.load(
@@ -82,7 +82,7 @@ class _AdMobViewState extends State<AdMobView> {
           );
 
           setState(() {
-            _interstitialAd = ad;
+            interstitialAd = ad;
           });
         },
         onAdFailedToLoad: (err) {
@@ -109,7 +109,7 @@ class _AdMobViewState extends State<AdMobView> {
   }
 
   void _showInterstitialAd() {
-    interstitialAd.show();
+    interstitialAd?.show();
   }
 
   //load ads
