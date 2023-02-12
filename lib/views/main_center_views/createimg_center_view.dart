@@ -7,6 +7,7 @@ import 'package:artgen/responsive.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../../constants.dart';
 
@@ -234,6 +235,23 @@ class _ImgGridViewState extends State<ImgGridView> {
               ),
 
               SizedBox(height: kDefaultPadding / 2),
+              //Image Grid View
+
+              // Expanded(
+              //   child: MasonryGridView.count(
+              //     crossAxisCount: 4,
+              //     mainAxisSpacing: 4,
+              //     crossAxisSpacing: 4,
+              //     itemBuilder: (context, index) {
+
+              //       return Tile(
+              //         index: index,
+              //         extent: (index % 5 + 1) * 100,
+              //       );
+              //     },
+              //   ),
+              // ),
+
               Expanded(
                 child: ImageGridView(
                     selectedImages: _selectedImages,
@@ -349,17 +367,26 @@ class _ImageGridViewState extends State<ImageGridView> {
   Widget build(BuildContext context) {
     _images = widget.images;
     _imageUrls = widget.imageUrls;
-    return GridView.builder(
+    return MasonryGridView.count(
+      crossAxisCount: 4,
+      mainAxisSpacing: 4,
+      crossAxisSpacing: 4,
+      // return GridView.builder(
       shrinkWrap: true,
       itemCount: _imageUrls!.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 1,
-      ),
+      // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      //   crossAxisCount: 3,
+      //   childAspectRatio: 1,
+      // ),
       itemBuilder: (BuildContext context, int index) {
         final imageUrl = _imageUrls![index];
         final imageFull = _images![index];
         final isSelected = _selectedImageUrls!.contains(imageUrl);
+
+        // return Tile(
+        //               index: index,
+        //               extent: (index % 5 + 1) * 100,
+        //             );
 
         return Container(
           decoration: BoxDecoration(
