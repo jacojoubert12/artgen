@@ -1,6 +1,7 @@
 import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
+import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -8,6 +9,15 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
+import 'dart:math';
+
+//TODOConsider moving these to MyUser of similar to use everywhere in app
+import 'package:artgen/components/mqtt_client_manager.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+// import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 import '../../../constants.dart';
 
@@ -63,10 +73,17 @@ class _ImgGridViewState extends State<ImgGridView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Set<dynamic>? _selectedImages;
   Set<String>? _selectedImageUrls;
-  List<String>? _imageUrls;
-  List<dynamic>? _images;
+  List<String> _imageUrls = [];
+  List<dynamic> _images = [];
   final pink = const Color(0xFFFACCCC);
   final grey = const Color(0xFFF2F2F7);
+  bool loading = false;
+
+  final firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  MQTTClientManager mqttClientManager = MQTTClientManager();
+  String pubTopic = "search";
+  String subTopic = "search_response/" + user.user!.uid;
 
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
@@ -74,6 +91,8 @@ class _ImgGridViewState extends State<ImgGridView> {
   @override
   void initState() {
     super.initState();
+    setupMqttClient();
+    setupUpdatesListener();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
@@ -81,28 +100,21 @@ class _ImgGridViewState extends State<ImgGridView> {
     getImageUrls();
   }
 
-  Future<List<String>?> getImageUrls([String q = "random"]) async {
-    final uri = Uri.https('lexica.art', '/api/v1/search', {'q': q});
-    final response = await http.get(uri);
+  @override
+  void dispose() {
+    mqttClientManager.disconnect();
+    super.dispose();
+  }
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
+  getImageUrls([String q = "random"]) async {
+    var query = {'keywords': q, 'response_topic': subTopic};
+    mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
+    print("JSON Encoded query:");
+    print(jsonEncode(query));
 
-      // print(jsonData);
-      final images = jsonData['images'].map<dynamic>((url) => url).toList();
-      final urls = jsonData['images']
-          .map<String>((image) => image['src'].toString())
-          .toList();
-
-      setState(() {
-        _imageUrls = urls;
-        _images = images;
-      });
-
-      return urls;
-    } else {
-      throw Exception('Failed to load images');
-    }
+    setState(() {
+      loading = true;
+    });
   }
 
   centerViewUpdateSelectedImages(_selectedImages, _selectedImageUrls) {
@@ -110,6 +122,49 @@ class _ImgGridViewState extends State<ImgGridView> {
       _selectedImages = widget.selectedImages;
       _selectedImageUrls = widget.selectedImageUrls;
       widget.updateSelectedImages!(_selectedImages, _selectedImageUrls);
+    });
+  }
+
+  Future<void> setupMqttClient() async {
+    await mqttClientManager.connect();
+    mqttClientManager.subscribe(subTopic);
+  }
+
+  void setupUpdatesListener() {
+    mqttClientManager
+        .getMessagesStream()!
+        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) async {
+      final recMess = c![0].payload as MqttPublishMessage;
+      final pt =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+      //   generatedImgUrls.clear();
+      print("response");
+      print(jsonDecode(pt));
+      print("after");
+      final List<String> imageUrls = [];
+      final List<dynamic> images = [];
+      for (var img in jsonDecode(pt)) {
+        print(img);
+        print('\n');
+        print(img['_source']['details']['images'][0]);
+        //Maybe add everything later - issue is if batch_size was 100 you dont want all to show?
+        int len = img['_source']['details']['images'].length;
+        var imgCount = min(len, 5);
+        for (var i = 0; i < imgCount; i++) {
+          var rawUrl = img['_source']['details']['images'][i];
+          rawUrl = rawUrl.toString();
+          String filename = rawUrl.substring(rawUrl.length - 40);
+          String url = await storage.ref('images/$filename').getDownloadURL();
+          imageUrls.add(url);
+        }
+        images.add(img);
+      }
+      setState(() {
+        _imageUrls = imageUrls;
+        _images = images;
+        loading = false;
+      });
     });
   }
 
