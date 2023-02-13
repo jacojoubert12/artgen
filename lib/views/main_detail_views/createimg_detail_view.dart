@@ -63,6 +63,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   String _negpromptTxt = "";
   String deviceId = "";
   Map<String, dynamic> query = {};
+  String _avatarImage =
+      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
   // String pubTopic = user.pubTopic; // : "mdjrny_v4";
@@ -272,57 +274,168 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
             children: [
               SizedBox(height: kDefaultPadding),
               Row(
-                // height: 35.0,
-                // width: 50,
                 children: [
-                  Responsive.isMobile(context)
-                      ? Align(
-                          alignment: Alignment.topLeft,
-                          child: ElevatedButton(
-                            child: Icon(
-                              Icons.arrow_back,
-                              size: 30.0,
-                              color: kButtonLightPurple,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                                primary: Color.fromARGB(0, 181, 9, 129),
-                                onPrimary: Colors.black,
-                                shape: CircleBorder()),
-                          ),
-                        )
-                      : Text(''),
-                  // ),
-                  // Container(
-                  // height: 35.0,
-                  // width: 50,
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: ElevatedButton(
-                      child: Icon(
-                        Icons.settings,
-                        size: 30.0,
+                  // Once user click the menu icon the menu shows like drawer
+                  // Also we want to hide this menu icon on desktop
+                  if (!Responsive.isDesktop(context))
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: kButtonLightPurple,
                       ),
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SettingNavigationDrawer();
-                          },
-                        );
+                        Navigator.of(context).pop();
                       },
-                      style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(255, 181, 9, 130),
-                          onPrimary: Colors.black,
-                          shape: CircleBorder()),
+                    ),
+                  if (!Responsive.isDesktop(context)) SizedBox(width: 5),
+                  Container(
+                    width: MediaQuery.of(context).size.width - 230,
+                    height: 35,
+                    alignment: Alignment.center,
+                    // padding: const EdgeInsets.all( 15.0),
+                    child: Text(
+                      "Create Image",
+                      style: TextStyle(
+                        fontFamily:
+                            'custom font', // remove this if don't have custom font
+                        fontSize: 20.0, // text size
+                        color: Color.fromARGB(255, 144, 142, 142),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    top: MediaQuery.of(context).size.height / 8,
+                    left: MediaQuery.of(context).size.width / 2 - 50,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 40),
+                      width: 40,
+                      height: 40,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(_avatarImage),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    top: MediaQuery.of(context).size.height / 8,
+                    left: MediaQuery.of(context).size.width / 2 - 50,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(_avatarImage),
+                      ),
                     ),
                   ),
                 ],
               ),
+              // Row(
+              //   // height: 35.0,
+              //   // width: 50,
+              //   children: [
+              //     Responsive.isMobile(context)
+              //         ? Align(
+              //             alignment: Alignment.topLeft,
+              //             child: ElevatedButton(
+              //               child: Icon(
+              //                 Icons.arrow_back,
+              //                 size: 30.0,
+              //                 color: kButtonLightPurple,
+              //               ),
+              //               onPressed: () {
+              //                 Navigator.of(context).pop();
+              //               },
+              //               style: ElevatedButton.styleFrom(
+              //                   primary: Color.fromARGB(0, 181, 9, 129),
+              //                   onPrimary: Colors.black,
+              //                   shape: CircleBorder()),
+              //             ),
+              //           )
+              //         : Text(''),
+              //     // Container(),
+              //     Positioned(
+              //       // top: MediaQuery.of(context).size.height / 8,
+              //       // left: MediaQuery.of(context).size.width / 2 - 50,
+              //       // alignment: Alignment.topRight,
+              //       child: Container(
+              //         alignment: Alignment.topRight,
+              //         child: ElevatedButton(
+              //           child: Icon(
+              //             Icons.settings,
+              //             size: 30.0,
+              //           ),
+              //           onPressed: () {
+              //             showDialog(
+              //               context: context,
+              //               builder: (context) {
+              //                 return SettingNavigationDrawer();
+              //               },
+              //             );
+              //           },
+              //           style: ElevatedButton.styleFrom(
+              //               primary: Color.fromARGB(255, 181, 9, 130),
+              //               onPrimary: Colors.black,
+              //               shape: CircleBorder()),
+              //         ),
+              //       ),
+              //     ),
+              //     Positioned(
+              //       // top: MediaQuery.of(context).size.height / 8,
+              //       // left: MediaQuery.of(context).size.width / 2 - 50,
+              //       child: Container(
+              //         // margin: EdgeInsets.only(left: 40),
+              //         width: 40,
+              //         height: 40,
+              //         child: CircleAvatar(
+              //           backgroundImage: NetworkImage(_avatarImage),
+              //         ),
+              //       ),
+              //     ),
+              //     // Positioned(
+              //     //   top: MediaQuery.of(context).size.height / 8,
+              //     //   left: MediaQuery.of(context).size.width / 2 - 50,
+              //     Container(
+              //       margin: EdgeInsets.only(left: 20),
+              //       width: 45,
+              //       height: 45,
+              //       child: CircleAvatar(
+              //         backgroundImage: NetworkImage(_avatarImage),
+              //       ),
+              //     ),
+              //     // ),
+              //   ],
+              // ),
+              SizedBox(height: kDefaultPadding),
+              if (Responsive.isMobile(context))
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Text(
+                    "Selected images",
+                    style: TextStyle(
+                      fontFamily:
+                          'custom font', // remove this if don't have custom font
+                      fontSize: 15.0, // text size
+                      color: Color.fromARGB(255, 144, 142, 142),
+                      // text color
+                    ),
+                  ),
+                ),
+              SizedBox(height: kDefaultPadding / 2),
               Container(
-                height: _selectedImageUrls!.length == 0 ? 0 : 100,
+                alignment: Alignment.center,
+                width: double.infinity,
+                height: 80,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Color.fromARGB(255, 77, 75, 75),
+                      width: 2.0,
+                      style: BorderStyle.solid),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                // height: _selectedImageUrls!.length == 0 ? 0 : 100,
                 child: Expanded(
                   child: (_selectedImageUrls!.length > 0)
                       ? ImageListView(
@@ -331,7 +444,16 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           selectedImageUrls: _selectedImageUrls,
                         )
                       : Text(
-                          "Select images in search view if you would like to make use of their prompts"),
+                          "Select images in search view if you would like to make use of their prompts",
+                          style: TextStyle(
+                            fontFamily:
+                                'custom font', // remove this if don't have custom font
+                            fontSize: 12.0, // text size
+                            color: Color.fromARGB(255, 144, 142, 142),
+
+                            // text color
+                          ),
+                        ),
                 ),
               ),
               SizedBox(height: kDefaultPadding),
@@ -342,6 +464,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   _promptTxt = value;
                 },
                 decoration: InputDecoration(
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                    color: Color.fromARGB(255, 144, 142, 142),
+                  ),
+                  // hintText: "Search for specific topics",
                   contentPadding: EdgeInsets.symmetric(vertical: 30),
                   label: Text.rich(
                     TextSpan(
@@ -349,6 +476,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         WidgetSpan(
                           child: Text(
                             'Prompt',
+                            style: TextStyle(
+                              fontFamily:
+                                  'custom font', // remove this if don't have custom font
+                              fontSize: 12.0, // text size
+                              color: Color.fromARGB(255, 144, 142, 142),
+
+                              // text color
+                            ),
                           ),
                         ),
                         WidgetSpan(
@@ -377,6 +512,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         WidgetSpan(
                           child: Text(
                             'Negative Prompt',
+                            style: TextStyle(
+                              fontFamily:
+                                  'custom font', // remove this if don't have custom font
+                              fontSize: 12.0, // text size
+                              color: Color.fromARGB(255, 144, 142, 142),
+
+                              // text color
+                            ),
                           ),
                         ),
                         WidgetSpan(

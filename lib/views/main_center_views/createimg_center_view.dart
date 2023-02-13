@@ -68,6 +68,9 @@ class _ImgGridViewState extends State<ImgGridView> {
   final pink = const Color(0xFFFACCCC);
   final grey = const Color(0xFFF2F2F7);
 
+  String _avatarImage =
+      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+
   @override
   void initState() {
     super.initState();
@@ -145,7 +148,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width - 300,
+                      width: MediaQuery.of(context).size.width - 230,
                       height: 35,
                       child: TextField(
                         textAlign: TextAlign.center,
@@ -168,16 +171,38 @@ class _ImgGridViewState extends State<ImgGridView> {
                               Icons.search,
                               color: kButtonLightPurple,
                             ),
-                            // child: WebsafeSvg.asset(
-                            //   "assets/Icons/Search.svg",
-                            //   width: 15,
-                            // ),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             borderSide: BorderSide(
                                 color: kTextFieldBackgroundColor, width: 2),
                           ),
+                        ),
+                      ),
+                    ),
+
+                    Positioned(
+                      top: MediaQuery.of(context).size.height / 8,
+                      left: MediaQuery.of(context).size.width / 2 - 50,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 40),
+                        width: 40,
+                        height: 40,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(_avatarImage),
+                        ),
+                      ),
+                    ),
+
+                    Positioned(
+                      top: MediaQuery.of(context).size.height / 8,
+                      left: MediaQuery.of(context).size.width / 2 - 50,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 20),
+                        width: 45,
+                        height: 45,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(_avatarImage),
                         ),
                       ),
                     ),
@@ -233,25 +258,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                   ),
                 ),
               ),
-
               SizedBox(height: kDefaultPadding / 2),
-              //Image Grid View
-
-              // Expanded(
-              //   child: MasonryGridView.count(
-              //     crossAxisCount: 4,
-              //     mainAxisSpacing: 4,
-              //     crossAxisSpacing: 4,
-              //     itemBuilder: (context, index) {
-
-              //       return Tile(
-              //         index: index,
-              //         extent: (index % 5 + 1) * 100,
-              //       );
-              //     },
-              //   ),
-              // ),
-
               Expanded(
                 child: ImageGridView(
                     selectedImages: _selectedImages,
@@ -288,34 +295,34 @@ class _ImgGridViewState extends State<ImgGridView> {
                   ),
                 ),
               SizedBox(height: kDefaultPadding),
-              Container(
-                height: 35.0,
-                width: 350,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    gradient: LinearGradient(colors: [
-                      Color.fromARGB(255, 61, 2, 50),
-                      Color.fromARGB(255, 10, 6, 20)
-                    ])),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    // shadowColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: Text('Addds'),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AdMob();
-                      },
-                    );
-                  },
-                ),
-              ),
+              // Container(
+              //   height: 35.0,
+              //   width: 350,
+              //   decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(10),
+              //       gradient: LinearGradient(colors: [
+              //         Color.fromARGB(255, 61, 2, 50),
+              //         Color.fromARGB(255, 10, 6, 20)
+              //       ])),
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       // shadowColor: Colors.transparent,
+              //       backgroundColor: Colors.transparent,
+              //       shadowColor: Colors.transparent,
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(10)),
+              //     ),
+              //     child: Text('Addds'),
+              //     onPressed: () {
+              //       showDialog(
+              //         context: context,
+              //         builder: (context) {
+              //           return AdMob();
+              //         },
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),
