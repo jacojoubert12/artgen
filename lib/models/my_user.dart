@@ -29,6 +29,7 @@ class MyUser {
   final Storage _localStorage = window.localStorage;
   List<String> modelList = [];
   String selectedModel = '';
+  String subTopic = '';
 
   //ImgGen Settings
   double samplingStepsSliderValue = 20;
@@ -44,6 +45,11 @@ class MyUser {
   initMyUser() {
     guestLogin();
     getUniqueCheckpointFiles();
+    setSubTopic();
+  }
+
+  setSubTopic() {
+    subTopic = "img_gen_response/" + user!.uid;
   }
 
   Future<List<DocumentSnapshot>> getDocumentsFromCollection(
@@ -89,7 +95,7 @@ class MyUser {
       data.forEach((key, value) {
         var now = Timestamp.fromDate(dateUtc);
         Timestamp activeTime = value['active'];
-        if ((now.seconds - activeTime.seconds) < 180)
+        if ((now.seconds - activeTime.seconds) < 1000)
           uniqueFiles.add(value["checkpoint_file"]);
       });
     });
@@ -134,55 +140,55 @@ class MyUser {
   }
 
   Future<String?> getStrData(String key) async {
-    // if (kIsWeb) {
-    //   String? value = _localStorage[key];
-    //   return value;
-    // } else {
-    //   final prefs = await SharedPreferences.getInstance();
-    //   return prefs.getString(key);
-    // }
+    if (kIsWeb) {
+      String? value = _localStorage[key];
+      return value;
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(key);
+    }
   }
 
   Future<void> storeStrData(String key, String? value) async {
-    // if (kIsWeb) {
-    //   _localStorage[key] = value!;
-    // } else {
-    //   final prefs = await SharedPreferences.getInstance();
-    //   prefs.setString(key, value!);
-    // }
+    if (kIsWeb) {
+      _localStorage[key] = value!;
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(key, value!);
+    }
   }
 
   Future<int?> getIntData(String key) async {
-    // if (kIsWeb) {
-    //   print("Nulll yet?");
-    //   String? strValue = _localStorage[key];
-    //   if (strValue == null) {
-    //     return 0;
-    //   }
-    //   int? value;
-    //   try {
-    //     value = int.tryParse(strValue);
-    //   } catch (_) {
-    //     value = 0;
-    //   }
-    //   print("getIntData");
-    //   print(value);
-    //   return value;
-    // } else {
-    //   final prefs = await SharedPreferences.getInstance();
-    //   return prefs.getInt(key) ?? 0;
-    // }
+    if (kIsWeb) {
+      print("Nulll yet?");
+      String? strValue = _localStorage[key];
+      if (strValue == null) {
+        return 0;
+      }
+      int? value;
+      try {
+        value = int.tryParse(strValue);
+      } catch (_) {
+        value = 0;
+      }
+      print("getIntData");
+      print(value);
+      return value;
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getInt(key) ?? 0;
+    }
   }
 
   Future<void> storeIntData(String key, int? value) async {
-    // if (kIsWeb) {
-    //   print("storeIntData");
-    //   print(value);
-    //   _localStorage[key] = value.toString();
-    // } else {
-    //   final prefs = await SharedPreferences.getInstance();
-    //   prefs.setInt(key, value!);
-    // }
+    if (kIsWeb) {
+      print("storeIntData");
+      print(value);
+      _localStorage[key] = value.toString();
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setInt(key, value!);
+    }
   }
 
   updateImagesGenerated() {

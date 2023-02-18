@@ -83,6 +83,7 @@ class _ImgGridViewState extends State<ImgGridView> {
       firebase_storage.FirebaseStorage.instance;
   MQTTClientManager mqttClientManager = MQTTClientManager();
   String pubTopic = "search";
+  String pubTopicFeatured = "featured";
   String subTopic = "search_response/" + user.user!.uid;
 
   String _avatarImage =
@@ -97,7 +98,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
     _images = widget.images;
-    getImageUrls();
+    getFeaturedImageUrls();
   }
 
   @override
@@ -106,9 +107,22 @@ class _ImgGridViewState extends State<ImgGridView> {
     super.dispose();
   }
 
-  getImageUrls([String q = "random"]) async {
+  getSearchImageUrls([String q = "house"]) async {
+    //TODo Add 'featued' for 'default' images on startup
     var query = {'keywords': q, 'response_topic': subTopic};
     mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
+    print("JSON Encoded query:");
+    print(jsonEncode(query));
+
+    setState(() {
+      loading = true;
+    });
+  }
+
+  getFeaturedImageUrls() async {
+    //TODo Add 'featued' for 'default' images on startup
+    var query = {'model': user.pubTopic, 'response_topic': subTopic};
+    mqttClientManager.publishMessage(pubTopicFeatured, jsonEncode(query));
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -127,6 +141,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   Future<void> setupMqttClient() async {
     await mqttClientManager.connect();
+    // mqttClientManager.client.autoReconnect = true;
     mqttClientManager.subscribe(subTopic);
   }
 
@@ -137,16 +152,16 @@ class _ImgGridViewState extends State<ImgGridView> {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+      // print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
       //   generatedImgUrls.clear();
       print("response");
-      print(jsonDecode(pt));
+      // print(jsonDecode(pt));
       print("after");
       final List<String> imageUrls = [];
       final List<dynamic> images = [];
       for (var img in jsonDecode(pt)) {
         print(img);
-        print('\n');
+        // print('\n');
         print(img['_source']['details']['images'][0]);
         //Maybe add everything later - issue is if batch_size was 100 you dont want all to show?
         int len = img['_source']['details']['images'].length;
@@ -155,7 +170,9 @@ class _ImgGridViewState extends State<ImgGridView> {
           var rawUrl = img['_source']['details']['images'][i];
           rawUrl = rawUrl.toString();
           String filename = rawUrl.substring(rawUrl.length - 40);
-          String url = await storage.ref('images/$filename').getDownloadURL();
+          String url =
+              await storage.ref('thumbnails/$filename').getDownloadURL();
+          // var url = '';
           imageUrls.add(url);
         }
         images.add(img);
@@ -164,6 +181,18 @@ class _ImgGridViewState extends State<ImgGridView> {
         _imageUrls = imageUrls;
         _images = images;
         loading = false;
+
+        // _imageUrls = [
+        //   "http://68.183.44.212:12000/images/glass.jpg",
+        //   "http://68.183.44.212:12000/images/thebest.jpg",
+        //   "http://68.183.44.212:12000/images/glass.jpg",
+        //   "http://68.183.44.212:12000/images/thebest.jpg",
+        //   "http://68.183.44.212:12000/images/glass.jpg",
+        //   "http://68.183.44.212:12000/images/thebest.jpg",
+        //   "http://68.183.44.212:12000/images/glass.jpg",
+        //   "http://68.183.44.212:12000/images/thebest.jpg",
+        //   "http://68.183.44.212:12000/images/glass.jpg"
+        // ];
       });
     });
   }
@@ -202,14 +231,16 @@ class _ImgGridViewState extends State<ImgGridView> {
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 230,
-                      height: 35,
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width - 230,
+                    //   height: 35,
+                    Expanded(
+                      flex: 4,
                       child: TextField(
                         textAlign: TextAlign.center,
                         onSubmitted: (value) {
                           setState(() {
-                            getImageUrls(value);
+                            getSearchImageUrls(value);
                           });
                         },
                         decoration: InputDecoration(
@@ -217,7 +248,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                             fontSize: 12,
                             color: Color.fromARGB(255, 144, 142, 142),
                           ),
-                          hintText: "Search for specific topics",
+                          hintText: "Search for inspiration",
                           fillColor: kTextFieldBackgroundColor,
                           filled: true,
                           suffixIcon: Padding(
@@ -235,10 +266,43 @@ class _ImgGridViewState extends State<ImgGridView> {
                         ),
                       ),
                     ),
+                    SizedBox(width: kDefaultWidth),
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        // height: 40,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
 
-                    Positioned(
-                      top: MediaQuery.of(context).size.height / 8,
-                      left: MediaQuery.of(context).size.width / 2 - 50,
+                              // color: Color.fromARGB(44, 215, 4, 170),
+                              ),
+                          child: DropdownButton<String>(
+                            value: user.selectedModel,
+                            borderRadius: BorderRadius.circular(20),
+                            itemHeight: 50,
+                            items: user.modelList
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                user.selectedModel = newValue!;
+                                user.pubTopic = user.selectedModel;
+                                getFeaturedImageUrls();
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
                       child: Container(
                         margin: EdgeInsets.only(left: 40),
                         width: 40,
@@ -248,17 +312,14 @@ class _ImgGridViewState extends State<ImgGridView> {
                         ),
                       ),
                     ),
-
-                    Positioned(
-                      top: MediaQuery.of(context).size.height / 8,
-                      left: MediaQuery.of(context).size.width / 2 - 50,
+                    Expanded(
+                      flex: 1,
                       child: Container(
                         margin: EdgeInsets.only(left: 20),
                         width: 45,
                         height: 45,
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(_avatarImage),
-                        ),
+                            backgroundImage: NetworkImage(_avatarImage)),
                       ),
                     ),
                   ],
@@ -315,14 +376,22 @@ class _ImgGridViewState extends State<ImgGridView> {
               ),
               SizedBox(height: kDefaultPadding / 2),
               Expanded(
-                child: ImageGridView(
-                    selectedImages: _selectedImages,
-                    selectedImageUrls: _selectedImageUrls,
-                    updateSelectedImages:
-                        centerViewUpdateSelectedImages, //widget.updateSelectedImages,
-                    showDetailView: widget.showDetailView,
-                    imageUrls: _imageUrls,
-                    images: _images),
+                child: loading
+                    ? Column(children: [
+                        SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator()),
+                        Text('')
+                      ])
+                    : ImageGridView(
+                        selectedImages: _selectedImages,
+                        selectedImageUrls: _selectedImageUrls,
+                        updateSelectedImages:
+                            centerViewUpdateSelectedImages, //widget.updateSelectedImages,
+                        showDetailView: widget.showDetailView,
+                        imageUrls: _imageUrls,
+                        images: _images),
               ),
               SizedBox(height: kDefaultPadding),
               if (Responsive.isMobile(context))
@@ -393,17 +462,17 @@ class ImageGridView extends StatefulWidget {
   final Set<String>? selectedImageUrls;
   final Function? updateSelectedImages;
   final Function? showDetailView;
-  final List<String>? imageUrls;
-  final List<dynamic>? images;
+  final List<String> imageUrls;
+  final List<dynamic> images;
 
-  const ImageGridView(
+  ImageGridView(
       {Key? key,
       this.updateSelectedImages,
       this.selectedImageUrls,
       this.selectedImages,
       this.showDetailView,
-      this.images,
-      this.imageUrls})
+      required this.images,
+      required this.imageUrls})
       : super(key: key);
 
   @override
@@ -413,8 +482,8 @@ class ImageGridView extends StatefulWidget {
 class _ImageGridViewState extends State<ImageGridView> {
   Set<String>? _selectedImageUrls;
   Set<dynamic>? _selectedImages;
-  List<String>? _imageUrls; // = [];
-  List<dynamic>? _images; // = [];
+  List<String> _imageUrls = [];
+  List<dynamic> _images = [];
 
   @override
   void initState() {
@@ -441,7 +510,7 @@ class _ImageGridViewState extends State<ImageGridView> {
       //   childAspectRatio: 1,
       // ),
       itemBuilder: (BuildContext context, int index) {
-        final imageUrl = _imageUrls![index];
+        final imageUrl = _imageUrls![index]; //.getDownloadUrl().toString();
         final imageFull = _images![index];
         final isSelected = _selectedImageUrls!.contains(imageUrl);
 

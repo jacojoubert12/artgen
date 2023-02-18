@@ -67,8 +67,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
   MQTTClientManager mqttClientManager = MQTTClientManager();
-  // String pubTopic = user.pubTopic; // : "mdjrny_v4";
-  String subTopic = "img_gen_response/" + user.user!.uid;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -89,10 +87,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     super.dispose();
   }
 
-  //TODO Reconnections and Timeouts on requests
   Future<void> setupMqttClient() async {
     await mqttClientManager.connect();
-    mqttClientManager.subscribe(subTopic);
+    // mqttClientManager.client.autoReconnect = true;
+    mqttClientManager.subscribe(user.subTopic);
   }
 
   void setupUpdatesListener() {
@@ -110,9 +108,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         String urlString = url.toString();
         String filename = urlString.substring(urlString.length - 40);
         print(filename);
-        String storage_ref =
-            await storage.ref('images/$filename').getDownloadURL();
-        imageUrls.add(storage_ref);
+        try {
+          String storage_ref =
+              await storage.ref('thumbnails/$filename').getDownloadURL();
+          imageUrls.add(storage_ref);
+        } catch (e) {
+          print("Could not find thumbnail");
+          print(e);
+        }
       }
       setState(() {
         generatedImgUrls = imageUrls;
@@ -140,9 +143,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     negprompt = "";
     for (var jsonString in _selectedImages!) {
       if (jsonString != null) {
-        var json = jsonEncode(jsonString['prompt']);
-        prompt += jsonDecode(json) + " ";
-
+        // print(jsonString);
+        var jsonP = jsonString['_source']['details']['parameters']['prompt'];
+        var jsonNP =
+            jsonString['_source']['details']['parameters']['negative_prompt'];
+        prompt += jsonP + " ";
+        negprompt += jsonNP + " ";
+        print(prompt);
+        print(negprompt);
         //Null checks etc?
         // json = jsonEncode(jsonString['negprompt']);
         // negprompt += jsonDecode(json) + " ";
@@ -162,7 +170,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "height": user.heightSliderValue,
       // "batch_count": _batchCountSliderValue;
       "batch_size": user.batchSizeSliderValue,
-      "response_topic": subTopic,
+      "response_topic": user.subTopic,
       "user": user.user?.uid,
     };
   }
@@ -557,8 +565,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                 );
                                 setState(() {});
                               },
-                              child: Image.network(generatedImgUrls[index],
-                                  fit: BoxFit.contain),
+                              child: FadeInImage(
+                                placeholder: NetworkImage(
+                                    'http://68.183.44.212:12000/images/glass.jpg'),
+                                image: NetworkImage(generatedImgUrls[index]),
+                              ),
                             ),
                           );
                         },

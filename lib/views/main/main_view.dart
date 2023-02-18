@@ -194,13 +194,13 @@ class _Mainviewstate extends State<MainScreen> {
         tablet: Row(
           children: [
             Expanded(
-              flex: 6,
-              child: getViewModeCenterView()!,
+              flex: 9,
+              child: getViewModeDetailView()!,
             ),
             shouldShowDetailView
                 ? Expanded(
-                    flex: 9,
-                    child: getViewModeDetailView()!,
+                    flex: 6,
+                    child: getViewModeCenterView()!,
                   )
                 : Expanded(
                     flex: 0,
@@ -217,12 +217,12 @@ class _Mainviewstate extends State<MainScreen> {
               ),
             ),
             Expanded(
-                flex: _size.width > 1340 ? 8 : 12,
-                child: getViewModeCenterView()!),
+                flex: _size.width > 1340 ? 12 : 15,
+                child: getViewModeDetailView()!),
             shouldShowDetailView
                 ? Expanded(
-                    flex: _size.width > 1340 ? 12 : 15,
-                    child: getViewModeDetailView()!,
+                    flex: _size.width > 1340 ? 8 : 12,
+                    child: getViewModeCenterView()!,
                   )
                 : Expanded(
                     flex: 0,
