@@ -43,8 +43,8 @@ class ImgGridView extends StatefulWidget {
   final Function? showDetailView;
   final selectedImages;
   final selectedImageUrls;
-  List<String> imageUrls = [];
-  List<dynamic> images = [];
+  final List<String> imageUrls = [];
+  final List<dynamic> images = [];
 
   // late InterstitialAd _interstitialAd;
   // bool _isAdLoaded = false;
@@ -297,17 +297,17 @@ class _ImgGridViewState extends State<ImgGridView> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 40),
-                        width: 40,
-                        height: 40,
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(_avatarImage),
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   flex: 1,
+                    //   child: Container(
+                    //     margin: EdgeInsets.only(left: 40),
+                    //     width: 40,
+                    //     height: 40,
+                    //     child: CircleAvatar(
+                    //       backgroundImage: NetworkImage(_avatarImage),
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
                       flex: 1,
                       child: Container(
@@ -337,27 +337,34 @@ class _ImgGridViewState extends State<ImgGridView> {
                         ),
                       ),
                     )
-                  : Text(""),
+                  : SizedBox(
+                      height: 0,
+                    ),
 
-              SizedBox(height: kDefaultPadding / 2),
-              Container(
-                width: double.infinity,
-                height: 80,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Color.fromARGB(255, 77, 75, 75),
-                      width: 2.0,
-                      style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: ImageListView(
-                  updateSelectedImages: widget.updateSelectedImages,
-                  selectedImages: _selectedImages,
-                  selectedImageUrls: _selectedImageUrls,
-                ),
-              ),
+              Responsive.isMobile(context)
+                  ? Container(
+                      width: double.infinity,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Color.fromARGB(255, 77, 75, 75),
+                            width: 2.0,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: ImageListView(
+                        updateSelectedImages: widget.updateSelectedImages,
+                        selectedImages: _selectedImages,
+                        selectedImageUrls: _selectedImageUrls,
+                      ),
+                    )
+                  : SizedBox(
+                      height: 0,
+                    ),
 
-              SizedBox(height: kDefaultPadding / 2),
+              SizedBox(
+                  height:
+                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20.0),
@@ -371,7 +378,9 @@ class _ImgGridViewState extends State<ImgGridView> {
                   ),
                 ),
               ),
-              SizedBox(height: kDefaultPadding / 2),
+              SizedBox(
+                  height:
+                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
 
               Expanded(
                 child: loading

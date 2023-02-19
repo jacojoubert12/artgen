@@ -304,46 +304,61 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       },
                     ),
                   if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                  Container(
-                    width: MediaQuery.of(context).size.width - 230,
-                    height: 35,
-                    alignment: Alignment.center,
-                    // padding: const EdgeInsets.all( 15.0),
-                    child: Text(
-                      "Create Image",
-                      style: TextStyle(
-                        fontFamily:
-                            'custom font', // remove this if don't have custom font
-                        fontSize: 20.0, // text size
-                        color: Color.fromARGB(255, 144, 142, 142),
+                  Expanded(
+                    flex: 1,
+                    child: Responsive.isMobile(context)
+                        ? Container(
+                            margin: EdgeInsets.only(left: 20),
+                            width: 45,
+                            height: 45,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(_avatarImage),
+                            ),
+                          )
+                        : SizedBox(
+                            width: 45,
+                          ),
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: Container(
+                      height: 35,
+                      alignment: Alignment.center,
+                      // padding: const EdgeInsets.all( 15.0),
+                      child: Text(
+                        "Create Image",
+                        style: TextStyle(
+                          fontFamily:
+                              'custom font', // remove this if don't have custom font
+                          fontSize: 20.0, // text size
+                          color: Color.fromARGB(255, 144, 142, 142),
+                        ),
                       ),
                     ),
                   ),
+                  // Container(
+                  //   margin: EdgeInsets.only(left: 40),
+                  //   width: 40,
+                  //   height: 40,
+                  //   child: CircleAvatar(
+                  //     backgroundImage: NetworkImage(_avatarImage),
+                  //   ),
+                  // ),
 
-                  Positioned(
-                    top: MediaQuery.of(context).size.height / 8,
-                    left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: Container(
-                      margin: EdgeInsets.only(left: 40),
-                      width: 40,
-                      height: 40,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(_avatarImage),
-                      ),
-                    ),
-                  ),
-
-                  Positioned(
-                    top: MediaQuery.of(context).size.height / 8,
-                    left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: Container(
-                      margin: EdgeInsets.only(left: 20),
-                      width: 45,
-                      height: 45,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(_avatarImage),
-                      ),
-                    ),
+                  Expanded(
+                    flex: 1,
+                    child: Responsive.isMobile(context)
+                        ? Container(
+                            margin: EdgeInsets.only(left: 20),
+                            width: 45,
+                            height: 45,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(_avatarImage),
+                            ),
+                          )
+                        : SizedBox(
+                            width: 45,
+                          ),
                   ),
                 ],
               ),
