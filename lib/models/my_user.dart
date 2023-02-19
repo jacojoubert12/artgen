@@ -3,6 +3,7 @@ import 'dart:html';
 import 'dart:io';
 
 import 'package:artgen/auth_gate.dart';
+import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -30,11 +31,14 @@ class MyUser {
   List<String> modelList = [];
   String selectedModel = '';
   String subTopic = '';
+  List<double> widths = [768, 704, 640, 576, 512, 460, 512, 512, 512, 512];
+  List<double> heights = [512, 512, 512, 512, 512, 460, 576, 640, 704, 768];
 
   //ImgGen Settings
   double samplingStepsSliderValue = 20;
-  double resolutionSliderValue = 20;
-  double widthliderValue = 512;
+  double resolutionSteps = 10;
+  double resolutionSliderValue = 0;
+  double widthSliderValue = 512;
   double heightSliderValue = 512;
   double guidanceScaleSliderValue = 15;
   // double batchCountSliderValue = 1;
@@ -105,6 +109,7 @@ class MyUser {
         : selectedModel == ''
             ? selectedModel = modelList[0]
             : selectedModel = selectedModel;
+    modelList.insert(0, '*');
     return modelList;
   }
 

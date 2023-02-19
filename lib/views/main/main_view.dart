@@ -79,7 +79,16 @@ class _Mainviewstate extends State<MainScreen> {
 
     getDeviceInfo();
     user.initMyUser();
-    // user = MyUser();
+  }
+
+  void setDfaultResolution() {
+    if (Responsive.isDesktop(context)) {
+      user.resolutionSliderValue = 0;
+    } else {
+      user.resolutionSliderValue = 9;
+    }
+    user.widthSliderValue = user.widths[user.resolutionSliderValue.toInt()];
+    user.heightSliderValue = user.heights[user.resolutionSliderValue.toInt()];
   }
 
   getDeviceInfo() async {
@@ -115,6 +124,7 @@ class _Mainviewstate extends State<MainScreen> {
           : shouldShowDetailView = false;
       this.viewMode = viewMode;
     });
+    setDfaultResolution();
   }
 
   updateSelectedImages(selectedImageSet, selectedImageUrls) {

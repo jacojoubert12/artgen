@@ -79,6 +79,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
     setupMqttClient();
     setupUpdatesListener();
+    setSettingsFromSelected();
   }
 
   @override
@@ -91,6 +92,19 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     await mqttClientManager.connect();
     // mqttClientManager.client.autoReconnect = true;
     mqttClientManager.subscribe(user.subTopic);
+  }
+
+  void setSettingsFromSelected() {
+    for (var selectedImg in _selectedImages?.toSet() ?? []) {
+      print(selectedImg);
+      int samplingSteps =
+          selectedImg["_source"]["details"]["parameters"]["steps"];
+      int width = selectedImg["_source"]["details"]["parameters"]["width"];
+      int height = selectedImg["_source"]["details"]["parameters"]["height"];
+      int guidanceScale =
+          selectedImg["_source"]["details"]["info"]["cfg_scale"];
+      String model = selectedImg["_source"]["model"];
+    }
   }
 
   void setupUpdatesListener() {
@@ -108,14 +122,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         String urlString = url.toString();
         String filename = urlString.substring(urlString.length - 40);
         print(filename);
-        try {
-          String storage_ref =
-              await storage.ref('thumbnails/$filename').getDownloadURL();
-          imageUrls.add(storage_ref);
-        } catch (e) {
-          print("Could not find thumbnail");
-          print(e);
-        }
+        String storage_ref =
+            await storage.ref('images/$filename').getDownloadURL();
+        imageUrls.add(storage_ref);
       }
       setState(() {
         generatedImgUrls = imageUrls;
@@ -166,7 +175,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "negprompt": escapeDangerousCharacters(negprompt),
       "steps": user.samplingStepsSliderValue,
       "guidance": user.guidanceScaleSliderValue,
-      "width": user.widthliderValue,
+      "width": user.widthSliderValue,
       "height": user.heightSliderValue,
       // "batch_count": _batchCountSliderValue;
       "batch_size": user.batchSizeSliderValue,

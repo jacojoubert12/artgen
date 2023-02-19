@@ -17,7 +17,7 @@ class MQTTClientManager {
 
   Future<int> connect() async {
     client.logging(on: true);
-    client.keepAlivePeriod = 300;
+    client.keepAlivePeriod = 3600;
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
     client.onSubscribed = onSubscribed;
@@ -27,14 +27,20 @@ class MQTTClientManager {
         MqttConnectMessage().startClean().withWillQos(MqttQos.atLeastOnce);
     client.connectionMessage = connMessage;
 
-    try {
-      await client.connect();
-    } on NoConnectionException catch (e) {
-      print('MQTTClient::Client exception - $e');
-      client.disconnect();
-    } on SocketException catch (e) {
-      print('MQTTClient::Socket exception - $e');
-      client.disconnect();
+    while (true) {
+      try {
+        await client.connect();
+        break; // break out of the loop if connection is successful
+      } on NoConnectionException catch (e) {
+        print('MQTTClient::Client exception - $e');
+        client.disconnect();
+      } on SocketException catch (e) {
+        print('MQTTClient::Socket exception - $e');
+        client.disconnect();
+      }
+
+      await Future.delayed(
+          Duration(seconds: 1)); // wait for 1 second before retrying
     }
 
     return 0;

@@ -98,27 +98,32 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
             Text("Resolution"),
             Slider(
               value: user.resolutionSliderValue,
-              max: 150,
-              min: 1,
-              divisions: 149,
-              label: user.resolutionSliderValue.round().toString(),
+              max: user.resolutionSteps - 1,
+              min: 0,
+              divisions: 9,
+              label:
+                  "${user.widths[user.resolutionSliderValue.toInt()]} x ${user.heights[user.resolutionSliderValue.toInt()]}",
               onChanged: (double value) {
                 setState(() {
                   user.resolutionSliderValue = value;
+                  user.widthSliderValue =
+                      user.widths[user.resolutionSliderValue.toInt()];
+                  user.heightSliderValue =
+                      user.heights[user.resolutionSliderValue.toInt()];
                 });
               },
             ),
             // SizedBox(height: kDefaultPadding),
             Text("Width"),
             Slider(
-              value: user.widthliderValue,
+              value: user.widthSliderValue,
               max: 2048,
               min: 64,
               divisions: 1984,
-              label: user.widthliderValue.round().toString(),
+              label: user.widthSliderValue.round().toString(),
               onChanged: (double value) {
                 setState(() {
-                  user.widthliderValue = value;
+                  user.widthSliderValue = value;
                 });
               },
             ),

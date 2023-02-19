@@ -2,6 +2,7 @@ import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/views/main/main_view.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -84,7 +85,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   MQTTClientManager mqttClientManager = MQTTClientManager();
   String pubTopic = "search";
   String pubTopicFeatured = "featured";
-  String subTopic = "search_response/" + user.user!.uid;
+  String subTopic = '';
 
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
@@ -107,8 +108,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     super.dispose();
   }
 
-  getSearchImageUrls([String q = "house"]) async {
-    //TODo Add 'featued' for 'default' images on startup
+  getSearchImageUrls([String q = "featured"]) async {
     var query = {'keywords': q, 'response_topic': subTopic};
     mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
     print("JSON Encoded query:");
@@ -142,6 +142,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   Future<void> setupMqttClient() async {
     await mqttClientManager.connect();
     // mqttClientManager.client.autoReconnect = true;
+    subTopic = "search_response/" + user.user!.uid;
     mqttClientManager.subscribe(subTopic);
   }
 
@@ -157,28 +158,26 @@ class _ImgGridViewState extends State<ImgGridView> {
       print("response");
       // print(jsonDecode(pt));
       print("after");
-      final List<String> imageUrls = [];
+      final Set<String> imageUrls = Set();
       final List<dynamic> images = [];
       for (var img in jsonDecode(pt)) {
-        print(img);
-        // print('\n');
+        // print(img);
         print(img['_source']['details']['images'][0]);
-        //Maybe add everything later - issue is if batch_size was 100 you dont want all to show?
         int len = img['_source']['details']['images'].length;
+        //If batch_size was 100 you dont want all to show?
         var imgCount = min(len, 5);
         for (var i = 0; i < imgCount; i++) {
-          var rawUrl = img['_source']['details']['images'][i];
-          rawUrl = rawUrl.toString();
-          String filename = rawUrl.substring(rawUrl.length - 40);
-          String url =
-              await storage.ref('thumbnails/$filename').getDownloadURL();
-          // var url = '';
-          imageUrls.add(url);
+          String rawUrl = img['_source']['details']['images'][i];
+          if (rawUrl.contains("thumbnail")) {
+            Reference ref = FirebaseStorage.instance.refFromURL(rawUrl);
+            String url = await ref.getDownloadURL();
+            imageUrls.add(url);
+          }
+          images.add(img);
         }
-        images.add(img);
       }
       setState(() {
-        _imageUrls = imageUrls;
+        _imageUrls = imageUrls.toList();
         _images = images;
         loading = false;
 
@@ -231,9 +230,6 @@ class _ImgGridViewState extends State<ImgGridView> {
                         },
                       ),
                     if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                    // SizedBox(
-                    //   width: MediaQuery.of(context).size.width - 230,
-                    //   height: 35,
                     Expanded(
                       flex: 4,
                       child: TextField(
@@ -326,21 +322,22 @@ class _ImgGridViewState extends State<ImgGridView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
-              if (Responsive.isMobile(context))
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    "Selected images",
-                    style: TextStyle(
-                      fontFamily:
-                          'custom font', // remove this if don't have custom font
-                      fontSize: 15.0, // text size
-                      color: Color.fromARGB(255, 144, 142, 142),
-                      // text color
-                    ),
-                  ),
-                ),
+              Responsive.isMobile(context)
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        "Selected images",
+                        style: TextStyle(
+                          fontFamily:
+                              'custom font', // remove this if don't have custom font
+                          fontSize: 15.0, // text size
+                          color: Color.fromARGB(255, 144, 142, 142),
+                          // text color
+                        ),
+                      ),
+                    )
+                  : Text(""),
 
               SizedBox(height: kDefaultPadding / 2),
               Container(
@@ -375,6 +372,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding / 2),
+
               Expanded(
                 child: loading
                     ? Column(children: [
