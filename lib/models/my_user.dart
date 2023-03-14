@@ -13,7 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_ui/auth.dart';
 // import 'package:firebase_firestore/firebase_firestore.dart';
 
-class MyUser {
+class MyUser extends ChangeNotifier {
   User? user;
   String? app_id;
   bool shouldLogin = true;
@@ -39,7 +39,7 @@ class MyUser {
   double resolutionSteps = 10;
   double resolutionSliderValue = 0;
   double widthSliderValue = 512;
-  double heightSliderValue = 512;
+  double heightSliderValue = 768;
   double guidanceScaleSliderValue = 15;
   // double batchCountSliderValue = 1;
   double batchSizeSliderValue = 1;
@@ -110,6 +110,7 @@ class MyUser {
             ? selectedModel = modelList[0]
             : selectedModel = selectedModel;
     modelList.insert(0, '*');
+    notifyListeners();
     return modelList;
   }
 

@@ -127,7 +127,40 @@ class _Mainviewstate extends State<MainScreen> {
     setDfaultResolution();
   }
 
+  void setSettingsFromSelected(var _selectedImages) {
+    List<String> models = [];
+    List<double> guidanceScales = [];
+
+    for (var selectedImg in _selectedImages) {
+      // int samplingSteps =
+      // selectedImg["_source"]["details"]["parameters"]["steps"];
+      // int width = selectedImg["_source"]["details"]["parameters"]["width"];
+      // int height = selectedImg["_source"]["details"]["parameters"]["height"];
+      String model = selectedImg["_source"]["model"];
+      double guidanceScale =
+          selectedImg['_source']['details']['parameters']['cfg_scale'];
+      models.add(model);
+      guidanceScales.add(guidanceScale);
+    }
+    String? mostCommonModel = models.isEmpty
+        ? null
+        : models.reduce((a, b) => models.where((model) => model == a).length >
+                models.where((model) => model == b).length
+            ? a
+            : b);
+    double? averageGuidanceScale = guidanceScales.isEmpty
+        ? null
+        : guidanceScales.reduce((a, b) => a + b) / guidanceScales.length;
+
+    if (mostCommonModel != null) user.selectedModel = mostCommonModel;
+    if (averageGuidanceScale != null)
+      user.guidanceScaleSliderValue = averageGuidanceScale;
+    print("Most common model: $mostCommonModel");
+    print("Average guidance scale: $averageGuidanceScale");
+  }
+
   updateSelectedImages(selectedImageSet, selectedImageUrls) {
+    setSettingsFromSelected(selectedImageSet);
     setState(() {
       this.selectedImages = selectedImages;
       this.selectedImageUrls = selectedImageUrls;

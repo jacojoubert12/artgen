@@ -100,6 +100,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     _imageUrls = widget.imageUrls;
     _images = widget.images;
     getFeaturedImageUrls();
+    user.addListener(getFeaturedImageUrls);
   }
 
   @override
@@ -127,6 +128,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     print(jsonEncode(query));
 
     setState(() {
+      user.modelList = user.modelList;
       loading = true;
     });
   }
@@ -153,48 +155,33 @@ class _ImgGridViewState extends State<ImgGridView> {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      // print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
-      //   generatedImgUrls.clear();
-      print("response");
-      // print(jsonDecode(pt));
-      print("after");
       final Set<String> imageUrls = Set();
       final List<dynamic> images = [];
       for (var img in jsonDecode(pt)) {
-        // print(img);
-        print(img['_source']['details']['images'][0]);
-        int len = img['_source']['details']['images'].length;
-        //If batch_size was 100 you dont want all to show?
-        var imgCount = min(len, 5);
-        for (var i = 0; i < imgCount; i++) {
-          String rawUrl = img['_source']['details']['images'][i];
-          if (rawUrl.contains("thumbnail")) {
-            Reference ref = FirebaseStorage.instance.refFromURL(rawUrl);
-            String url = await ref.getDownloadURL();
-            imageUrls.add(url);
-          }
-          images.add(img);
-        }
+        print(img['_source']['details']['images']['thumbnails'][0]);
+        String url = img['_source']['details']['images']['thumbnails'][0];
+        imageUrls.add(url);
+        images.add(img);
       }
       setState(() {
         _imageUrls = imageUrls.toList();
         _images = images;
         loading = false;
-
-        // _imageUrls = [
-        //   "http://68.183.44.212:12000/images/glass.jpg",
-        //   "http://68.183.44.212:12000/images/thebest.jpg",
-        //   "http://68.183.44.212:12000/images/glass.jpg",
-        //   "http://68.183.44.212:12000/images/thebest.jpg",
-        //   "http://68.183.44.212:12000/images/glass.jpg",
-        //   "http://68.183.44.212:12000/images/thebest.jpg",
-        //   "http://68.183.44.212:12000/images/glass.jpg",
-        //   "http://68.183.44.212:12000/images/thebest.jpg",
-        //   "http://68.183.44.212:12000/images/glass.jpg"
-        // ];
       });
     });
   }
+
+  // _imageUrls = [
+  //   "http://68.183.44.212:12000/images/glass.jpg",
+  //   "http://68.183.44.212:12000/images/thebest.jpg",
+  //   "http://68.183.44.212:12000/images/glass.jpg",
+  //   "http://68.183.44.212:12000/images/thebest.jpg",
+  //   "http://68.183.44.212:12000/images/glass.jpg",
+  //   "http://68.183.44.212:12000/images/thebest.jpg",
+  //   "http://68.183.44.212:12000/images/glass.jpg",
+  //   "http://68.183.44.212:12000/images/thebest.jpg",
+  //   "http://68.183.44.212:12000/images/glass.jpg"
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +249,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                         ),
                       ),
                     ),
-                    SizedBox(width: kDefaultWidth),
+                    SizedBox(width: kDefaultWidth * 2),
                     Expanded(
                       flex: 3,
                       child: Container(
@@ -426,34 +413,6 @@ class _ImgGridViewState extends State<ImgGridView> {
                   ),
                 ),
               SizedBox(height: kDefaultPadding),
-              // Container(
-              //   height: 35.0,
-              //   width: 350,
-              //   decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(10),
-              //       gradient: LinearGradient(colors: [
-              //         Color.fromARGB(255, 61, 2, 50),
-              //         Color.fromARGB(255, 10, 6, 20)
-              //       ])),
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       // shadowColor: Colors.transparent,
-              //       backgroundColor: Colors.transparent,
-              //       shadowColor: Colors.transparent,
-              //       shape: RoundedRectangleBorder(
-              //           borderRadius: BorderRadius.circular(10)),
-              //     ),
-              //     child: Text('Addds'),
-              //     onPressed: () {
-              //       showDialog(
-              //         context: context,
-              //         builder: (context) {
-              //           return AdMob();
-              //         },
-              //       );
-              //     },
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -509,23 +468,12 @@ class _ImageGridViewState extends State<ImageGridView> {
       crossAxisCount: 4,
       mainAxisSpacing: 4,
       crossAxisSpacing: 4,
-      // return GridView.builder(
       shrinkWrap: true,
-      itemCount: _imageUrls!.length,
-      // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //   crossAxisCount: 3,
-      //   childAspectRatio: 1,
-      // ),
+      itemCount: _imageUrls.length,
       itemBuilder: (BuildContext context, int index) {
-        final imageUrl = _imageUrls![index]; //.getDownloadUrl().toString();
-        final imageFull = _images![index];
+        final imageUrl = _imageUrls[index];
+        final imageFull = _images[index];
         final isSelected = _selectedImageUrls!.contains(imageUrl);
-
-        // return Tile(
-        //               index: index,
-        //               extent: (index % 5 + 1) * 100,
-        //             );
-
         return Container(
           decoration: BoxDecoration(
             border: Border.all(

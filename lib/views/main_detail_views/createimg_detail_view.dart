@@ -79,7 +79,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
     setupMqttClient();
     setupUpdatesListener();
-    setSettingsFromSelected();
   }
 
   @override
@@ -94,18 +93,31 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     mqttClientManager.subscribe(user.subTopic);
   }
 
-  void setSettingsFromSelected() {
-    for (var selectedImg in _selectedImages?.toSet() ?? []) {
-      print(selectedImg);
-      int samplingSteps =
-          selectedImg["_source"]["details"]["parameters"]["steps"];
-      int width = selectedImg["_source"]["details"]["parameters"]["width"];
-      int height = selectedImg["_source"]["details"]["parameters"]["height"];
-      int guidanceScale =
-          selectedImg["_source"]["details"]["info"]["cfg_scale"];
-      String model = selectedImg["_source"]["model"];
-    }
-  }
+  // void setupUpdatesListener() {
+  //   mqttClientManager
+  //       .getMessagesStream()!
+  //       .listen((List<MqttReceivedMessage<MqttMessage?>>? c) async {
+  //     final recMess = c![0].payload as MqttPublishMessage;
+  //     final pt =
+  //         MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+  //     print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+  //     //   generatedImgUrls.clear();
+  //     print(jsonDecode(pt));
+  //     final List<String> imageUrls = [];
+  //     for (var url in jsonDecode(pt)) {
+  //       String urlString = url.toString();
+  //       String filename = urlString.substring(urlString.length - 40);
+  //       print(filename);
+  //       String storage_ref =
+  //           await storage.ref('images/$filename').getDownloadURL();
+  //       imageUrls.add(storage_ref);
+  //     }
+  //     setState(() {
+  //       generatedImgUrls = imageUrls;
+  //       loading = false;
+  //     });
+  //   });
+  // }
 
   void setupUpdatesListener() {
     mqttClientManager
@@ -114,20 +126,15 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
-      //   generatedImgUrls.clear();
-      print(jsonDecode(pt));
-      final List<String> imageUrls = [];
-      for (var url in jsonDecode(pt)) {
-        String urlString = url.toString();
-        String filename = urlString.substring(urlString.length - 40);
-        print(filename);
-        String storage_ref =
-            await storage.ref('images/$filename').getDownloadURL();
-        imageUrls.add(storage_ref);
+      final Set<String> imageUrls = Set();
+      var response = jsonDecode(pt);
+      // print(response);
+      for (var img in response) {
+        print(img);
+        imageUrls.add(img);
       }
       setState(() {
-        generatedImgUrls = imageUrls;
+        generatedImgUrls = imageUrls.toList();
         loading = false;
       });
     });
@@ -291,40 +298,46 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
               SizedBox(height: kDefaultPadding),
               Row(
                 children: [
-                  // Once user click the menu icon the menu shows like drawer
-                  // Also we want to hide this menu icon on desktop
-                  if (!Responsive.isDesktop(context))
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: kButtonLightPurple,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                   Expanded(
                     flex: 1,
-                    child: Responsive.isMobile(context)
+                    child: !Responsive.isDesktop(context)
                         ? Container(
-                            margin: EdgeInsets.only(left: 20),
                             width: 45,
-                            height: 45,
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(_avatarImage),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: kButtonLightPurple,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
                           )
                         : SizedBox(
                             width: 45,
                           ),
                   ),
+                  if (!Responsive.isDesktop(context)) SizedBox(width: 5),
+                  // Expanded(
+                  //   flex: 1,
+                  //   child: Responsive.isMobile(context)
+                  //       ? Container(
+                  //           margin: EdgeInsets.only(left: 20),
+                  //           width: 45,
+                  //           height: 45,
+                  //           child: CircleAvatar(
+                  //             backgroundImage: NetworkImage(_avatarImage),
+                  //           ),
+                  //         )
+                  //       : SizedBox(
+                  //           width: 45,
+                  //         ),
+                  // ),
                   Expanded(
                     flex: 5,
                     child: Container(
                       height: 35,
                       alignment: Alignment.center,
-                      // padding: const EdgeInsets.all( 15.0),
                       child: Text(
                         "Create Image",
                         style: TextStyle(
@@ -686,6 +699,27 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       ),
               ),
               SizedBox(height: kDefaultPadding),
+              Container(
+                alignment: Alignment.topRight,
+                child: ElevatedButton(
+                  child: Icon(
+                    Icons.settings,
+                    size: 30.0,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return SettingNavigationDrawer();
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 181, 9, 130),
+                      onPrimary: Colors.black,
+                      shape: CircleBorder()),
+                ),
+              ),
             ],
           ),
         ),
