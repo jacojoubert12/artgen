@@ -1,29 +1,25 @@
 import 'dart:convert';
 import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
-import 'package:artgen/components/mqtt_client_manager.dart';
+// import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
 import 'package:artgen/views/main/main_view.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:platform_device_id/platform_device_id.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import '../../components/side_menu.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
-import 'components/header.dart';
 import 'image_details_view.dart';
 
 import 'dart:async';
 import 'dart:io';
-import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt5_client/mqtt5_browser_client.dart';
+import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
@@ -56,6 +52,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   ];
 
   bool loading = false;
+  int retries = 0;
   bool uploading = false;
   String prompt = "";
   String negprompt = "";
@@ -66,10 +63,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
-  MQTTClientManager mqttClientManager = MQTTClientManager();
-
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
+  final client =
+      MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
 
   @override
   void initState() {
@@ -78,65 +75,73 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     _selectedImageUrls = widget.selectedImageUrls;
 
     setupMqttClient();
-    setupUpdatesListener();
   }
 
   @override
   void dispose() {
-    mqttClientManager.disconnect();
+    client.disconnect();
     super.dispose();
   }
 
-  Future<void> setupMqttClient() async {
-    await mqttClientManager.connect();
-    // mqttClientManager.client.autoReconnect = true;
-    mqttClientManager.subscribe(user.subTopic);
+  Future<void> mqttConnect() async {
+    client.keepAlivePeriod = 3600;
+
+    client.onConnected = () {
+      print('Connected');
+    };
+
+    client.onDisconnected = () {
+      print('Disconnected');
+      if (loading) {
+        retries++;
+        if (retries > 5) {
+          retries = 0;
+        } else {
+          // mqttConnect();
+          generateImage();
+        }
+      }
+    };
+
+    client.onSubscribed = (topic) {
+      print('Subscribed to $topic');
+    };
+
+    print("Check Connection Status");
+    if (client.connectionStatus != MqttConnectionState.connected) {
+      print("Connect to server");
+      await client.connect();
+      print("Subscribe");
+      client.subscribe(user.subTopic, MqttQos.exactlyOnce);
+      print("Listen for updates");
+
+      client.updates.listen((dynamic c) {
+        final MqttPublishMessage recMess = c[0].payload;
+        final pt =
+            MqttUtilities.bytesToStringAsString(recMess.payload.message!);
+        print(
+            'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+        showGeneratedImages(pt);
+      });
+    }
   }
 
-  // void setupUpdatesListener() {
-  //   mqttClientManager
-  //       .getMessagesStream()!
-  //       .listen((List<MqttReceivedMessage<MqttMessage?>>? c) async {
-  //     final recMess = c![0].payload as MqttPublishMessage;
-  //     final pt =
-  //         MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-  //     print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
-  //     //   generatedImgUrls.clear();
-  //     print(jsonDecode(pt));
-  //     final List<String> imageUrls = [];
-  //     for (var url in jsonDecode(pt)) {
-  //       String urlString = url.toString();
-  //       String filename = urlString.substring(urlString.length - 40);
-  //       print(filename);
-  //       String storage_ref =
-  //           await storage.ref('images/$filename').getDownloadURL();
-  //       imageUrls.add(storage_ref);
-  //     }
-  //     setState(() {
-  //       generatedImgUrls = imageUrls;
-  //       loading = false;
-  //     });
-  //   });
-  // }
+  Future<void> setupMqttClient() async {
+    await mqttConnect();
+    client.subscribe(user.subTopic, MqttQos.exactlyOnce);
+  }
 
-  void setupUpdatesListener() {
-    mqttClientManager
-        .getMessagesStream()!
-        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) async {
-      final recMess = c![0].payload as MqttPublishMessage;
-      final pt =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      final Set<String> imageUrls = Set();
-      var response = jsonDecode(pt);
-      // print(response);
-      for (var img in response) {
-        print(img);
-        imageUrls.add(img);
-      }
-      setState(() {
-        generatedImgUrls = imageUrls.toList();
-        loading = false;
-      });
+  void showGeneratedImages(String message) {
+    final Set<String> imageUrls = Set();
+    var response = jsonDecode(message);
+    // print(response);
+    for (var img in response) {
+      print(img);
+      imageUrls.add(img);
+    }
+    setState(() {
+      generatedImgUrls = imageUrls.toList();
+      loading = false;
     });
   }
 
@@ -192,7 +197,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   generateImage() async {
-    mqttClientManager.publishMessage(user.pubTopic, jsonEncode(query));
+    if (client.connectionStatus != MqttConnectionState.connected) {
+      await mqttConnect();
+    }
+    final builder = MqttPayloadBuilder();
+    builder.addString(jsonEncode(query));
+    client.publishMessage(user.pubTopic, MqttQos.exactlyOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -640,10 +650,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                   user.imagesToGenerate =
                                       (user.batchSizeSliderValue as int?)!,
                                   // concatPrompts(),
-                                  setState(() {
-                                    loading = true;
-                                  }),
-                                  generateImage() //Put back!
+                                  // setState(() {
+                                  // loading = true;
+                                  // }),
+                                  generateImage()
                                 }
                               : showDialog(
                                   context: context,

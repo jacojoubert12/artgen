@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
-
 import 'package:artgen/main.dart';
 import 'package:artgen/models/my_user.dart';
 import 'package:artgen/views/main_center_views/createimg_center_view.dart';

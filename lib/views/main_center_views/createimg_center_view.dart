@@ -1,31 +1,18 @@
 import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
-import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/views/main/main_view.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:websafe_svg/websafe_svg.dart';
+import 'package:mqtt5_client/mqtt5_browser_client.dart';
+import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-
-import 'dart:math';
-
-//TODOConsider moving these to MyUser of similar to use everywhere in app
-import 'package:artgen/components/mqtt_client_manager.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-// import 'package:firebase_core/firebase_core.dart' as firebase_core;
-
 import '../../../constants.dart';
-
 import 'package:flutter/foundation.dart' show kIsWeb;
-
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class ImgGridView extends StatefulWidget {
   ImgGridView(
@@ -79,22 +66,26 @@ class _ImgGridViewState extends State<ImgGridView> {
   final pink = const Color(0xFFFACCCC);
   final grey = const Color(0xFFF2F2F7);
   bool loading = false;
+  int retries = 0;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  MQTTClientManager mqttClientManager = MQTTClientManager();
+  // MQTTClientManager mqttClientManager = MQTTClientManager();
   String pubTopic = "search";
   String pubTopicFeatured = "featured";
   String subTopic = '';
+  String searchString = '';
 
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+
+  final client =
+      MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
 
   @override
   void initState() {
     super.initState();
     setupMqttClient();
-    setupUpdatesListener();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
@@ -105,13 +96,60 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   @override
   void dispose() {
-    mqttClientManager.disconnect();
+    client.disconnect();
     super.dispose();
   }
 
+  Future<void> mqttConnect() async {
+    client.keepAlivePeriod = 3600;
+    client.onConnected = () {
+      print('Connected');
+    };
+
+    client.onDisconnected = () {
+      print('Disconnected');
+      if (loading) {
+        retries++;
+        if (retries > 5) {
+          retries = 0;
+        } else {
+          mqttConnect();
+          // getSearchImageUrls(searchString);
+        }
+      }
+    };
+
+    client.onSubscribed = (topic) {
+      print('Subscribed to $topic');
+    };
+
+    print("Check Connection Status");
+    if (client.connectionStatus != MqttConnectionState.connected) {
+      print("Connect to server");
+      await client.connect();
+      print("Subscribe");
+      client.subscribe(subTopic, MqttQos.exactlyOnce);
+      print("Listen for updates");
+
+      client.updates.listen((dynamic c) {
+        final MqttPublishMessage recMess = c[0].payload;
+        final pt =
+            MqttUtilities.bytesToStringAsString(recMess.payload.message!);
+        print(
+            'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+        showSearchResults(pt);
+      });
+    }
+  }
+
   getSearchImageUrls([String q = "featured"]) async {
+    if (client.connectionStatus != MqttConnectionState.connected) {
+      await mqttConnect();
+    }
     var query = {'keywords': q, 'response_topic': subTopic};
-    mqttClientManager.publishMessage(pubTopic, jsonEncode(query));
+    final builder = MqttPayloadBuilder();
+    builder.addString(jsonEncode(query));
+    client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -122,8 +160,14 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   getFeaturedImageUrls() async {
     //TODo Add 'featued' for 'default' images on startup
+    if (client.connectionStatus != MqttConnectionState.connected) {
+      await mqttConnect();
+    }
     var query = {'model': user.pubTopic, 'response_topic': subTopic};
-    mqttClientManager.publishMessage(pubTopicFeatured, jsonEncode(query));
+    final builder = MqttPayloadBuilder();
+    builder.addString(jsonEncode(query));
+    client.publishMessage(
+        pubTopicFeatured, MqttQos.exactlyOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -142,46 +186,27 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   Future<void> setupMqttClient() async {
-    await mqttClientManager.connect();
-    // mqttClientManager.client.autoReconnect = true;
+    mqttConnect();
     subTopic = "search_response/" + user.user!.uid;
-    mqttClientManager.subscribe(subTopic);
+    client.subscribe(subTopic, MqttQos.exactlyOnce);
   }
 
-  void setupUpdatesListener() {
-    mqttClientManager
-        .getMessagesStream()!
-        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) async {
-      final recMess = c![0].payload as MqttPublishMessage;
-      final pt =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      final Set<String> imageUrls = Set();
-      final List<dynamic> images = [];
-      for (var img in jsonDecode(pt)) {
-        print(img['_source']['details']['images']['thumbnails'][0]);
-        String url = img['_source']['details']['images']['thumbnails'][0];
-        imageUrls.add(url);
-        images.add(img);
-      }
-      setState(() {
-        _imageUrls = imageUrls.toList();
-        _images = images;
-        loading = false;
-      });
+  void showSearchResults(String message) {
+    loading = false;
+    final Set<String> imageUrls = Set();
+    final List<dynamic> images = [];
+    for (var img in jsonDecode(message)) {
+      print(img['_source']['details']['images']['thumbnails'][0]);
+      String url = img['_source']['details']['images']['thumbnails'][0];
+      imageUrls.add(url);
+      images.add(img);
+    }
+    setState(() {
+      _imageUrls = imageUrls.toList();
+      _images = images;
+      loading = false;
     });
   }
-
-  // _imageUrls = [
-  //   "http://68.183.44.212:12000/images/glass.jpg",
-  //   "http://68.183.44.212:12000/images/thebest.jpg",
-  //   "http://68.183.44.212:12000/images/glass.jpg",
-  //   "http://68.183.44.212:12000/images/thebest.jpg",
-  //   "http://68.183.44.212:12000/images/glass.jpg",
-  //   "http://68.183.44.212:12000/images/thebest.jpg",
-  //   "http://68.183.44.212:12000/images/glass.jpg",
-  //   "http://68.183.44.212:12000/images/thebest.jpg",
-  //   "http://68.183.44.212:12000/images/glass.jpg"
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +223,6 @@ class _ImgGridViewState extends State<ImgGridView> {
           right: false,
           child: Column(
             children: [
-              // This is our Seearch bar
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: kDefaultPadding),
@@ -223,6 +247,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                         textAlign: TextAlign.center,
                         onSubmitted: (value) {
                           setState(() {
+                            searchString = value;
                             getSearchImageUrls(value);
                           });
                         },
@@ -327,7 +352,6 @@ class _ImgGridViewState extends State<ImgGridView> {
                   : SizedBox(
                       height: 0,
                     ),
-
               Responsive.isMobile(context)
                   ? Container(
                       width: double.infinity,
@@ -348,7 +372,6 @@ class _ImgGridViewState extends State<ImgGridView> {
                   : SizedBox(
                       height: 0,
                     ),
-
               SizedBox(
                   height:
                       Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
@@ -368,7 +391,6 @@ class _ImgGridViewState extends State<ImgGridView> {
               SizedBox(
                   height:
                       Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
-
               Expanded(
                 child: loading
                     ? Column(children: [
