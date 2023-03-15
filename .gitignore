@@ -26,3 +26,6 @@ api/__pycache__
 .flutter-plugins-dependencies
 .flutter-plugins
 .vscode/settings.json
+
+# Android studio files
+.idea
