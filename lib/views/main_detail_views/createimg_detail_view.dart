@@ -53,6 +53,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   bool loading = false;
   int retries = 0;
+  int timeoutRetries = 0;
+  int retryDurationInSeconds = 60;
   bool uploading = false;
   String prompt = "";
   String negprompt = "";
@@ -81,6 +83,26 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   void dispose() {
     client.disconnect();
     super.dispose();
+  }
+
+  Future<void> startRetryTimer() async {
+    // setState(() {
+    //   _isRunning = true;
+    // });
+
+    // Wait for the timer duration
+    await Future.delayed(Duration(seconds: retryDurationInSeconds));
+
+    // Execute the function
+    if (loading && timeoutRetries < 5) {
+      generateImage();
+      timeoutRetries++;
+    } else if (timeoutRetries >= 5) {
+      timeoutRetries = 0;
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   Future<void> mqttConnect() async {
@@ -145,8 +167,20 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     });
   }
 
-  String escapeDangerousCharacters(String input) {
-    return input
+  String escapeDangerousCharacters(String inputString) {
+    String sanitizedString = "";
+    for (int i = 0; i < inputString.length; i++) {
+      int codeUnit = inputString.codeUnitAt(i);
+      if (codeUnit < 128) {
+        sanitizedString += inputString[i];
+      }
+    }
+    String regex =
+        r'[^\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Connector_Punctuation}\p{Join_Control}\s]+';
+    sanitizedString.replaceAll(RegExp(regex, unicode: true), '');
+    print('sanitizedString');
+    print(sanitizedString);
+    return sanitizedString
         .replaceAll('\\', '\\\\')
         .replaceAll('\n', '\\n')
         .replaceAll('\r', '\\r')
@@ -209,6 +243,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     setState(() {
       loading = true;
     });
+    startRetryTimer();
   }
 
   Future<void> uploadFile() async {
