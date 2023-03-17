@@ -33,6 +33,7 @@ class MyUser extends ChangeNotifier {
   List<String> modelList = [];
   String selectedModel = '';
   String subTopic = '';
+  String searchSubTopic = '';
   List<double> widths = [768, 704, 640, 576, 512, 460, 512, 512, 512, 512];
   List<double> heights = [512, 512, 512, 512, 512, 460, 576, 640, 704, 768];
 
@@ -60,9 +61,14 @@ class MyUser extends ChangeNotifier {
   Future<void> setSubTopicAsync() async {
     while (user == null) {
       // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 5000));
+      print("user still null");
+      guestLogin();
     }
     subTopic = "img_gen_response/${user!.uid}";
+    searchSubTopic = "search_response/${user!.uid}";
+    print("subTopic");
+    print(subTopic);
   }
 
   // setSubTopic() {

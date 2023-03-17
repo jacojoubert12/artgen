@@ -73,7 +73,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   // MQTTClientManager mqttClientManager = MQTTClientManager();
   String pubTopic = "search";
   String pubTopicFeatured = "featured";
-  String subTopic = '';
+  // String subTopic = '';
   String searchString = '';
 
   String _avatarImage =
@@ -112,9 +112,10 @@ class _ImgGridViewState extends State<ImgGridView> {
         retries++;
         if (retries > 5) {
           retries = 0;
+          loading = false;
         } else {
-          mqttConnect();
-          // getSearchImageUrls(searchString);
+          // mqttConnect();
+          getSearchImageUrls(searchString);
         }
       }
     };
@@ -128,7 +129,7 @@ class _ImgGridViewState extends State<ImgGridView> {
       print("Connect to server");
       await client.connect();
       print("Subscribe");
-      client.subscribe(subTopic, MqttQos.exactlyOnce);
+      client.subscribe(user.searchSubTopic, MqttQos.exactlyOnce);
       print("Listen for updates");
 
       client.updates.listen((dynamic c) {
@@ -143,10 +144,15 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   getSearchImageUrls([String q = "featured"]) async {
+    while (user.user == null) {
+      // Wait until user is not null
+      await Future.delayed(Duration(milliseconds: 500));
+      print("user still null");
+    }
     if (client.connectionStatus != MqttConnectionState.connected) {
       await mqttConnect();
     }
-    var query = {'keywords': q, 'response_topic': subTopic};
+    var query = {'keywords': q, 'response_topic': user.searchSubTopic};
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
     client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
@@ -160,10 +166,15 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   getFeaturedImageUrls() async {
     //TODo Add 'featued' for 'default' images on startup
+    while (user.user == null) {
+      // Wait until user is not null
+      await Future.delayed(Duration(milliseconds: 500));
+      print("user still null");
+    }
     if (client.connectionStatus != MqttConnectionState.connected) {
       await mqttConnect();
     }
-    var query = {'model': user.pubTopic, 'response_topic': subTopic};
+    var query = {'model': user.pubTopic, 'response_topic': user.searchSubTopic};
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
     client.publishMessage(
@@ -187,8 +198,13 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   Future<void> setupMqttClient() async {
     mqttConnect();
-    subTopic = "search_response/" + user.user!.uid;
-    client.subscribe(subTopic, MqttQos.exactlyOnce);
+    // subTopic = "search_response/" + user.user!.uid;
+    while (user.user == null) {
+      // Wait until user is not null
+      await Future.delayed(Duration(milliseconds: 500));
+      print("user still null");
+    }
+    client.subscribe(user.searchSubTopic, MqttQos.exactlyOnce);
   }
 
   void showSearchResults(String message) {
@@ -302,24 +318,24 @@ class _ImgGridViewState extends State<ImgGridView> {
                               setState(() {
                                 user.selectedModel = newValue!;
                                 user.pubTopic = user.selectedModel;
-                                // getFeaturedImageUrls();
+                                getFeaturedImageUrls();
                               });
                             },
                           ),
                         ),
                       ),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 40),
-                        width: 40,
-                        height: 40,
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(_avatarImage),
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   flex: 1,
+                    //   child: Container(
+                    //     margin: EdgeInsets.only(left: 40),
+                    //     width: 40,
+                    //     height: 40,
+                    //     child: CircleAvatar(
+                    //       backgroundImage: NetworkImage(_avatarImage),
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
                       flex: 1,
                       child: Container(
