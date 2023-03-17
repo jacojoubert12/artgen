@@ -276,7 +276,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                     ),
                     SizedBox(width: kDefaultWidth * 2),
                     Expanded(
-                      flex: 3,
+                      flex: 4,
                       child: Container(
                         // height: 40,
                         child: DecoratedBox(
@@ -302,24 +302,24 @@ class _ImgGridViewState extends State<ImgGridView> {
                               setState(() {
                                 user.selectedModel = newValue!;
                                 user.pubTopic = user.selectedModel;
-                                getFeaturedImageUrls();
+                                // getFeaturedImageUrls();
                               });
                             },
                           ),
                         ),
                       ),
                     ),
-                    // Expanded(
-                    //   flex: 1,
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(left: 40),
-                    //     width: 40,
-                    //     height: 40,
-                    //     child: CircleAvatar(
-                    //       backgroundImage: NetworkImage(_avatarImage),
-                    //     ),
-                    //   ),
-                    // ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 40),
+                        width: 40,
+                        height: 40,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(_avatarImage),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       flex: 1,
                       child: Container(

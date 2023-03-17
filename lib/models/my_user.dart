@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:html';
 import 'dart:io';
+import 'dart:js';
 
 import 'package:artgen/auth_gate.dart';
 import 'package:artgen/responsive.dart';
@@ -16,6 +17,7 @@ import 'package:flutterfire_ui/auth.dart';
 class MyUser extends ChangeNotifier {
   User? user;
   String? app_id;
+  bool userInitDone = false;
   bool shouldLogin = true;
   bool shouldShowPackages = false;
   bool shouldGetPackages = true;
@@ -37,24 +39,35 @@ class MyUser extends ChangeNotifier {
   //ImgGen Settings
   double samplingStepsSliderValue = 20;
   double resolutionSteps = 10;
-  double resolutionSliderValue = 0;
+  double resolutionSliderValue = 9;
   double widthSliderValue = 512;
   double heightSliderValue = 768;
   double guidanceScaleSliderValue = 15;
   // double batchCountSliderValue = 1;
   double batchSizeSliderValue = 1;
 
-  MyUser() {}
+  MyUser() {
+    initMyUser();
+  }
 
   initMyUser() {
     guestLogin();
     getUniqueCheckpointFiles();
-    setSubTopic();
+    // setSubTopic();
+    setSubTopicAsync().then((_) => userInitDone = true);
   }
 
-  setSubTopic() {
-    subTopic = "img_gen_response/" + user!.uid;
+  Future<void> setSubTopicAsync() async {
+    while (user == null) {
+      // Wait until user is not null
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    subTopic = "img_gen_response/${user!.uid}";
   }
+
+  // setSubTopic() {
+  //   subTopic = "img_gen_response/" + user!.uid;
+  // }
 
   Future<List<DocumentSnapshot>> getDocumentsFromCollection(
       String collectionName) async {
@@ -249,7 +262,7 @@ class MyUser extends ChangeNotifier {
     writeToCollection("image_gen_queries", query);
   }
 
-  void getCurrentPackage() async {
+  Future<void> getCurrentPackage() async {
     if (user == null) return;
     FirebaseFirestore.instance
         .collection('users')
@@ -291,8 +304,8 @@ class MyUser extends ChangeNotifier {
 
   void guestLogin() async {
     user = FirebaseAuth.instance.currentUser;
-    getPackages();
-    getCurrentPackage();
+    await getPackages();
+    await getCurrentPackage();
     if (user == null) {
       // Sign in anonymously
       FirebaseAuth.instance.signInAnonymously().then((userCredentials) async {

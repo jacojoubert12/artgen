@@ -47,8 +47,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Set<dynamic>? _selectedImages;
   Set<String>? _selectedImageUrls;
   List<String> generatedImgUrls = [
+    "assets/images/tmp_image.png"
     // "http://localhost:5000/output/" + "output.png"
-    "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+    // "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
   ];
 
   bool loading = false;
@@ -624,14 +625,22 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
               ),
               SizedBox(height: kDefaultPadding),
               loading
-                  ? CircularProgressIndicator()
+                  ? Expanded(
+                      child: Column(children: [
+                      SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator()),
+                      Text('')
+                    ]))
                   : Expanded(
                       child: GridView.builder(
                         shrinkWrap: true,
                         itemCount: generatedImgUrls.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
-                          childAspectRatio: 1,
+                          childAspectRatio:
+                              user.heightSliderValue / user.widthSliderValue,
                         ),
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
@@ -648,8 +657,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                 setState(() {});
                               },
                               child: FadeInImage(
-                                placeholder: NetworkImage(
-                                    'http://68.183.44.212:12000/images/glass.jpg'),
+                                placeholder:
+                                    NetworkImage("assets/images/tmp_image.png"),
                                 image: NetworkImage(generatedImgUrls[index]),
                               ),
                             ),
@@ -658,112 +667,126 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       ),
                     ),
               SizedBox(height: kDefaultPadding),
-              loading
-                  ? Text('')
-                  : Container(
-                      height: 40,
-                      width: 400,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(colors: [
-                            Color.fromARGB(255, 61, 2, 50),
-                            Color.fromARGB(255, 10, 6, 20)
-                          ])),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        child: Text('Generate'),
-                        onPressed: () {
-                          concatPrompts();
-                          user.showLogin(context, query)
-                              ? {
-                                  //Move to response on success
-                                  user.imagesToGenerate =
-                                      (user.batchSizeSliderValue as int?)!,
-                                  // concatPrompts(),
-                                  // setState(() {
-                                  // loading = true;
-                                  // }),
-                                  generateImage()
-                                }
-                              : showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Popup title"),
-                                      content:
-                                          Text("You have reached your limit"),
-                                      actions: <Widget>[
-                                        Container(
-                                          height: 80,
-                                          width: 500,
-                                          child: RoundedButton(
-                                            text: "OK",
-                                            press: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                        },
-                      ),
-                    ),
-              SizedBox(height: kDefaultPadding),
-              Container(
-                height: 40,
-                width: 400,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    gradient: LinearGradient(colors: [
-                      Color.fromARGB(255, 61, 2, 50),
-                      Color.fromARGB(255, 10, 6, 20)
-                    ])),
-                child: uploading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        child: Text('Upload'),
-                        onPressed: () async {
-                          setState(() {
-                            uploading = true;
-                          });
-                          uploadFile();
-                        },
-                      ),
-              ),
-              SizedBox(height: kDefaultPadding),
-              Container(
-                alignment: Alignment.topRight,
-                child: ElevatedButton(
-                  child: Icon(
-                    Icons.settings,
-                    size: 30.0,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(''),
                   ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return SettingNavigationDrawer();
+                  // loading
+                  //     ? Text('')
+                  //     :
+                  Container(
+                    height: 40,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text('Generate'),
+                      onPressed: () {
+                        concatPrompts();
+                        user.showLogin(context, query)
+                            ? {
+                                //Move to response on success
+                                user.imagesToGenerate =
+                                    (user.batchSizeSliderValue as int?)!,
+                                // concatPrompts(),
+                                // setState(() {
+                                // loading = true;
+                                // }),
+                                generateImage()
+                              }
+                            : showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Popup title"),
+                                    content:
+                                        Text("You have reached your limit"),
+                                    actions: <Widget>[
+                                      Container(
+                                        height: 80,
+                                        width: 500,
+                                        child: RoundedButton(
+                                          text: "OK",
+                                          press: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                       },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 181, 9, 130),
-                      onPrimary: Colors.black,
-                      shape: CircleBorder()),
-                ),
+                    ),
+                  ),
+                  SizedBox(width: kDefaultPadding),
+                  Container(
+                    height: 40,
+                    width: 80,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 61, 2, 50),
+                          Color.fromARGB(255, 10, 6, 20)
+                        ])),
+                    child: uploading
+                        ? CircularProgressIndicator()
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: Text('Upload'),
+                            onPressed: () async {
+                              setState(() {
+                                uploading = true;
+                              });
+                              uploadFile();
+                            },
+                          ),
+                  ),
+                  SizedBox(height: kDefaultPadding),
+                  Container(
+                    alignment: Alignment.topRight,
+                    child: ElevatedButton(
+                      child: Icon(
+                        Icons.settings,
+                        size: 30.0,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SettingNavigationDrawer();
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: Color.fromARGB(255, 181, 9, 130),
+                          onPrimary: Colors.black,
+                          shape: CircleBorder()),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(''),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: kDefaultPadding,
               ),
             ],
           ),

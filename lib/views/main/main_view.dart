@@ -74,7 +74,7 @@ class _Mainviewstate extends State<MainScreen> {
         setViewMode: this.setViewMode);
 
     getDeviceInfo();
-    user.initMyUser();
+    // user.initMyUser();
   }
 
   void setDfaultResolution() {
