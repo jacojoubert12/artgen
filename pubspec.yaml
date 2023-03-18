@@ -59,6 +59,7 @@ dependencies:
   google_mobile_ads: ^2.3.0
   waterfall_flow: ^3.0.2
   mqtt5_client: ^3.3.7
+  # rabbitmq_client: ^0.3.3
 
 
 dev_dependencies:

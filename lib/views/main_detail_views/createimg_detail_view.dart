@@ -107,7 +107,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   Future<void> mqttConnect() async {
-    client.keepAlivePeriod = 3600;
+    client.keepAlivePeriod = 1;
 
     client.onConnected = () {
       print('Connected');
@@ -117,6 +117,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       print('Disconnected');
       if (loading) {
         retries++;
+        mqttConnect();
         if (retries > 5) {
           retries = 0;
         } else {
@@ -638,10 +639,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         shrinkWrap: true,
                         itemCount: generatedImgUrls.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
-                          childAspectRatio:
-                              user.heightSliderValue / user.widthSliderValue,
-                        ),
+                            crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
+                            childAspectRatio: 16 / 9
+                            // user.heightSliderValue / user.widthSliderValue,
+                            ),
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             child: GestureDetector(

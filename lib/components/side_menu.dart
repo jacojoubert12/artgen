@@ -26,33 +26,33 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 //   ),
 // );
 
-class SideMenu extends StatelessWidget {
-  const SideMenu({Key? key, this.setViewMode}) : super(key: key);
+class SideMenu extends StatefulWidget {
+  SideMenu({Key? key, this.setViewMode}) : super(key: key);
 
   final Function? setViewMode;
 
-  // String _name = '';
-  // String _surname = '';
+  @override
+  State<SideMenu> createState() => _SideMenuState();
+}
 
-  // Future _getDataFromDatabase() async {
-  //   await FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(FirebaseAuth.instance.currentUser!.uid)
-  //       .get()
-  //       .then((snapshot) async {
-  //     if (snapshot.exists) {
-  //       setState(() {
-  //         _name = snapshot.data()!["_name"];
-  //         _surname = snapshot.data()!["_surname"];
-  //         // _email = snapshot.data()!["_email"];
-  //         // snapshot.data()!["_profileImg"];
-  //       });
-  //     }
-  //   });
-  // }
+class _SideMenuState extends State<SideMenu> {
+  String userName = 'Welcome';
+
+  // String _surname = '';
+  setUserDetalails() async {
+    while (user.user == null) {
+      // Wait until user is not null
+      await Future.delayed(Duration(milliseconds: 500));
+      print("user still null");
+    }
+    setState(() {
+      userName = user.user!.displayName!;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    setUserDetalails();
     return Container(
       height: double.infinity,
       // padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
@@ -82,7 +82,7 @@ class SideMenu extends StatelessWidget {
               ),
               SizedBox(height: kDefaultPadding),
               Text(
-                "User Name",
+                userName,
                 style: TextStyle(
                   fontFamily:
                       'custom font', // remove this if don't have custom font
@@ -102,7 +102,7 @@ class SideMenu extends StatelessWidget {
               // Menu Items
               SideMenuItem(
                 press: () {
-                  this.setViewMode!(ViewMode.create);
+                  this.widget.setViewMode!(ViewMode.create);
                 },
                 title: "Create",
                 icon: Icon(
@@ -114,7 +114,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode!(ViewMode.mygallary);
+                  this.widget.setViewMode!(ViewMode.mygallary);
                 },
                 title: "My Gallary",
                 icon: Icon(
@@ -126,7 +126,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode!(ViewMode.explore);
+                  this.widget.setViewMode!(ViewMode.explore);
                 },
                 title: "Explore",
                 icon: Icon(
@@ -138,7 +138,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode!(ViewMode.likes);
+                  this.widget.setViewMode!(ViewMode.likes);
                 },
                 title: "Likes",
                 icon: Icon(
@@ -153,7 +153,7 @@ class SideMenu extends StatelessWidget {
                   print("Before");
                   print(ViewMode.profile);
                   print("object");
-                  this.setViewMode!(ViewMode.profile);
+                  this.widget.setViewMode!(ViewMode.profile);
                   print("After");
                 },
                 title: "Profile",
@@ -166,7 +166,7 @@ class SideMenu extends StatelessWidget {
               ),
               SideMenuItem(
                 press: () {
-                  this.setViewMode!(ViewMode.about);
+                  this.widget.setViewMode!(ViewMode.about);
                 },
                 title: "About",
                 icon: Icon(

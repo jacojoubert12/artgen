@@ -81,6 +81,8 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   final client =
       MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
+  Set<String> imageUrls = Set();
+  List<dynamic> images = [];
 
   @override
   void initState() {
@@ -101,7 +103,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   Future<void> mqttConnect() async {
-    client.keepAlivePeriod = 3600;
+    client.keepAlivePeriod = 1;
     client.onConnected = () {
       print('Connected');
     };
@@ -110,6 +112,7 @@ class _ImgGridViewState extends State<ImgGridView> {
       print('Disconnected');
       if (loading) {
         retries++;
+        mqttConnect();
         if (retries > 5) {
           retries = 0;
           loading = false;
@@ -144,6 +147,8 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   getSearchImageUrls([String q = "featured"]) async {
+    imageUrls = Set();
+    images = [];
     while (user.user == null) {
       // Wait until user is not null
       await Future.delayed(Duration(milliseconds: 500));
@@ -165,6 +170,8 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   getFeaturedImageUrls() async {
+    imageUrls = Set();
+    images = [];
     //TODo Add 'featued' for 'default' images on startup
     while (user.user == null) {
       // Wait until user is not null
@@ -209,14 +216,19 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   void showSearchResults(String message) {
     loading = false;
-    final Set<String> imageUrls = Set();
-    final List<dynamic> images = [];
-    for (var img in jsonDecode(message)) {
-      print(img['_source']['details']['images']['thumbnails'][0]);
-      String url = img['_source']['details']['images']['thumbnails'][0];
-      imageUrls.add(url);
-      images.add(img);
-    }
+    // final Set<String> imageUrls = Set();
+    // final List<dynamic> images = [];
+    var jsonMap = jsonDecode(message);
+    // for (var img in jsonMap.values) {
+    //   print(img['_source']['details']['images']['thumbnails'][0]);
+    //   String url = img['_source']['details']['images']['thumbnails'][0];
+    //   imageUrls.add(url);
+    //   images.add(img);
+    // }
+    print(jsonMap['_source']['details']['images']['thumbnails'][0]);
+    String url = jsonMap['_source']['details']['images']['thumbnails'][0];
+    imageUrls.add(url);
+    images.add(jsonMap);
     setState(() {
       _imageUrls = imageUrls.toList();
       _images = images;

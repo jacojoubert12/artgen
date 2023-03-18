@@ -257,7 +257,9 @@ class _Mainviewstate extends State<MainScreen> {
             ),
             Expanded(
                 flex: _size.width > 1340 ? 12 : 15,
-                child: getViewModeDetailView()!),
+                child: viewMode == ViewMode.create
+                    ? getViewModeDetailView()!
+                    : getViewModeCenterView()!),
             shouldShowDetailView
                 ? Expanded(
                     flex: _size.width > 1340 ? 8 : 12,
