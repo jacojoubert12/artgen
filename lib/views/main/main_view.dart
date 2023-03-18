@@ -232,14 +232,11 @@ class _Mainviewstate extends State<MainScreen> {
         mobile: getViewModeCenterView(),
         tablet: Row(
           children: [
-            Expanded(
-              flex: 9,
-              child: getViewModeDetailView()!,
-            ),
+            Expanded(flex: 1, child: getViewModeCenterView()!),
             shouldShowDetailView
                 ? Expanded(
-                    flex: 6,
-                    child: getViewModeCenterView()!,
+                    flex: 1,
+                    child: getViewModeDetailView()!,
                   )
                 : Expanded(
                     flex: 0,
@@ -250,19 +247,25 @@ class _Mainviewstate extends State<MainScreen> {
         desktop: Row(
           children: [
             Expanded(
-              flex: _size.width > 1340 ? 3 : 5,
+              flex: _size.width > 1340
+                  ? viewMode == ViewMode.create
+                      ? 6
+                      : 3
+                  : viewMode == ViewMode.create
+                      ? 6
+                      : 3,
               child: SideMenu(
                 setViewMode: setViewMode,
               ),
             ),
             Expanded(
-                flex: _size.width > 1340 ? 12 : 15,
+                flex: _size.width > 1340 ? 15 : 15,
                 child: viewMode == ViewMode.create
                     ? getViewModeDetailView()!
                     : getViewModeCenterView()!),
             shouldShowDetailView
                 ? Expanded(
-                    flex: _size.width > 1340 ? 8 : 12,
+                    flex: _size.width > 1340 ? 15 : 15,
                     child: getViewModeCenterView()!,
                   )
                 : Expanded(

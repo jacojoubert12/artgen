@@ -252,7 +252,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                           _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
-                    if (!Responsive.isDesktop(context)) SizedBox(width: 5),
+                    // if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                     Expanded(
                       flex: 5,
                       child: Container(
@@ -280,14 +280,18 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
 
                     Expanded(
                       flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 20),
-                        width: 45,
-                        height: 45,
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(_avatarImage),
-                        ),
-                      ),
+                      child: Responsive.isMobile(context)
+                          ? Container(
+                              margin: EdgeInsets.only(left: 20),
+                              width: 45,
+                              height: 45,
+                              child: CircleAvatar(
+                                backgroundImage: NetworkImage(_avatarImage),
+                              ),
+                            )
+                          : SizedBox(
+                              width: 45,
+                            ),
                     ),
                   ],
                 ),

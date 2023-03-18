@@ -51,8 +51,14 @@ class _SideMenuState extends State<SideMenu> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     setUserDetalails();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       height: double.infinity,
       // padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
@@ -103,6 +109,7 @@ class _SideMenuState extends State<SideMenu> {
               SideMenuItem(
                 press: () {
                   this.widget.setViewMode!(ViewMode.create);
+                  setUserDetalails();
                 },
                 title: "Create",
                 icon: Icon(
@@ -136,25 +143,22 @@ class _SideMenuState extends State<SideMenu> {
                 isActive: false,
                 showBorder: true,
               ),
+              // SideMenuItem(
+              //   press: () {
+              //     this.widget.setViewMode!(ViewMode.likes);
+              //   },
+              //   title: "Likes",
+              //   icon: Icon(
+              //     Icons.favorite,
+              //     color: kButtonLightPurple,
+              //   ),
+              //   isActive: false,
+              //   showBorder: true,
+              // ),
               SideMenuItem(
                 press: () {
-                  this.widget.setViewMode!(ViewMode.likes);
-                },
-                title: "Likes",
-                icon: Icon(
-                  Icons.favorite,
-                  color: kButtonLightPurple,
-                ),
-                isActive: false,
-                showBorder: true,
-              ),
-              SideMenuItem(
-                press: () {
-                  print("Before");
                   print(ViewMode.profile);
-                  print("object");
                   this.widget.setViewMode!(ViewMode.profile);
-                  print("After");
                 },
                 title: "Profile",
                 icon: Icon(
