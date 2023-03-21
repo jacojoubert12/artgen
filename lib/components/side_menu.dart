@@ -74,18 +74,18 @@ class _SideMenuState extends State<SideMenu> {
                 child: Image.network("assets/images/flower.png",
                     fit: BoxFit.fitWidth),
               ),
-              Positioned(
-                top: MediaQuery.of(context).size.height / 2,
-                left: MediaQuery.of(context).size.width / 2 - 50,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  child: CircleAvatar(
-                    // backgroundImage: NetworkImage(_avatarImage),
-                    child: Image.network("assets/images/flower.png"),
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: MediaQuery.of(context).size.height / 2,
+              //   left: MediaQuery.of(context).size.width / 2 - 50,
+              //   child: Container(
+              //     width: 80,
+              //     height: 80,
+              //     child: CircleAvatar(
+              //       // backgroundImage: NetworkImage(_avatarImage),
+              //       child: Image.network("assets/images/flower.png"),
+              //     ),
+              //   ),
+              // ),
               SizedBox(height: kDefaultPadding),
               Text(
                 userName,
@@ -122,6 +122,7 @@ class _SideMenuState extends State<SideMenu> {
               SideMenuItem(
                 press: () {
                   this.widget.setViewMode!(ViewMode.mygallary);
+                  setUserDetalails();
                 },
                 title: "My Gallary",
                 icon: Icon(
@@ -134,6 +135,7 @@ class _SideMenuState extends State<SideMenu> {
               SideMenuItem(
                 press: () {
                   this.widget.setViewMode!(ViewMode.explore);
+                  setUserDetalails();
                 },
                 title: "Explore",
                 icon: Icon(

@@ -164,10 +164,15 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     if (client.connectionStatus != MqttConnectionState.connected) {
       await mqttConnect();
     }
-    var query = {'keywords': q, 'response_topic': user.searchSubTopic};
+    var query = {
+      'keywords': q,
+      'response_topic': user.searchSubTopic,
+      'pos': 0,
+      'size': 200
+    };
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
-    client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    client.publishMessage(pubTopic, MqttQos.atMostOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -189,7 +194,12 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     if (client.connectionStatus != MqttConnectionState.connected) {
       await mqttConnect();
     }
-    var query = {'model': user.pubTopic, 'response_topic': user.searchSubTopic};
+    var query = {
+      'model': user.pubTopic,
+      'response_topic': user.searchSubTopic,
+      'pos': 0,
+      'size': 200
+    };
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
     client.publishMessage(
@@ -345,27 +355,15 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                         ),
                       ),
                     ),
-                    // Expanded(
-                    //   flex: 1,
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(left: 40),
-                    //     width: 40,
-                    //     height: 40,
-                    //     child: CircleAvatar(
-                    //       backgroundImage: NetworkImage(_avatarImage),
-                    //     ),
-                    //   ),
-                    // ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 20),
-                        width: 45,
-                        height: 45,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(_avatarImage)),
+                    Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(_avatarImage),
                       ),
                     ),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),

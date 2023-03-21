@@ -67,6 +67,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   final grey = const Color(0xFFF2F2F7);
   bool loading = false;
   int retries = 0;
+  bool getFeatured = true;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -118,7 +119,10 @@ class _ImgGridViewState extends State<ImgGridView> {
           loading = false;
         } else {
           // mqttConnect();
-          getSearchImageUrls(searchString);
+          if (getFeatured)
+            getFeaturedImageUrls();
+          else
+            getSearchImageUrls(searchString);
         }
       }
     };
@@ -132,7 +136,7 @@ class _ImgGridViewState extends State<ImgGridView> {
       print("Connect to server");
       await client.connect();
       print("Subscribe");
-      client.subscribe(user.searchSubTopic, MqttQos.exactlyOnce);
+      client.subscribe(user.searchSubTopic, MqttQos.atMostOnce);
       print("Listen for updates");
 
       client.updates.listen((dynamic c) {
@@ -147,6 +151,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   getSearchImageUrls([String q = "featured"]) async {
+    getFeatured = false;
     imageUrls = Set();
     images = [];
     while (user.user == null) {
@@ -157,10 +162,15 @@ class _ImgGridViewState extends State<ImgGridView> {
     if (client.connectionStatus != MqttConnectionState.connected) {
       await mqttConnect();
     }
-    var query = {'keywords': q, 'response_topic': user.searchSubTopic};
+    var query = {
+      'keywords': q,
+      'response_topic': user.searchSubTopic,
+      'pos': 0,
+      'size': 20
+    };
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
-    client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    client.publishMessage(pubTopic, MqttQos.atMostOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -170,6 +180,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   }
 
   getFeaturedImageUrls() async {
+    getFeatured = true;
     imageUrls = Set();
     images = [];
     //TODo Add 'featued' for 'default' images on startup
@@ -181,11 +192,16 @@ class _ImgGridViewState extends State<ImgGridView> {
     if (client.connectionStatus != MqttConnectionState.connected) {
       await mqttConnect();
     }
-    var query = {'model': user.pubTopic, 'response_topic': user.searchSubTopic};
+    var query = {
+      'model': user.pubTopic,
+      'response_topic': user.searchSubTopic,
+      'pos': 0,
+      'size': 20
+    };
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
     client.publishMessage(
-        pubTopicFeatured, MqttQos.exactlyOnce, builder.payload!);
+        pubTopicFeatured, MqttQos.atMostOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -211,7 +227,7 @@ class _ImgGridViewState extends State<ImgGridView> {
       await Future.delayed(Duration(milliseconds: 500));
       print("user still null");
     }
-    client.subscribe(user.searchSubTopic, MqttQos.exactlyOnce);
+    client.subscribe(user.searchSubTopic, MqttQos.atMostOnce);
   }
 
   void showSearchResults(String message) {
@@ -516,8 +532,8 @@ class _ImageGridViewState extends State<ImageGridView> {
     _imageUrls = widget.imageUrls;
     return MasonryGridView.count(
       crossAxisCount: 4,
-      mainAxisSpacing: 4,
-      crossAxisSpacing: 4,
+      mainAxisSpacing: 0,
+      crossAxisSpacing: 0,
       shrinkWrap: true,
       itemCount: _imageUrls.length,
       itemBuilder: (BuildContext context, int index) {

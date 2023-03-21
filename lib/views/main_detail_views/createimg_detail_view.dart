@@ -57,6 +57,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   int timeoutRetries = 0;
   int retryDurationInSeconds = 60;
   bool uploading = false;
+  List<String> uploadImg2ImgImages = [];
   String prompt = "";
   String negprompt = "";
   String _promptTxt = "";
@@ -183,16 +184,27 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     print('sanitizedString');
     print(sanitizedString);
     return sanitizedString
-        .replaceAll('\\', '\\\\')
-        .replaceAll('\n', '\\n')
-        .replaceAll('\r', '\\r')
-        .replaceAll('\t', '\\t')
-        .replaceAll('"', '\\"')
-        .replaceAll('“', '"')
-        .replaceAll('”', '"')
-        .replaceAll('”', '"')
-        .replaceAll('“', '"')
-        .replaceAll('”', '"');
+        .replaceAll('\\', '')
+        .replaceAll('\n', '')
+        .replaceAll('\r', '')
+        .replaceAll('\t', '')
+        .replaceAll('"', '')
+        .replaceAll('“', '')
+        .replaceAll('”', '')
+        .replaceAll('”', '')
+        .replaceAll('“', '')
+        .replaceAll('”', '');
+
+    // .replaceAll('\\', '\\\\')
+    // .replaceAll('\n', '\\n')
+    // .replaceAll('\r', '\\r')
+    // .replaceAll('\t', '\\t')
+    // .replaceAll('"', '\\"')
+    // .replaceAll('“', '"')
+    // .replaceAll('”', '"')
+    // .replaceAll('”', '"')
+    // .replaceAll('“', '"')
+    // .replaceAll('”', '"');
   }
 
   concatPrompts() {
@@ -200,6 +212,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     negprompt = "";
     for (var jsonString in _selectedImages!) {
       if (jsonString != null) {
+        print(jsonString);
+        if (jsonString.toString().contains('img2img')) continue;
         // print(jsonString);
         var jsonP = jsonString['_source']['details']['parameters']['prompt'];
         var jsonNP =
@@ -213,6 +227,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         // negprompt += jsonDecode(json) + " ";
       }
     }
+
+    List<String> img2imgList = [];
+    for (var uploadedImgUrl in _selectedImageUrls!) {
+      if (uploadImg2ImgImages.contains(uploadedImgUrl))
+        img2imgList.add(uploadedImgUrl);
+    }
+
     prompt += " ((" + _promptTxt + "))";
     negprompt += " ((" + _negpromptTxt + "))";
     print(prompt);
@@ -230,6 +251,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       "response_topic": user.subTopic,
       "user": user.user?.uid,
     };
+
+    if (img2imgList.length > 0) {
+      query['init_images'] = img2imgList;
+      query['denoising_strength'] =
+          0.5; //TODO Get from slider in settings!!!!!!!!!!!!
+    }
   }
 
   generateImage() async {
@@ -328,8 +355,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     String url = await storage.ref('uploads/$filename').getDownloadURL();
 
     setState(() {
+      uploadImg2ImgImages.add(url);
       _selectedImageUrls!.add(url);
-      _selectedImages!.add(url);
+      print(_selectedImages);
+      _selectedImages!.add({'img2img': url});
       uploading = false;
     });
   }
@@ -639,10 +668,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         shrinkWrap: true,
                         itemCount: generatedImgUrls.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
-                            childAspectRatio: 16 / 9
-                            // user.heightSliderValue / user.widthSliderValue,
-                            ),
+                          crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
+                          // childAspectRatio: 16 / 9
+                          // user.heightSliderValue / user.widthSliderValue,
+                        ),
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             child: GestureDetector(

@@ -136,7 +136,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
       print("Connect to server");
       await client.connect();
       print("Subscribe");
-      client.subscribe(user.gallarySubTopic, MqttQos.exactlyOnce);
+      client.subscribe(user.gallarySubTopic, MqttQos.atMostOnce);
       print("Listen for updates");
 
       client.updates.listen((dynamic c) {
@@ -164,12 +164,14 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
     }
     var query = {
       'user': user.user!.uid,
-      'response_topic': user.gallarySubTopic
+      'response_topic': user.gallarySubTopic,
+      'pos': 0,
+      'size': 200
     };
     final builder = MqttPayloadBuilder();
     builder.addString(jsonEncode(query));
     client.publishMessage(
-        pubTopicFeatured, MqttQos.exactlyOnce, builder.payload!);
+        pubTopicFeatured, MqttQos.atMostOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -195,7 +197,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
       await Future.delayed(Duration(milliseconds: 500));
       print("user still null");
     }
-    client.subscribe(user.gallarySubTopic, MqttQos.exactlyOnce);
+    client.subscribe(user.gallarySubTopic, MqttQos.atMostOnce);
   }
 
   void showSearchResults(String message) {
@@ -252,7 +254,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                           _scaffoldKey.currentState!.openDrawer();
                         },
                       ),
-                    // if (!Responsive.isDesktop(context)) SizedBox(width: 5),
+                    SizedBox(width: 5),
                     Expanded(
                       flex: 5,
                       child: Container(
@@ -278,21 +280,15 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                     //   ),
                     // ),
 
-                    Expanded(
-                      flex: 1,
-                      child: Responsive.isMobile(context)
-                          ? Container(
-                              margin: EdgeInsets.only(left: 20),
-                              width: 45,
-                              height: 45,
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(_avatarImage),
-                              ),
-                            )
-                          : SizedBox(
-                              width: 45,
-                            ),
+                    Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(_avatarImage),
+                      ),
                     ),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -356,13 +352,15 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                       Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
               Expanded(
                 child: loading
-                    ? Column(children: [
-                        SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator()),
-                        Text('')
-                      ])
+                    ? Container(
+                        // ? Column(children: [
+                        // SizedBox(
+                        // width: 20,
+                        // height: 20,
+                        // child: CircularProgressIndicator()),
+                        // Text(''),
+                        child: Image.network("assets/images/tmp_image.png"))
+                    // ])
                     : ImageGridView(
                         selectedImages: _selectedImages,
                         selectedImageUrls: _selectedImageUrls,
