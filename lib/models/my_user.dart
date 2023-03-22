@@ -45,6 +45,7 @@ class MyUser extends ChangeNotifier {
   double widthSliderValue = 512;
   double heightSliderValue = 768;
   double guidanceScaleSliderValue = 15;
+  double denoisingStrengthSliderValue = 0.5;
   // double batchCountSliderValue = 1;
   double batchSizeSliderValue = 1;
 

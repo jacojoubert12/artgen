@@ -128,6 +128,7 @@ class _Mainviewstate extends State<MainScreen> {
     List<double> guidanceScales = [];
 
     for (var selectedImg in _selectedImages) {
+      if (selectedImg.toString().contains('img2img')) continue;
       // int samplingSteps =
       // selectedImg["_source"]["details"]["parameters"]["steps"];
       // int width = selectedImg["_source"]["details"]["parameters"]["width"];

@@ -156,6 +156,20 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
               },
             ),
             // SizedBox(height: kDefaultPadding),
+            Text("Denoising Strength"),
+            Slider(
+              value: user.denoisingStrengthSliderValue,
+              max: 1,
+              min: 0,
+              divisions: 101,
+              label: user.denoisingStrengthSliderValue.toString(),
+              onChanged: (double value) {
+                setState(() {
+                  user.denoisingStrengthSliderValue = value;
+                });
+              },
+            ),
+            // SizedBox(height: kDefaultPadding),
             Text("Number of Images"),
             Slider(
               value: user.batchSizeSliderValue,

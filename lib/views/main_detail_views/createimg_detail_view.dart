@@ -254,8 +254,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
     if (img2imgList.length > 0) {
       query['init_images'] = img2imgList;
-      query['denoising_strength'] =
-          0.5; //TODO Get from slider in settings!!!!!!!!!!!!
+      query['denoising_strength'] = user.denoisingStrengthSliderValue;
     }
   }
 
@@ -357,7 +356,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     setState(() {
       uploadImg2ImgImages.add(url);
       _selectedImageUrls!.add(url);
-      print(_selectedImages);
+      // print(_selectedImages);
       _selectedImages!.add({'img2img': url});
       uploading = false;
     });
