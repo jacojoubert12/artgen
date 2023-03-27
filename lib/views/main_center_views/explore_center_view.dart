@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:mqtt5_client/mqtt5_browser_client.dart';
-import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -72,7 +70,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  // MQTTClientManager mqttClientManager = MQTTClientManager();
+
   String pubTopic = "search";
   String pubTopicFeatured = "featured";
   // String subTopic = '';
@@ -81,15 +79,12 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
-  final client =
-      MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
   Set<String> imageUrls = Set();
   List<dynamic> images = [];
 
   @override
   void initState() {
     super.initState();
-    setupMqttClient();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
@@ -100,56 +95,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   @override
   void dispose() {
-    client.disconnect();
     super.dispose();
-  }
-
-  Future<void> mqttConnect() async {
-    client.keepAlivePeriod = 1;
-    client.onConnected = () {
-      print('Connected');
-    };
-
-    client.onDisconnected = () {
-      print('Disconnected');
-      if (loading) {
-        retries++;
-        mqttConnect();
-        if (retries > 5) {
-          retries = 0;
-          loading = false;
-        } else {
-          // mqttConnect();
-          if (getFeatured)
-            getFeaturedImageUrls();
-          else
-            getSearchImageUrls(searchString);
-        }
-      }
-    };
-
-    client.onSubscribed = (topic) {
-      print('Subscribed to $topic');
-    };
-
-    print("Check Connection Status");
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      print("Connect to server");
-      await client.connect();
-      print("Subscribe");
-      client.subscribe(user.searchSubTopic, MqttQos.exactlyOnce);
-      print("Listen for updates");
-
-      client.updates.listen((dynamic c) {
-        final MqttPublishMessage recMess = c[0].payload;
-        final pt =
-            MqttUtilities.bytesToStringAsString(recMess.payload.message!);
-        print("Featured/Search Response received");
-        print(
-            'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-        showSearchResults(pt);
-      });
-    }
   }
 
   getSearchImageUrls([String q = "featured"]) async {
@@ -161,20 +107,13 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
       await Future.delayed(Duration(milliseconds: 500));
       print("user still null");
     }
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      await mqttConnect();
-    }
+
     var query = {
       'keywords': q,
       'response_topic': user.searchSubTopic,
       'pos': 0,
       'size': 200
     };
-    final builder = MqttPayloadBuilder();
-    builder.addString(jsonEncode(query));
-    client.publishMessage(pubTopic, MqttQos.atMostOnce, builder.payload!);
-    print("JSON Encoded query:");
-    print(jsonEncode(query));
 
     setState(() {
       loading = true;
@@ -191,21 +130,13 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
       await Future.delayed(Duration(milliseconds: 500));
       print("user still null");
     }
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      await mqttConnect();
-    }
+
     var query = {
       'model': user.pubTopic,
       'response_topic': user.searchSubTopic,
       'pos': 0,
       'size': 200
     };
-    final builder = MqttPayloadBuilder();
-    builder.addString(jsonEncode(query));
-    client.publishMessage(
-        pubTopicFeatured, MqttQos.exactlyOnce, builder.payload!);
-    print("JSON Encoded query:");
-    print(jsonEncode(query));
 
     setState(() {
       user.modelList = user.modelList;
@@ -219,17 +150,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
       // _selectedImageUrls = widget.selectedImageUrls;
       // widget.updateSelectedImages!(_selectedImages, _selectedImageUrls);
     });
-  }
-
-  Future<void> setupMqttClient() async {
-    mqttConnect();
-    // subTopic = "search_response/" + user.user!.uid;
-    while (user.user == null) {
-      // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 500));
-      print("user still null");
-    }
-    client.subscribe(user.searchSubTopic, MqttQos.exactlyOnce);
   }
 
   void showSearchResults(String message) {

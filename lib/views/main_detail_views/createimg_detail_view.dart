@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
-// import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
 import 'package:artgen/views/main/main_view.dart';
@@ -18,8 +17,6 @@ import 'image_details_view.dart';
 
 import 'dart:async';
 import 'dart:io';
-import 'package:mqtt5_client/mqtt5_browser_client.dart';
-import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
@@ -69,21 +66,16 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  final client =
-      MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
 
   @override
   void initState() {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-
-    setupMqttClient();
   }
 
   @override
   void dispose() {
-    client.disconnect();
     super.dispose();
   }
 
@@ -105,55 +97,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         loading = false;
       });
     }
-  }
-
-  Future<void> mqttConnect() async {
-    client.keepAlivePeriod = 1;
-
-    client.onConnected = () {
-      print('Connected');
-    };
-
-    client.onDisconnected = () {
-      print('Disconnected');
-      if (loading) {
-        retries++;
-        mqttConnect();
-        if (retries > 5) {
-          retries = 0;
-        } else {
-          // mqttConnect();
-          generateImage();
-        }
-      }
-    };
-
-    client.onSubscribed = (topic) {
-      print('Subscribed to $topic');
-    };
-
-    print("Check Connection Status");
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      print("Connect to server");
-      await client.connect();
-      print("Subscribe");
-      client.subscribe(user.subTopic, MqttQos.exactlyOnce);
-      print("Listen for updates");
-
-      client.updates.listen((dynamic c) {
-        final MqttPublishMessage recMess = c[0].payload;
-        final pt =
-            MqttUtilities.bytesToStringAsString(recMess.payload.message!);
-        print(
-            'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-        showGeneratedImages(pt);
-      });
-    }
-  }
-
-  Future<void> setupMqttClient() async {
-    await mqttConnect();
-    client.subscribe(user.subTopic, MqttQos.exactlyOnce);
   }
 
   void showGeneratedImages(String message) {
@@ -259,15 +202,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   generateImage() async {
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      await mqttConnect();
-    }
-    final builder = MqttPayloadBuilder();
-    builder.addString(jsonEncode(query));
-    client.publishMessage(user.pubTopic, MqttQos.exactlyOnce, builder.payload!);
-    print("JSON Encoded query:");
-    print(jsonEncode(query));
-
     setState(() {
       loading = true;
     });
