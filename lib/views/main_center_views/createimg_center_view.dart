@@ -299,47 +299,46 @@ class _ImgGridViewState extends State<ImgGridView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
-              Responsive.isMobile(context)
-                  ? Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        "Selected images",
-                        style: TextStyle(
-                          fontFamily:
-                              'custom font', // remove this if don't have custom font
-                          fontSize: 15.0, // text size
-                          color: Color.fromARGB(255, 144, 142, 142),
-                          // text color
+              if (Responsive.isMobile(context))
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Selected images",
+                          style: TextStyle(
+                            fontFamily:
+                            'custom font', // remove this if don't have custom font
+                            fontSize: 15.0, // text size
+                            color: Color.fromARGB(255, 144, 142, 142),
+                            // text color
+                          ),
                         ),
                       ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    ),
-              Responsive.isMobile(context)
-                  ? Container(
-                      width: double.infinity,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromARGB(255, 77, 75, 75),
-                            width: 2.0,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(5),
+                      SizedBox(height: kDefaultHeight / 2),
+                      Container(
+                        width: double.infinity,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Color.fromARGB(255, 77, 75, 75),
+                              width: 2.0,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: ImageListView(
+                          updateSelectedImages: widget.updateSelectedImages,
+                          selectedImages: _selectedImages,
+                          selectedImageUrls: _selectedImageUrls,
+                        ),
                       ),
-                      child: ImageListView(
-                        updateSelectedImages: widget.updateSelectedImages,
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                      ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    ),
-              SizedBox(
-                  height:
-                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
+                      SizedBox(height: kDefaultHeight),
+                    ],
+                  ),
+                ),
+
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20.0),
@@ -355,7 +354,7 @@ class _ImgGridViewState extends State<ImgGridView> {
               ),
               SizedBox(
                   height:
-                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
+                      Responsive.isMobile(context) ? kDefaultHeight / 2 : 0),
               Expanded(
                 child: loading
                     ? Column(children: [

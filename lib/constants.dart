@@ -32,3 +32,4 @@ const kDefaultWidth = 10.0;
 const kDefaultMargin = 20.0;
 const kDeafaultButton = 20.0;
 const kDeafaultJournalEntry = 50.0;
+const kDefaultHeight = 10.0;
