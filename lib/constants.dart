@@ -26,6 +26,7 @@ const kButtonPurple = Color.fromARGB(255, 15, 11, 22);
 const kButtonLightPurple = Color.fromARGB(255, 181, 9, 130);
 const kTextFieldBackgroundColor = Color.fromARGB(180, 79, 79, 79);
 const kTextFieldBoarderColor = Color.fromARGB(180, 28, 28, 28);
+const kTextColorLightGrey = Color.fromARGB(255, 144, 142, 142);
 
 const kDefaultPadding = 20.0;
 const kDefaultWidth = 10.0;
@@ -33,3 +34,6 @@ const kDefaultMargin = 20.0;
 const kDeafaultButton = 20.0;
 const kDeafaultJournalEntry = 50.0;
 const kDefaultHeight = 10.0;
+const kDefaultBorderRadius = 10.0;
+
+const kTextFontSize = 16.0;

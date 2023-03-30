@@ -176,6 +176,10 @@ class _ImgGridViewState extends State<ImgGridView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: !Responsive.isDesktop(context) ? AppBar(
+        title: Text('ArtGen'),
+        backgroundColor: kButtonLightPurple,
+      ) : null,
       key: _scaffoldKey,
       drawer: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 250),
@@ -188,24 +192,11 @@ class _ImgGridViewState extends State<ImgGridView> {
           right: false,
           child: Column(
             children: [
+              SizedBox(height: Responsive.isMobile(context) ? kDefaultHeight * 2 : 0),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
                 child: Row(
                   children: [
-                    // Once user click the menu icon the menu shows like drawer
-                    // Also we want to hide this menu icon on desktop
-                    if (!Responsive.isDesktop(context))
-                      IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: kButtonLightPurple,
-                        ),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                     Expanded(
                       flex: 4,
                       child: TextField(
@@ -218,83 +209,90 @@ class _ImgGridViewState extends State<ImgGridView> {
                         },
                         decoration: InputDecoration(
                           hintStyle: TextStyle(
-                            fontSize: 12,
-                            color: Color.fromARGB(255, 144, 142, 142),
+                            fontSize: kTextFontSize,
+                            color: kTextColorLightGrey,
                           ),
                           hintText: "Search for inspiration",
                           fillColor: kTextFieldBackgroundColor,
                           filled: true,
                           suffixIcon: Padding(
-                            padding: const EdgeInsets.only(right: 20),
+                            padding: EdgeInsets.only(right: Responsive.isDesktop(context) ? kDefaultWidth : 0),
                             child: Icon(
                               Icons.search,
                               color: kButtonLightPurple,
                             ),
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius)),
                             borderSide: BorderSide(
                                 color: kTextFieldBackgroundColor, width: 2),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: kDefaultWidth * 2),
+                    SizedBox(
+                        width: Responsive.isDesktop(context) ?
+                          kDefaultWidth * 2 : kDefaultWidth),
                     Expanded(
                       flex: 4,
                       child: Container(
                         // height: 40,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-
-                              // color: Color.fromARGB(44, 215, 4, 170),
-                              ),
-                          child: DropdownButton<String>(
-                            value: user.selectedModel,
-                            borderRadius: BorderRadius.circular(20),
-                            itemHeight: 50,
-                            items: user.modelList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                user.selectedModel = newValue!;
-                                user.pubTopic = user.selectedModel;
-                                getFeaturedImageUrls();
-                              });
-                            },
+                            color: kTextFieldBackgroundColor,
+                            borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius)),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: user.selectedModel,
+                              borderRadius: BorderRadius.circular(20),
+                              itemHeight: 50,
+                              items: user.modelList
+                                  .map<DropdownMenuItem<String>>((String dropDownText) {
+                                return DropdownMenuItem<String>(
+                                  value: dropDownText,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(width: kDefaultWidth),
+                                      Expanded(
+                                        child: Text(
+                                          dropDownText,
+                                          maxLines: 1,
+                                          softWrap: false,
+                                          style: TextStyle(
+                                            fontSize: kTextFontSize,
+                                            color: kTextColorLightGrey,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  user.selectedModel = newValue!;
+                                  user.pubTopic = user.selectedModel;
+                                  getFeaturedImageUrls();
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    // Expanded(
-                    //   flex: 1,
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(left: 40),
-                    //     width: 40,
-                    //     height: 40,
-                    //     child: CircleAvatar(
-                    //       backgroundImage: NetworkImage(_avatarImage),
-                    //     ),
-                    //   ),
-                    // ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 20),
-                        width: 45,
-                        height: 45,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(_avatarImage)),
+                    if (Responsive.isDesktop(context))
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20),
+                          width: 45,
+                          height: 45,
+                          child: CircleAvatar(
+                              backgroundImage: NetworkImage(_avatarImage)),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
