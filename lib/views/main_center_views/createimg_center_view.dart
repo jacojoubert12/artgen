@@ -374,14 +374,12 @@ class _ImgGridViewState extends State<ImgGridView> {
               SizedBox(height: kDefaultPadding),
               if (Responsive.isMobile(context))
                 Container(
-                  height: 35.0,
+                  height: 50.0,
                   width: 350,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(colors: [
-                        Color.fromARGB(255, 61, 2, 50),
-                        Color.fromARGB(255, 10, 6, 20)
-                      ])),
+                    borderRadius: BorderRadius.circular(10),
+                    color: kPurple,
+                  ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       // shadowColor: Colors.transparent,
@@ -390,7 +388,12 @@ class _ImgGridViewState extends State<ImgGridView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: Text('Create'),
+                    child: Text(
+                        'Create',
+                      style: TextStyle(
+                        fontSize: 18
+                      ),
+                    ),
                     onPressed: () {
                       widget.showDetailView!();
                     },
