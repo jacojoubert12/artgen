@@ -38,7 +38,6 @@ dependencies:
 
   syncfusion_flutter_sliders: ^20.4.44
   syncfusion_flutter_gauges: ^20.4.44
-  web_socket_channel: ^2.3.0
   websafe_svg: ^2.1.2+7
   flutter_datetime_picker: ^1.5.1
   firebase_core: ^2.4.1
@@ -59,7 +58,8 @@ dependencies:
   google_mobile_ads: ^2.3.0
   waterfall_flow: ^3.0.2
   mqtt5_client: ^3.3.7
-  # rabbitmq_client: ^0.3.3
+  purchases_flutter: ^4.11.1
+  web_socket_channel: ^2.3.0
 
 
 dev_dependencies:

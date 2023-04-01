@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
-// import 'package:artgen/components/mqtt_client_manager.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
 import 'package:artgen/views/main/main_view.dart';
@@ -11,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../constants.dart';
 import '../../responsive.dart';
@@ -18,8 +18,6 @@ import 'image_details_view.dart';
 
 import 'dart:async';
 import 'dart:io';
-import 'package:mqtt5_client/mqtt5_browser_client.dart';
-import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
@@ -47,7 +45,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Set<dynamic>? _selectedImages;
   Set<String>? _selectedImageUrls;
   List<String> generatedImgUrls = [
+    // "https://e1.pngegg.com/pngimages/866/743/png-clipart-waves-s-black-dot.png"),
     "assets/images/tmp_image.png"
+    // AssetImage('assets/images/tmp_image.png'),
     // "http://localhost:5000/output/" + "output.png"
     // "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
   ];
@@ -58,6 +58,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   int retryDurationInSeconds = 60;
   bool uploading = false;
   List<String> uploadImg2ImgImages = [];
+  String pubTopic = '';
   String prompt = "";
   String negprompt = "";
   String _promptTxt = "";
@@ -69,8 +70,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  final client =
-      MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
+  WebSocketChannel? webSocketChannel;
+  String _response = '';
 
   @override
   void initState() {
@@ -78,12 +79,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
 
-    setupMqttClient();
+    setupWSClient();
   }
 
   @override
   void dispose() {
-    client.disconnect();
+    webSocketChannel?.sink.close();
     super.dispose();
   }
 
@@ -107,59 +108,59 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     }
   }
 
-  Future<void> mqttConnect() async {
-    client.keepAlivePeriod = 1;
-
-    client.onConnected = () {
-      print('Connected');
-    };
-
-    client.onDisconnected = () {
-      print('Disconnected');
-      if (loading) {
-        retries++;
-        mqttConnect();
-        if (retries > 5) {
-          retries = 0;
-        } else {
-          // mqttConnect();
-          generateImage();
-        }
-      }
-    };
-
-    client.onSubscribed = (topic) {
-      print('Subscribed to $topic');
-    };
-
-    print("Check Connection Status");
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      print("Connect to server");
-      await client.connect();
-      print("Subscribe");
-      client.subscribe(user.subTopic, MqttQos.exactlyOnce);
-      print("Listen for updates");
-
-      client.updates.listen((dynamic c) {
-        final MqttPublishMessage recMess = c[0].payload;
-        final pt =
-            MqttUtilities.bytesToStringAsString(recMess.payload.message!);
-        print(
-            'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-        showGeneratedImages(pt);
-      });
-    }
+  Future<void> wsConnect() async {
+    print("Connecting to WebSocket");
+    webSocketChannel = WebSocketChannel.connect(
+      Uri.parse('ws://localhost:8765'),
+    );
+    webSocketChannel!.stream.listen(
+      (event) {
+        setState(() {
+          _response = event;
+          print("WS Response:");
+          showGeneratedImages(_response);
+        });
+      },
+      onError: (error) {
+        print('Error: $error');
+        reconnectWS();
+      },
+      onDone: () {
+        print('WebSocket disconnected.');
+        reconnectWS();
+      },
+    );
   }
 
-  Future<void> setupMqttClient() async {
-    await mqttConnect();
-    client.subscribe(user.subTopic, MqttQos.exactlyOnce);
+  void reconnectWS() {
+    Future.delayed(Duration(seconds: 2), () {
+      wsConnect();
+    });
+  }
+
+  void _subscribeToTopic(String topic) {
+    pubTopic = "img-gen-req-${user.selectedModel}";
+    if (topic == 'no available models') {
+      print("No model to request images from");
+      return;
+    } //TODO Show error popup
+    webSocketChannel?.sink
+        .add(json.encode({'uid': user.user!.uid, 'subscribe': topic}));
+  }
+
+  void _sendMessage(String topic) {
+    webSocketChannel?.sink.add(jsonEncode(query));
+  }
+
+  Future<void> setupWSClient() async {
+    await wsConnect();
+    // _subscribeToTopic(user.subTopic);
   }
 
   void showGeneratedImages(String message) {
     final Set<String> imageUrls = Set();
     var response = jsonDecode(message);
-    // print(response);
+    print(response);
     for (var img in response) {
       print(img);
       imageUrls.add(img);
@@ -194,17 +195,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         .replaceAll('”', '')
         .replaceAll('“', '')
         .replaceAll('”', '');
-
-    // .replaceAll('\\', '\\\\')
-    // .replaceAll('\n', '\\n')
-    // .replaceAll('\r', '\\r')
-    // .replaceAll('\t', '\\t')
-    // .replaceAll('"', '\\"')
-    // .replaceAll('“', '"')
-    // .replaceAll('”', '"')
-    // .replaceAll('”', '"')
-    // .replaceAll('“', '"')
-    // .replaceAll('”', '"');
   }
 
   concatPrompts() {
@@ -240,16 +230,17 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     print(negprompt);
 
     query = {
+      'topic': "img-gen-req-${user.selectedModel}",
       'prompt': escapeDangerousCharacters(prompt),
-      "negprompt": escapeDangerousCharacters(negprompt),
-      "steps": user.samplingStepsSliderValue,
-      "guidance": user.guidanceScaleSliderValue,
-      "width": user.widthSliderValue,
-      "height": user.heightSliderValue,
+      'negprompt': escapeDangerousCharacters(negprompt),
+      'steps': user.samplingStepsSliderValue,
+      'guidance': user.guidanceScaleSliderValue,
+      'width': user.widthSliderValue,
+      'height': user.heightSliderValue,
       // "batch_count": _batchCountSliderValue;
-      "batch_size": user.batchSizeSliderValue,
-      "response_topic": user.subTopic,
-      "user": user.user?.uid,
+      'batch_size': user.batchSizeSliderValue,
+      // "response_topic": user.subTopic,
+      'uid': user.user?.uid,
     };
 
     if (img2imgList.length > 0) {
@@ -259,12 +250,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   generateImage() async {
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      await mqttConnect();
-    }
-    final builder = MqttPayloadBuilder();
-    builder.addString(jsonEncode(query));
-    client.publishMessage(user.pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    // if (webSocketChannel.connectionStatus != MqttConnectionState.connected) {
+    // await wsConnect();
+    // }
+    wsConnect();
+    _subscribeToTopic("img-gen-res-${user.selectedModel}");
+    _sendMessage("img-gen-req-${user.selectedModel}");
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
@@ -419,7 +410,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           fontFamily:
                               'custom font', // remove this if don't have custom font
                           fontSize: 20.0, // text size
-                          color: Color.fromARGB(255, 144, 142, 142),
+                          color: Color.fromARGB(255, 142, 142, 142),
                         ),
                       ),
                     ),
@@ -450,82 +441,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   ),
                 ],
               ),
-              // Row(
-              //   // height: 35.0,
-              //   // width: 50,
-              //   children: [
-              //     Responsive.isMobile(context)
-              //         ? Align(
-              //             alignment: Alignment.topLeft,
-              //             child: ElevatedButton(
-              //               child: Icon(
-              //                 Icons.arrow_back,
-              //                 size: 30.0,
-              //                 color: kButtonLightPurple,
-              //               ),
-              //               onPressed: () {
-              //                 Navigator.of(context).pop();
-              //               },
-              //               style: ElevatedButton.styleFrom(
-              //                   primary: Color.fromARGB(0, 181, 9, 129),
-              //                   onPrimary: Colors.black,
-              //                   shape: CircleBorder()),
-              //             ),
-              //           )
-              //         : Text(''),
-              //     // Container(),
-              //     Positioned(
-              //       // top: MediaQuery.of(context).size.height / 8,
-              //       // left: MediaQuery.of(context).size.width / 2 - 50,
-              //       // alignment: Alignment.topRight,
-              //       child: Container(
-              //         alignment: Alignment.topRight,
-              //         child: ElevatedButton(
-              //           child: Icon(
-              //             Icons.settings,
-              //             size: 30.0,
-              //           ),
-              //           onPressed: () {
-              //             showDialog(
-              //               context: context,
-              //               builder: (context) {
-              //                 return SettingNavigationDrawer();
-              //               },
-              //             );
-              //           },
-              //           style: ElevatedButton.styleFrom(
-              //               primary: Color.fromARGB(255, 181, 9, 130),
-              //               onPrimary: Colors.black,
-              //               shape: CircleBorder()),
-              //         ),
-              //       ),
-              //     ),
-              //     Positioned(
-              //       // top: MediaQuery.of(context).size.height / 8,
-              //       // left: MediaQuery.of(context).size.width / 2 - 50,
-              //       child: Container(
-              //         // margin: EdgeInsets.only(left: 40),
-              //         width: 40,
-              //         height: 40,
-              //         child: CircleAvatar(
-              //           backgroundImage: NetworkImage(_avatarImage),
-              //         ),
-              //       ),
-              //     ),
-              //     // Positioned(
-              //     //   top: MediaQuery.of(context).size.height / 8,
-              //     //   left: MediaQuery.of(context).size.width / 2 - 50,
-              //     Container(
-              //       margin: EdgeInsets.only(left: 20),
-              //       width: 45,
-              //       height: 45,
-              //       child: CircleAvatar(
-              //         backgroundImage: NetworkImage(_avatarImage),
-              //       ),
-              //     ),
-              //     // ),
-              //   ],
-              // ),
               SizedBox(height: kDefaultPadding),
               if (Responsive.isMobile(context))
                 Container(
@@ -537,44 +452,44 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       fontFamily:
                           'custom font', // remove this if don't have custom font
                       fontSize: 15.0, // text size
-                      color: Color.fromARGB(255, 144, 142, 142),
+                      color: Color.fromARGB(255, 142, 142, 142),
                       // text color
                     ),
                   ),
                 ),
               SizedBox(height: kDefaultPadding / 2),
-              Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 80,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Color.fromARGB(255, 77, 75, 75),
-                      width: 2.0,
-                      style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                // height: _selectedImageUrls!.length == 0 ? 0 : 100,
-                child: Expanded(
-                  child: (_selectedImageUrls!.length > 0)
-                      ? ImageListView(
-                          updateSelectedImages: widget.updateSelectedImages,
-                          selectedImages: _selectedImages,
-                          selectedImageUrls: _selectedImageUrls,
-                        )
-                      : Text(
-                          "Select images in search view if you would like to make use of their prompts",
-                          style: TextStyle(
-                            fontFamily:
-                                'custom font', // remove this if don't have custom font
-                            fontSize: 12.0, // text size
-                            color: Color.fromARGB(255, 144, 142, 142),
+              // Container(
+              //   alignment: Alignment.center,
+              //   width: double.infinity,
+              //   height: 80,
+              //   decoration: BoxDecoration(
+              //     border: Border.all(
+              //         color: Color.fromARGB(255, 77, 75, 75),
+              //         width: 2.0,
+              //         style: BorderStyle.solid),
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              //   // height: _selectedImageUrls!.length == 0 ? 0 : 100,
+              //   child: Expanded(
+              //     child: (_selectedImageUrls!.length > 0)
+              //         ? ImageListView(
+              //             updateSelectedImages: widget.updateSelectedImages,
+              //             selectedImages: _selectedImages,
+              //             selectedImageUrls: _selectedImageUrls,
+              //           )
+              //         : Text(
+              //             "Select images in search view if you would like to make use of their prompts",
+              //             style: TextStyle(
+              //               fontFamily:
+              //                   'custom font', // remove this if don't have custom font
+              //               fontSize: 12.0, // text size
+              //               color: Color.fromARGB(255, 142, 142, 142),
 
-                            // text color
-                          ),
-                        ),
-                ),
-              ),
+              //               // text color
+              //             ),
+              //           ),
+              //   ),
+              // ),
               SizedBox(height: kDefaultPadding),
               TextField(
                 keyboardType: TextInputType.multiline,
@@ -585,7 +500,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                 decoration: InputDecoration(
                   hintStyle: TextStyle(
                     fontSize: 12,
-                    color: Color.fromARGB(255, 144, 142, 142),
+                    color: Color.fromARGB(255, 142, 142, 142),
                   ),
                   // hintText: "Search for specific topics",
                   contentPadding: EdgeInsets.symmetric(vertical: 30),
@@ -599,7 +514,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                               fontFamily:
                                   'custom font', // remove this if don't have custom font
                               fontSize: 12.0, // text size
-                              color: Color.fromARGB(255, 144, 142, 142),
+                              color: Color.fromARGB(255, 142, 142, 142),
 
                               // text color
                             ),
@@ -635,7 +550,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                               fontFamily:
                                   'custom font', // remove this if don't have custom font
                               fontSize: 12.0, // text size
-                              color: Color.fromARGB(255, 144, 142, 142),
+                              color: Color.fromARGB(255, 142, 142, 142),
 
                               // text color
                             ),
@@ -667,10 +582,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         shrinkWrap: true,
                         itemCount: generatedImgUrls.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
-                          // childAspectRatio: 16 / 9
-                          // user.heightSliderValue / user.widthSliderValue,
-                        ),
+                            crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
+                            mainAxisSpacing: 0,
+                            crossAxisSpacing: 0
+                            // childAspectRatio: 16 / 9
+                            // user.heightSliderValue / user.widthSliderValue,
+                            ),
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             child: GestureDetector(
@@ -687,7 +604,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                               },
                               child: FadeInImage(
                                 placeholder:
-                                    NetworkImage("assets/images/tmp_image.png"),
+                                    AssetImage('assets/images/tmp_image.png'),
+                                // image:
+                                // AssetImage('assets/images/tmp_image.png'),
                                 image: NetworkImage(generatedImgUrls[index]),
                               ),
                             ),

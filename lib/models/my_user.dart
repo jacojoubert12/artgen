@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_ui/auth.dart';
 // import 'package:firebase_firestore/firebase_firestore.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 class MyUser extends ChangeNotifier {
   User? user;
@@ -67,7 +68,7 @@ class MyUser extends ChangeNotifier {
       print("user still null");
       guestLogin();
     }
-    subTopic = "img_gen_response/${user!.uid}";
+    subTopic = "img-gen-res";
     searchSubTopic = "search_response/${user!.uid}";
     gallarySubTopic = "gallary_response/${user!.uid}";
     print("subTopic");

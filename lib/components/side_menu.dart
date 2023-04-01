@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main/main_view.dart';
@@ -37,9 +38,15 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
   String userName = 'Welcome';
+  String bannerImage = '';
 
   // String _surname = '';
   setUserDetalails() async {
+    setState(() async {
+      bannerImage = await rootBundle.loadString("assets/images/flower.png");
+      print("bannerImage?????????????");
+      print(bannerImage);
+    });
     while (user.user == null) {
       // Wait until user is not null
       await Future.delayed(Duration(milliseconds: 500));
@@ -71,8 +78,11 @@ class _SideMenuState extends State<SideMenu> {
               Container(
                 width: double.maxFinite,
                 color: Color(0xFF),
-                child: Image.network("assets/images/flower.png",
-                    fit: BoxFit.fitWidth),
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/images/flower.png'),
+                  image: AssetImage('assets/images/flower.png'),
+                ),
+                // child: Image.network(bannerImage, fit: BoxFit.fitWidth),
               ),
               // Positioned(
               //   top: MediaQuery.of(context).size.height / 2,

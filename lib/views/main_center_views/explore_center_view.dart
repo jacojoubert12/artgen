@@ -5,10 +5,11 @@ import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mqtt5_client/mqtt5_browser_client.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
@@ -544,7 +545,9 @@ class _ImageGridViewState extends State<ImageGridView> {
               setState(() {});
             },
             child: FadeInImage(
-              placeholder: NetworkImage("assets/images/tmp_image.png"),
+              // placeholder: NetworkImage(rootBundle.loadString("assets/images/tmp_image.png"),
+              placeholder: NetworkImage(
+                  "https://e1.pngegg.com/pngimages/866/743/png-clipart-waves-s-black-dot.png"),
               image: NetworkImage(imageUrl),
             ),
           ),

@@ -7,7 +7,7 @@ import 'package:artgen/responsive.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mqtt5_client/mqtt5_browser_client.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
