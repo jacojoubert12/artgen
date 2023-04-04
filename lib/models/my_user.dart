@@ -33,9 +33,10 @@ class MyUser extends ChangeNotifier {
   final Storage _localStorage = window.localStorage;
   List<String> modelList = [];
   String selectedModel = '';
-  String subTopic = '';
-  String searchSubTopic = '';
-  String gallarySubTopic = '';
+  String subTopic = "img-gen-res";
+  String searchSubTopic = "keyword-search-res";
+  String featuredSubTopic = "featured-search-res";
+  String gallarySubTopic = "gallary-search-res";
   List<double> widths = [768, 704, 640, 576, 512, 460, 512, 512, 512, 512];
   List<double> heights = [512, 512, 512, 512, 512, 460, 576, 640, 704, 768];
 
@@ -57,7 +58,6 @@ class MyUser extends ChangeNotifier {
   initMyUser() {
     guestLogin();
     getUniqueCheckpointFiles();
-    // setSubTopic();
     setSubTopicAsync().then((_) => userInitDone = true);
   }
 
@@ -68,16 +68,8 @@ class MyUser extends ChangeNotifier {
       print("user still null");
       guestLogin();
     }
-    subTopic = "img-gen-res";
-    searchSubTopic = "search_response/${user!.uid}";
-    gallarySubTopic = "gallary_response/${user!.uid}";
-    print("subTopic");
-    print(subTopic);
+    //Do everything that requires a UID after this
   }
-
-  // setSubTopic() {
-  //   subTopic = "img_gen_response/" + user!.uid;
-  // }
 
   Future<List<DocumentSnapshot>> getDocumentsFromCollection(
       String collectionName) async {

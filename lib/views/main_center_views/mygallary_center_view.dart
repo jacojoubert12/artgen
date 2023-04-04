@@ -13,6 +13,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
 class MyGallaryCenterView extends StatefulWidget {
@@ -81,15 +82,15 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
-  final client =
-      MqttBrowserClient('ws://68.183.44.212', 'flutter-browser-client');
+  WebSocketChannel? webSocketChannel;
+  String _response = '';
   Set<String> imageUrls = Set();
   List<dynamic> images = [];
 
   @override
   void initState() {
     super.initState();
-    setupMqttClient();
+    setupWSClient();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
@@ -100,55 +101,52 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
 
   @override
   void dispose() {
-    client.disconnect();
+    webSocketChannel?.sink.close();
     super.dispose();
   }
 
-  Future<void> mqttConnect() async {
-    client.keepAlivePeriod = 1;
-    client.onConnected = () {
-      print('Connected');
-    };
+  Future<void> wsConnect() async {
+    print("Connecting to WebSocket");
+    webSocketChannel = WebSocketChannel.connect(
+      Uri.parse('ws://localhost:8765'),
+    );
+    webSocketChannel!.stream.listen(
+      (event) {
+        setState(() {
+          _response = event;
+          print("WS Response:");
+          showSearchResults(_response);
+        });
+      },
+      onError: (error) {
+        print('Error: $error');
+        reconnectWS();
+      },
+      onDone: () {
+        print('WebSocket disconnected.');
+        reconnectWS();
+      },
+    );
+  }
 
-    client.onDisconnected = () {
-      print('Disconnected');
-      if (loading) {
-        retries++;
-        mqttConnect();
-        if (retries > 5) {
-          retries = 0;
-          loading = false;
-        } else {
-          // mqttConnect();
-          if (getFeatured) getFeaturedImageUrls();
-          // else
-          // getSearchImageUrls(searchString);
-        }
-      }
-    };
+  void reconnectWS() {
+    Future.delayed(Duration(seconds: 2), () {
+      wsConnect();
+    });
+  }
 
-    client.onSubscribed = (topic) {
-      print('Subscribed to $topic');
-    };
+  void _subscribeToTopic(String topic) {
+    webSocketChannel?.sink
+        .add(json.encode({'uid': user.user!.uid, 'subscribe': topic}));
+  }
 
-    print("Check Connection Status");
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      print("Connect to server");
-      await client.connect();
-      print("Subscribe");
-      client.subscribe(user.gallarySubTopic, MqttQos.atMostOnce);
-      print("Listen for updates");
+  void _sendMessage(var query) {
+    webSocketChannel?.sink.add(jsonEncode(query));
+  }
 
-      client.updates.listen((dynamic c) {
-        final MqttPublishMessage recMess = c[0].payload;
-        final pt =
-            MqttUtilities.bytesToStringAsString(recMess.payload.message!);
-        print("Featured/Search Response received");
-        print(
-            'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-        showSearchResults(pt);
-      });
-    }
+  Future<void> setupWSClient() async {
+    await wsConnect();
+    // _subscribeToTopic(user.subTopic);
   }
 
   getFeaturedImageUrls() async {
@@ -159,21 +157,18 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
       await Future.delayed(Duration(milliseconds: 500));
       print("user still null");
     }
-    if (client.connectionStatus != MqttConnectionState.connected) {
-      await mqttConnect();
-    }
+
     var query = {
       'user': user.user!.uid,
-      'response_topic': user.gallarySubTopic,
       'pos': 0,
-      'size': 200
+      'size': 200,
+      'uid': user.user?.uid,
+      'topic': 'gallary-search'
     };
-    final builder = MqttPayloadBuilder();
-    builder.addString(jsonEncode(query));
-    client.publishMessage(
-        pubTopicFeatured, MqttQos.atMostOnce, builder.payload!);
     print("JSON Encoded query:");
     print(jsonEncode(query));
+    _subscribeToTopic(user.featuredSubTopic);
+    _sendMessage(query);
 
     setState(() {
       user.modelList = user.modelList;
@@ -189,30 +184,11 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
     });
   }
 
-  Future<void> setupMqttClient() async {
-    mqttConnect();
-    // subTopic = "search_response/" + user.user!.uid;
-    while (user.user == null) {
-      // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 500));
-      print("user still null");
-    }
-    client.subscribe(user.gallarySubTopic, MqttQos.atMostOnce);
-  }
-
   void showSearchResults(String message) {
     loading = false;
-    // final Set<String> imageUrls = Set();
-    // final List<dynamic> images = [];
     var jsonMap = jsonDecode(message);
-    // for (var img in jsonMap.values) {
-    //   print(img['_source']['details']['images']['thumbnails'][0]);
-    //   String url = img['_source']['details']['images']['thumbnails'][0];
-    //   imageUrls.add(url);
-    //   images.add(img);
-    // }
-    print(jsonMap['_source']['details']['images']['thumbnails'][0]);
-    String url = jsonMap['_source']['details']['images']['thumbnails'][0];
+    print(jsonMap['_source']['details']['images']['images'][0]);
+    String url = jsonMap['_source']['details']['images']['images'][0];
     imageUrls.add(url);
     images.add(jsonMap);
     setState(() {

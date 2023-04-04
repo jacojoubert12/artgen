@@ -98,6 +98,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
     // Execute the function
     if (loading && timeoutRetries < 5) {
+      print("Timeout, going to retry");
       generateImage();
       timeoutRetries++;
     } else if (timeoutRetries >= 5) {
@@ -148,7 +149,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         .add(json.encode({'uid': user.user!.uid, 'subscribe': topic}));
   }
 
-  void _sendMessage(String topic) {
+  void _sendMessage() {
     webSocketChannel?.sink.add(jsonEncode(query));
   }
 
@@ -230,7 +231,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     print(negprompt);
 
     query = {
-      'topic': "img-gen-req-${user.selectedModel}",
       'prompt': escapeDangerousCharacters(prompt),
       'negprompt': escapeDangerousCharacters(negprompt),
       'steps': user.samplingStepsSliderValue,
@@ -239,8 +239,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       'height': user.heightSliderValue,
       // "batch_count": _batchCountSliderValue;
       'batch_size': user.batchSizeSliderValue,
-      // "response_topic": user.subTopic,
       'uid': user.user?.uid,
+      'topic': "img-gen-req-${user.selectedModel}"
     };
 
     if (img2imgList.length > 0) {
@@ -253,9 +253,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     // if (webSocketChannel.connectionStatus != MqttConnectionState.connected) {
     // await wsConnect();
     // }
+    print("Generate Images");
+    retryDurationInSeconds = (user.batchSizeSliderValue * 60) as int;
     wsConnect();
     _subscribeToTopic("img-gen-res-${user.selectedModel}");
-    _sendMessage("img-gen-req-${user.selectedModel}");
+    _sendMessage();
     print("JSON Encoded query:");
     print(jsonEncode(query));
 
