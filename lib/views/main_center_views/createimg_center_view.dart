@@ -494,6 +494,8 @@ class _ImageGridViewState extends State<ImageGridView> {
           child: GestureDetector(
             onTap: () {
               setState(() {
+                print("Selected image Details: ");
+                print(imageFull);
                 if (isSelected) {
                   _selectedImageUrls!.remove(imageUrl);
                   _selectedImages!.remove(imageFull);

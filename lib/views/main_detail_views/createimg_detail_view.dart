@@ -164,6 +164,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   concatPrompts() {
+    //TODo: Add NLP to cleanup the prompt and remove duplicate sentences when selected images have overlapping prompts
+    //Ensure the sise #GPT4All? Basically rewrite the prompt to improve it
     prompt = "";
     negprompt = "";
     for (var jsonString in _selectedImages!) {
@@ -422,38 +424,35 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   ),
                 ),
               SizedBox(height: kDefaultPadding / 2),
-              // Container(
-              //   alignment: Alignment.center,
-              //   width: double.infinity,
-              //   height: 80,
-              //   decoration: BoxDecoration(
-              //     border: Border.all(
-              //         color: Color.fromARGB(255, 77, 75, 75),
-              //         width: 2.0,
-              //         style: BorderStyle.solid),
-              //     borderRadius: BorderRadius.circular(5),
-              //   ),
-              //   // height: _selectedImageUrls!.length == 0 ? 0 : 100,
-              //   child: Expanded(
-              //     child: (_selectedImageUrls!.length > 0)
-              //         ? ImageListView(
-              //             updateSelectedImages: widget.updateSelectedImages,
-              //             selectedImages: _selectedImages,
-              //             selectedImageUrls: _selectedImageUrls,
-              //           )
-              //         : Text(
-              //             "Select images in search view if you would like to make use of their prompts",
-              //             style: TextStyle(
-              //               fontFamily:
-              //                   'custom font', // remove this if don't have custom font
-              //               fontSize: 12.0, // text size
-              //               color: Color.fromARGB(255, 142, 142, 142),
-
-              //               // text color
-              //             ),
-              //           ),
-              //   ),
-              // ),
+              Container(
+                alignment: Alignment.center,
+                width: double.infinity,
+                height: 80,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Color.fromARGB(255, 77, 75, 75),
+                      width: 2.0,
+                      style: BorderStyle.solid),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                // height: _selectedImageUrls!.length == 0 ? 0 : 100,
+                child: (_selectedImageUrls!.length > 0)
+                    ? ImageListView(
+                        updateSelectedImages: widget.updateSelectedImages,
+                        selectedImages: _selectedImages,
+                        selectedImageUrls: _selectedImageUrls,
+                      )
+                    : Text(
+                        "Select images in search view if you would like to make use of their prompts",
+                        style: TextStyle(
+                          fontFamily:
+                              'custom font', // remove this if don't have custom font
+                          fontSize: 12.0, // text size
+                          color: Color.fromARGB(255, 142, 142, 142),
+                          // text color
+                        ),
+                      ),
+              ),
               SizedBox(height: kDefaultPadding),
               TextField(
                 keyboardType: TextInputType.multiline,
@@ -542,39 +541,70 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       Text('')
                     ]))
                   : Expanded(
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        itemCount: generatedImgUrls.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: generatedImgUrls.length < 3 ? 1 : 3,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0
-                            // childAspectRatio: 16 / 9
-                            // user.heightSliderValue / user.widthSliderValue,
-                            ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: GestureDetector(
+                      child: LayoutBuilder(
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          double availableWidth = constraints.maxWidth;
+                          double aspectRatio = availableWidth /
+                              MediaQuery.of(context).size.height;
+
+                          if (generatedImgUrls.length == 1) {
+                            return GestureDetector(
                               onTap: () {
                                 showDialog(
                                   context: context,
                                   builder: (context) {
                                     return ImageDetailsModal(
-                                      selectedImageUrl: generatedImgUrls[index],
+                                      selectedImageUrl: generatedImgUrls[0],
                                     );
                                   },
                                 );
                                 setState(() {});
                               },
-                              child: FadeInImage(
-                                placeholder:
-                                    AssetImage('assets/images/tmp_image.png'),
-                                // image:
-                                // AssetImage('assets/images/tmp_image.png'),
-                                image: NetworkImage(generatedImgUrls[index]),
+                              child: Center(
+                                child: FadeInImage(
+                                  placeholder:
+                                      AssetImage('assets/images/tmp_image.png'),
+                                  image: NetworkImage(generatedImgUrls[0]),
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: generatedImgUrls.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                    generatedImgUrls.length < 3 ? 1 : 3,
+                                mainAxisSpacing: 0,
+                                crossAxisSpacing: 0,
+                                childAspectRatio: aspectRatio,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ImageDetailsModal(
+                                          selectedImageUrl:
+                                              generatedImgUrls[index],
+                                        );
+                                      },
+                                    );
+                                    setState(() {});
+                                  },
+                                  child: FadeInImage(
+                                    placeholder: AssetImage(
+                                        'assets/images/tmp_image.png'),
+                                    image:
+                                        NetworkImage(generatedImgUrls[index]),
+                                  ),
+                                );
+                              },
+                            );
+                          }
                         },
                       ),
                     ),
