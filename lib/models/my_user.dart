@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 import 'dart:io';
@@ -36,7 +37,7 @@ class MyUser extends ChangeNotifier {
   String subTopic = "img-gen-res";
   String searchSubTopic = "keyword-search-res";
   String featuredSubTopic = "featured-search-res";
-  String gallarySubTopic = "gallary-search-res";
+  String gallerySubTopic = "gallery-search-res";
   List<double> widths = [768, 704, 640, 576, 512, 460, 512, 512, 512, 512];
   List<double> heights = [512, 512, 512, 512, 512, 460, 576, 640, 704, 768];
 
@@ -52,7 +53,7 @@ class MyUser extends ChangeNotifier {
   double batchSizeSliderValue = 1;
 
   MyUser() {
-    initMyUser();
+    // initMyUser();
   }
 
   initMyUser() {
@@ -61,12 +62,79 @@ class MyUser extends ChangeNotifier {
     setSubTopicAsync().then((_) => userInitDone = true);
   }
 
+  Future<void> get loggedInUserFuture {
+    final completer = Completer<void>();
+    print("Going to check if user is logged in...");
+
+    void checkUser() {
+      if (user != null) {
+        print("User logged in...");
+        completer.complete();
+        removeListener(checkUser);
+      }
+    }
+
+    // Check if the user is already logged in before adding the listener
+    if (user != null) {
+      print("User logged in...");
+      completer.complete();
+    } else {
+      addListener(checkUser);
+    }
+
+    return completer.future;
+  }
+
+  Future<void> get loggedInUserFutureForImgGen {
+    final completer = Completer<void>();
+    print("Going to check if user is logged in...");
+
+    void checkUser() {
+      if (user != null) {
+        print("User logged in...");
+        completer.complete();
+        removeListener(checkUser);
+      }
+    }
+
+    // Check if the user is already logged in before adding the listener
+    if (user != null) {
+      print("User logged in...");
+      completer.complete();
+    } else {
+      addListener(checkUser);
+    }
+
+    return completer.future;
+  }
+
+  Future<void> get haveCheckpointFiles {
+    final completer = Completer<void>();
+    print("Going to check if modelList has been updated...");
+
+    void checkCheckpointFiles() {
+      if (modelList.length > 0) {
+        print("Available models loaded...");
+        completer.complete();
+        removeListener(checkCheckpointFiles);
+      }
+    }
+
+    if (modelList.length > 0) {
+      print("Available models loaded...");
+      completer.complete();
+    } else {
+      addListener(checkCheckpointFiles);
+    }
+
+    return completer.future;
+  }
+
   Future<void> setSubTopicAsync() async {
     while (user == null) {
       // Wait until user is not null
       await Future.delayed(Duration(milliseconds: 5000));
-      print("user still null");
-      guestLogin();
+      if (user == null) guestLogin();
     }
     //Do everything that requires a UID after this
   }
@@ -105,6 +173,7 @@ class MyUser extends ChangeNotifier {
   }
 
   Future<List<String>> getUniqueCheckpointFiles() async {
+    print("Updating list of available models");
     Set<String> uniqueFiles = Set();
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection("active_workers").get();
@@ -119,6 +188,8 @@ class MyUser extends ChangeNotifier {
       });
     });
     modelList = uniqueFiles.toList();
+    print("modelList:");
+    print(modelList);
     modelList.length == 0
         ? {modelList.add("no available models"), selectedModel = modelList[0]}
         : selectedModel == ''
@@ -181,7 +252,6 @@ class MyUser extends ChangeNotifier {
 
   Future<int?> getIntData(String key) async {
     if (kIsWeb) {
-      print("Nulll yet?");
       String? strValue = _localStorage[key];
       if (strValue == null) {
         return 0;
@@ -273,7 +343,6 @@ class MyUser extends ChangeNotifier {
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
         userInfo = documentSnapshot.data() as Map<String, dynamic>;
-        // print('Document data: ${documentSnapshot.data()}');
         print("userInfo");
         print(userInfo);
         print("userInfo['package']");
@@ -330,7 +399,7 @@ class MyUser extends ChangeNotifier {
     }
     if (user != null) {
       if (!user!.isAnonymous) {
-        print("NOT ANONaMOUSES");
+        print("User NOT Anonymous");
         shouldLogin = false;
       } else {
         var appIdTmp = await getStrData("app_id");
@@ -346,13 +415,10 @@ class MyUser extends ChangeNotifier {
           imagesGenerated = generatedImgsTmp;
           print("generatedImgsTmp not null");
         }
-        print("ANONaMOUSES");
-        print("appIdTmp");
-        print(appIdTmp);
+        print("Anonymous");
         appIdTmp = await getStrData("app_id");
-        print("appIdTmp Now?");
+        print("appIdTmp:");
         print(appIdTmp);
-        print(user!.uid);
         print("images_generated");
         print(imagesGenerated);
       }

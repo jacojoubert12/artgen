@@ -41,27 +41,27 @@ class _SideMenuState extends State<SideMenu> {
   String bannerImage = '';
 
   // String _surname = '';
-  setUserDetalails() async {
-    setState(() async {
-      bannerImage = await rootBundle.loadString("assets/images/flower.png");
-      print("bannerImage?????????????");
-      print(bannerImage);
-    });
-    while (user.user == null) {
-      // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 500));
-      print("user still null");
-    }
-    setState(() {
-      userName = user.user!.displayName!;
-    });
-  }
+  // setUserDetalails() async {
+  //   // setState(() async {
+  //   //   bannerImage = await rootBundle.loadString("assets/images/flower.png");
+  //   //   print("bannerImage?????????????");
+  //   //   print(bannerImage);
+  //   // });
+  //   while (user.user == null) {
+  //     // Wait until user is not null
+  //     await Future.delayed(Duration(milliseconds: 500));
+  //     print("user still null");
+  //   }
+  //   setState(() {
+  //     userName = user.user!.displayName!;
+  //   });
+  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    setUserDetalails();
+    // setUserDetalails();
   }
 
   @override
@@ -119,7 +119,7 @@ class _SideMenuState extends State<SideMenu> {
               SideMenuItem(
                 press: () {
                   this.widget.setViewMode!(ViewMode.create);
-                  setUserDetalails();
+                  // setUserDetalails();
                 },
                 title: "Create",
                 icon: Icon(
@@ -131,10 +131,10 @@ class _SideMenuState extends State<SideMenu> {
               ),
               SideMenuItem(
                 press: () {
-                  this.widget.setViewMode!(ViewMode.mygallary);
-                  setUserDetalails();
+                  this.widget.setViewMode!(ViewMode.mygallery);
+                  // setUserDetalails();
                 },
-                title: "My Gallary",
+                title: "My Gallery",
                 icon: Icon(
                   Icons.collections,
                   color: kButtonLightPurple,
@@ -145,7 +145,7 @@ class _SideMenuState extends State<SideMenu> {
               SideMenuItem(
                 press: () {
                   this.widget.setViewMode!(ViewMode.explore);
-                  setUserDetalails();
+                  // setUserDetalails();
                 },
                 title: "Explore",
                 icon: Icon(

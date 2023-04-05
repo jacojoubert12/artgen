@@ -3,6 +3,7 @@ import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
+import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
@@ -70,8 +71,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  WebSocketChannel? webSocketChannel;
-  String _response = '';
+  late MyWebsockets imgGenWs;
 
   @override
   void initState() {
@@ -79,24 +79,38 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
 
-    setupWSClient();
+    user.loggedInUserFutureForImgGen.then((_) {
+      setupWebsockets();
+    });
   }
 
   @override
   void dispose() {
-    webSocketChannel?.sink.close();
+    imgGenWs.close();
     super.dispose();
   }
 
-  Future<void> startRetryTimer() async {
-    // setState(() {
-    //   _isRunning = true;
-    // });
+  Future<void> setupWebsockets() async {
+    print("setupWebsockets()");
+    while (user.user == null) await Future.delayed(Duration(seconds: 1));
 
-    // Wait for the timer duration
+    while (user.selectedModel.length == 0)
+      await Future.delayed(Duration(seconds: 1));
+
+    imgGenWs = MyWebsockets(
+      onMessageReceived: (message) {
+        setState(() {
+          print("image gen response");
+          showGeneratedImages(message);
+        });
+      },
+      topic: "img-gen-res-${user.selectedModel}",
+    );
+  }
+
+  Future<void> startRetryTimer() async {
     await Future.delayed(Duration(seconds: retryDurationInSeconds));
 
-    // Execute the function
     if (loading && timeoutRetries < 5) {
       print("Timeout, going to retry");
       generateImage();
@@ -107,55 +121,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         loading = false;
       });
     }
-  }
-
-  Future<void> wsConnect() async {
-    print("Connecting to WebSocket");
-    webSocketChannel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:8765'),
-    );
-    webSocketChannel!.stream.listen(
-      (event) {
-        setState(() {
-          _response = event;
-          print("WS Response:");
-          showGeneratedImages(_response);
-        });
-      },
-      onError: (error) {
-        print('Error: $error');
-        reconnectWS();
-      },
-      onDone: () {
-        print('WebSocket disconnected.');
-        reconnectWS();
-      },
-    );
-  }
-
-  void reconnectWS() {
-    Future.delayed(Duration(seconds: 2), () {
-      wsConnect();
-    });
-  }
-
-  void _subscribeToTopic(String topic) {
-    pubTopic = "img-gen-req-${user.selectedModel}";
-    if (topic == 'no available models') {
-      print("No model to request images from");
-      return;
-    } //TODO Show error popup
-    webSocketChannel?.sink
-        .add(json.encode({'uid': user.user!.uid, 'subscribe': topic}));
-  }
-
-  void _sendMessage() {
-    webSocketChannel?.sink.add(jsonEncode(query));
-  }
-
-  Future<void> setupWSClient() async {
-    await wsConnect();
-    // _subscribeToTopic(user.subTopic);
   }
 
   void showGeneratedImages(String message) {
@@ -250,16 +215,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   generateImage() async {
-    // if (webSocketChannel.connectionStatus != MqttConnectionState.connected) {
-    // await wsConnect();
-    // }
     print("Generate Images");
     retryDurationInSeconds = (user.batchSizeSliderValue * 60) as int;
-    wsConnect();
-    _subscribeToTopic("img-gen-res-${user.selectedModel}");
-    _sendMessage();
+    ;
     print("JSON Encoded query:");
     print(jsonEncode(query));
+    setupWebsockets();
+    imgGenWs.sendMessage(query);
 
     setState(() {
       loading = true;
@@ -646,13 +608,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         concatPrompts();
                         user.showLogin(context, query)
                             ? {
-                                //Move to response on success
                                 user.imagesToGenerate =
                                     (user.batchSizeSliderValue as int?)!,
-                                // concatPrompts(),
-                                // setState(() {
-                                // loading = true;
-                                // }),
                                 generateImage()
                               }
                             : showDialog(

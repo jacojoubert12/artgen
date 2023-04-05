@@ -5,7 +5,7 @@ import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/Welcome/welcome_screen.dart';
 import 'package:artgen/components/my_input_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'firebase_options.dart';
 
 // void main() {
@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  MobileAds.instance.initialize();
+  // MobileAds.instance.initialize();
   runApp(MyApp());
 }
 

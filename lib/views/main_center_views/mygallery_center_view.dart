@@ -1,11 +1,11 @@
 import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
+import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mqtt5_client/mqtt5_browser_client.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -16,8 +16,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
-class MyGallaryCenterView extends StatefulWidget {
-  MyGallaryCenterView(
+class MyGalleryCenterView extends StatefulWidget {
+  MyGalleryCenterView(
       {Key? key,
       this.setViewMode,
       this.selectedImages,
@@ -56,10 +56,10 @@ class MyGallaryCenterView extends StatefulWidget {
   // }
 
   @override
-  State<MyGallaryCenterView> createState() => _MyGallaryCenterViewState();
+  State<MyGalleryCenterView> createState() => _MyGalleryCenterViewState();
 }
 
-class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
+class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Set<dynamic>? _selectedImages;
   Set<String>? _selectedImageUrls;
@@ -75,100 +75,64 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
       firebase_storage.FirebaseStorage.instance;
   // MQTTClientManager mqttClientManager = MQTTClientManager();
   String pubTopic = "search";
-  String pubTopicFeatured = "gallary";
+  String pubTopicFeatured = "gallery";
   // String subTopic = '';
   String searchString = '';
 
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
-  WebSocketChannel? webSocketChannel;
-  String _response = '';
+  late MyWebsockets galleryWs;
   Set<String> imageUrls = Set();
   List<dynamic> images = [];
 
   @override
   void initState() {
     super.initState();
-    setupWSClient();
+    // setupWSClient();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
     _images = widget.images;
-    getFeaturedImageUrls();
-    user.addListener(getFeaturedImageUrls);
+    user.loggedInUserFuture.then((_) {
+      print("User logged in, setting up gallery websocket");
+      setupWebsockets();
+      getGalleryImageUrls();
+    });
   }
 
   @override
   void dispose() {
-    webSocketChannel?.sink.close();
+    galleryWs.close();
     super.dispose();
   }
 
-  Future<void> wsConnect() async {
-    print("Connecting to WebSocket");
-    webSocketChannel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:8765'),
-    );
-    webSocketChannel!.stream.listen(
-      (event) {
+  void setupWebsockets() {
+    print("setupWebsockets()");
+
+    galleryWs = MyWebsockets(
+      onMessageReceived: (message) {
         setState(() {
-          _response = event;
-          print("WS Response:");
-          showSearchResults(_response);
+          showSearchResults(message);
         });
       },
-      onError: (error) {
-        print('Error: $error');
-        reconnectWS();
-      },
-      onDone: () {
-        print('WebSocket disconnected.');
-        reconnectWS();
-      },
+      topic: user.gallerySubTopic,
     );
   }
 
-  void reconnectWS() {
-    Future.delayed(Duration(seconds: 2), () {
-      wsConnect();
-    });
-  }
-
-  void _subscribeToTopic(String topic) {
-    webSocketChannel?.sink
-        .add(json.encode({'uid': user.user!.uid, 'subscribe': topic}));
-  }
-
-  void _sendMessage(var query) {
-    webSocketChannel?.sink.add(jsonEncode(query));
-  }
-
-  Future<void> setupWSClient() async {
-    await wsConnect();
-    // _subscribeToTopic(user.subTopic);
-  }
-
-  getFeaturedImageUrls() async {
+  getGalleryImageUrls() {
     getFeatured = true;
-    //TODo Add 'featued' for 'default' images on startup
-    while (user.user == null) {
-      // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 500));
-      print("user still null");
-    }
 
     var query = {
       'user': user.user!.uid,
       'pos': 0,
-      'size': 200,
+      'size': 100,
       'uid': user.user?.uid,
-      'topic': 'gallary-search'
+      'topic': 'gallery-search'
     };
     print("JSON Encoded query:");
     print(jsonEncode(query));
-    _subscribeToTopic(user.featuredSubTopic);
-    _sendMessage(query);
+    galleryWs.sendMessage(query);
 
     setState(() {
       user.modelList = user.modelList;
@@ -237,7 +201,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
                         height: 35,
                         alignment: Alignment.center,
                         child: Text(
-                          "My Gallary",
+                          "My Gallery",
                           style: TextStyle(
                             fontFamily:
                                 'custom font', // remove this if don't have custom font
@@ -379,7 +343,7 @@ class _MyGallaryCenterViewState extends State<MyGallaryCenterView> {
     );
   }
 
-  void onAdLoaded(InterstitialAd ad) {}
+  // void onAdLoaded(InterstitialAd ad) {}
 }
 
 class ImageGridView extends StatefulWidget {

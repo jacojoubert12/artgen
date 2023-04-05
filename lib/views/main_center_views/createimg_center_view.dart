@@ -1,10 +1,10 @@
 import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
+import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -78,95 +78,72 @@ class _ImgGridViewState extends State<ImgGridView> {
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
-  WebSocketChannel? webSocketChannel;
-  String _response = '';
+  late MyWebsockets searchWs;
+  late MyWebsockets featuredWs;
   Set<String> imageUrls = Set();
   List<dynamic> images = [];
 
   @override
   void initState() {
     super.initState();
-    setupWSClient();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
     _images = widget.images;
-    getFeaturedImageUrls();
-    user.addListener(getFeaturedImageUrls);
+    user.loggedInUserFuture.then((_) {
+      setupWebsockets();
+      user.haveCheckpointFiles.then((_) {
+        print("Goind to get Featured Images...");
+        getFeaturedImageUrls();
+      });
+    });
   }
 
   @override
   void dispose() {
-    webSocketChannel?.sink.close();
+    searchWs.close();
+    featuredWs.close();
     super.dispose();
   }
 
-  Future<void> wsConnect() async {
-    print("Connecting to WebSocket");
-
-    webSocketChannel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:8765'),
-    );
-    webSocketChannel!.stream.listen(
-      (event) {
+  void setupWebsockets() {
+    print("setupWebsockets()");
+    searchWs = MyWebsockets(
+      onMessageReceived: (message) {
         setState(() {
-          _response = event;
-          print("WS Response:");
-          showSearchResults(_response);
+          showSearchResults(message);
         });
       },
-      onError: (error) {
-        print('Error: $error');
-        reconnectWS();
-      },
-      onDone: () {
-        print('WebSocket disconnected.');
-        reconnectWS();
-      },
+      topic: user.searchSubTopic,
     );
-  }
 
-  void reconnectWS() {
-    Future.delayed(Duration(seconds: 2), () {
-      wsConnect();
-    });
-  }
-
-  void _subscribeToTopic(String topic) {
-    webSocketChannel?.sink
-        .add(json.encode({'uid': user.user!.uid, 'subscribe': topic}));
-  }
-
-  void _sendMessage(var query) {
-    webSocketChannel?.sink.add(jsonEncode(query));
-  }
-
-  Future<void> setupWSClient() async {
-    await wsConnect();
+    featuredWs = MyWebsockets(
+      onMessageReceived: (message) {
+        setState(() {
+          showSearchResults(message);
+        });
+      },
+      topic: user.featuredSubTopic,
+    );
   }
 
   getSearchImageUrls([String q = "featured"]) async {
     getFeatured = false;
     imageUrls = Set();
     images = [];
-    while (user.user == null) {
-      // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 500));
-      print("user still null");
-    }
 
     var query = {
       'keywords': q,
       'pos': 0,
-      'size': 20,
+      'size': 100,
       'uid': user.user?.uid,
       'topic': 'keyword-search'
     };
 
     print("JSON Encoded query:");
     print(jsonEncode(query));
-    _subscribeToTopic(user.searchSubTopic);
-    _sendMessage(query);
+    setupWebsockets();
+    featuredWs.sendMessage(query);
 
     setState(() {
       loading = true;
@@ -177,24 +154,18 @@ class _ImgGridViewState extends State<ImgGridView> {
     getFeatured = true;
     imageUrls = Set();
     images = [];
-    //TODo Add 'featued' for 'default' images on startup
-    while (user.user == null) {
-      // Wait until user is not null
-      await Future.delayed(Duration(milliseconds: 500));
-      print("user still null");
-    }
 
     var query = {
       'model': user.pubTopic,
       'pos': 0,
-      'size': 20,
+      'size': 100,
       'uid': user.user?.uid,
       'topic': 'featured-search'
     };
     print("JSON Encoded query:");
     print(jsonEncode(query));
-    _subscribeToTopic(user.featuredSubTopic);
-    _sendMessage(query);
+    setupWebsockets();
+    searchWs.sendMessage(query);
 
     setState(() {
       user.modelList = user.modelList;
@@ -459,7 +430,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     );
   }
 
-  void onAdLoaded(InterstitialAd ad) {}
+  // void onAdLoaded(InterstitialAd ad) {}
 }
 
 class ImageGridView extends StatefulWidget {
@@ -535,7 +506,10 @@ class _ImageGridViewState extends State<ImageGridView> {
                     _selectedImages, _selectedImageUrls);
               });
             },
-            child: Image.network(imageUrl),
+            child: FadeInImage(
+              placeholder: AssetImage('assets/images/tmp_image.png'),
+              image: NetworkImage(imageUrl),
+            ),
           ),
         );
       },

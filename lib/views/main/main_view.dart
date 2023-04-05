@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 
-import 'package:artgen/views/main_center_views/mygallary_center_view.dart';
+import 'package:artgen/views/main_center_views/mygallery_center_view.dart';
 import 'package:artgen/views/main_center_views/likes_center_view.dart';
 import 'package:artgen/views/main_center_views/explore_center_view.dart';
 import 'package:artgen/views/main_center_views/profile_center_view.dart';
@@ -18,7 +18,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:artgen/auth_gate.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
-enum ViewMode { create, mygallary, explore, likes, profile, about, share }
+enum ViewMode { create, mygallery, explore, likes, profile, about, share }
 
 MyUser user = MyUser();
 
@@ -74,7 +74,7 @@ class _Mainviewstate extends State<MainScreen> {
         setViewMode: this.setViewMode);
 
     getDeviceInfo();
-    // user.initMyUser();
+    user.initMyUser();
   }
 
   void setDfaultResolution() {
@@ -186,8 +186,8 @@ class _Mainviewstate extends State<MainScreen> {
       case ViewMode.create:
         centerView = createImgCenterView;
         break;
-      case ViewMode.mygallary:
-        centerView = MyGallaryCenterView(setViewMode: setViewMode);
+      case ViewMode.mygallery:
+        centerView = MyGalleryCenterView(setViewMode: setViewMode);
         break;
       case ViewMode.explore:
         centerView = ExploreCenterView(setViewMode: setViewMode);
@@ -211,8 +211,8 @@ class _Mainviewstate extends State<MainScreen> {
     switch (viewMode) {
       case ViewMode.create:
         return this.createImgDetailView;
-      // case ViewMode.mygallary:
-      //   return mygallaryDetailView;
+      // case ViewMode.mygallery:
+      //   return mygalleryDetailView;
       //   break;
       default:
         return this.createImgDetailView;
