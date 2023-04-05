@@ -80,7 +80,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   late MyWebsockets searchWs;
   late MyWebsockets featuredWs;
-  Set<String> imageUrls = Set();
+  List<String> imageUrls = [];
   List<dynamic> images = [];
 
   @override
@@ -129,7 +129,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   getSearchImageUrls([String q = "featured"]) async {
     getFeatured = false;
-    imageUrls = Set();
+    imageUrls = [];
     images = [];
 
     var query = {
@@ -152,7 +152,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   getFeaturedImageUrls() async {
     getFeatured = true;
-    imageUrls = Set();
+    imageUrls = [];
     images = [];
 
     var query = {
@@ -186,11 +186,16 @@ class _ImgGridViewState extends State<ImgGridView> {
     var jsonMap = jsonDecode(message);
 
     print(jsonMap['_source']['details']['images']['images'][0]);
+    print(jsonMap);
     String url = jsonMap['_source']['details']['images']['images'][0];
-    imageUrls.add(url);
-    images.add(jsonMap);
+
+    if (!imageUrls.contains(url)) {
+      imageUrls.add(url);
+      images.add(jsonMap);
+    }
+
     setState(() {
-      _imageUrls = imageUrls.toList();
+      _imageUrls = imageUrls; //.toList();
       _images = images;
       loading = false;
     });
@@ -496,13 +501,16 @@ class _ImageGridViewState extends State<ImageGridView> {
               setState(() {
                 print("Selected image Details: ");
                 print(imageFull);
+                print(imageUrl);
                 if (isSelected) {
                   _selectedImageUrls!.remove(imageUrl);
                   _selectedImages!.remove(imageFull);
                 } else {
-                  _selectedImageUrls!.add(imageUrl);
-                  _selectedImages!.add(imageFull);
-                  // print(_selectedImages);
+                  if (_selectedImageUrls!.length < 5) {
+                    // Limit the number of selected images to 5
+                    _selectedImageUrls!.add(imageUrl);
+                    _selectedImages!.add(imageFull);
+                  }
                 }
                 widget.updateSelectedImages!(
                     _selectedImages, _selectedImageUrls);
