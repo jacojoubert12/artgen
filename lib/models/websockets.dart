@@ -32,7 +32,7 @@ class MyWebsockets {
     );
     webSocketChannel!.stream.listen(
       (event) {
-        print("WS Response:");
+        // print("WS Response:");
         if (onMessageReceived != null) {
           onMessageReceived!(event);
         }

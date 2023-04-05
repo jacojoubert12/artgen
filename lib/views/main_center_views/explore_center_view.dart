@@ -83,7 +83,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   late MyWebsockets searchWs;
   late MyWebsockets featuredWs;
-  Set<String> imageUrls = Set();
+  List<String> imageUrls = [];
   List<dynamic> images = [];
 
   @override
@@ -133,7 +133,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   getSearchImageUrls([String q = "featured"]) async {
     getFeatured = false;
-    imageUrls = Set();
+    imageUrls = [];
     images = [];
 
     var query = {
@@ -156,7 +156,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   getFeaturedImageUrls() async {
     getFeatured = true;
-    imageUrls = Set();
+    imageUrls = [];
     images = [];
 
     var query = {
@@ -185,15 +185,28 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   }
 
   void showSearchResults(String message) {
+    bool isNsfw = false;
     loading = false;
     var jsonMap = jsonDecode(message);
 
-    print(jsonMap['_source']['details']['images']['images'][0]);
+    // print(jsonMap['_source']['details']['images']['images'][0]);
+    // print(jsonMap);
     String url = jsonMap['_source']['details']['images']['images'][0];
-    imageUrls.add(url);
-    images.add(jsonMap);
+
+    if (jsonMap['_source']['nsfw_probs'] != null) {
+      double nsfwProb = jsonMap['_source']['nsfw_probs'][0];
+      isNsfw = nsfwProb > user.nsfwFilterSliderValue;
+      print("NSFW Value");
+      print(nsfwProb);
+    }
+
+    if (!imageUrls.contains(url) && !isNsfw) {
+      imageUrls.add(url);
+      images.add(jsonMap);
+    }
+
     setState(() {
-      _imageUrls = imageUrls.toList();
+      _imageUrls = imageUrls;
       _images = images;
       loading = false;
     });

@@ -1,3 +1,4 @@
+import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -163,6 +164,21 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                             onChanged: (value) {
                               setState(() {
                                 _email = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 30.0),
+                          Text("NSFW Filter"),
+                          Slider(
+                            value: user.nsfwFilterSliderValue,
+                            max: 1,
+                            min: 0,
+                            divisions: 101,
+                            label:
+                                user.nsfwFilterSliderValue.toStringAsFixed(2),
+                            onChanged: (double value) {
+                              setState(() {
+                                user.nsfwFilterSliderValue = value;
                               });
                             },
                           ),
