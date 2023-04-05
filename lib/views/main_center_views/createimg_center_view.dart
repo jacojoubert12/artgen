@@ -10,7 +10,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'dart:convert';
 
@@ -185,8 +184,8 @@ class _ImgGridViewState extends State<ImgGridView> {
     loading = false;
     var jsonMap = jsonDecode(message);
 
-    print(jsonMap['_source']['details']['images']['images'][0]);
-    print(jsonMap);
+    // print(jsonMap['_source']['details']['images']['images'][0]);
+    // print(jsonMap);
     String url = jsonMap['_source']['details']['images']['images'][0];
 
     if (!imageUrls.contains(url)) {

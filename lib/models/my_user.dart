@@ -56,8 +56,8 @@ class MyUser extends ChangeNotifier {
     // initMyUser();
   }
 
-  initMyUser() {
-    guestLogin();
+  initMyUser() async {
+    await guestLogin();
     getUniqueCheckpointFiles();
     setSubTopicAsync().then((_) => userInitDone = true);
   }
@@ -71,6 +71,8 @@ class MyUser extends ChangeNotifier {
         print("User logged in...");
         completer.complete();
         removeListener(checkUser);
+      } else {
+        print("checkUser: Not logged in yet");
       }
     }
 
@@ -373,40 +375,33 @@ class MyUser extends ChangeNotifier {
     shouldGetCurrentPackage = false;
   }
 
-  void guestLogin() async {
+  Future<void> guestLogin() async {
     user = FirebaseAuth.instance.currentUser;
-    await getPackages();
-    await getCurrentPackage();
+    print("guestLogin");
+
     if (user == null) {
+      print("user is null in guestLogin");
       // Sign in anonymously
-      FirebaseAuth.instance.signInAnonymously().then((userCredentials) async {
-        activePackage = 0;
-        user = userCredentials.user;
-        var appIdTmp = await getStrData("app_id");
-        if (appIdTmp == null) {
-          storeStrData("app_id", user!.uid);
-          app_id = user!.uid;
-        }
-        var generatedImgsTmp = await getIntData("images_generated");
-        if (generatedImgsTmp == null) {
-          print("generatedImgsTmp == null");
-          storeIntData("images_generated", imagesGenerated);
-        } else {
-          imagesGenerated = generatedImgsTmp;
-          print("generatedImgsTmp not null");
-        }
-      });
+      UserCredential userCredentials =
+          await FirebaseAuth.instance.signInAnonymously();
+      user = userCredentials.user;
     }
+
     if (user != null) {
+      await getPackages();
+      await getCurrentPackage();
+
       if (!user!.isAnonymous) {
         print("User NOT Anonymous");
         shouldLogin = false;
       } else {
+        print("Anonymous");
         var appIdTmp = await getStrData("app_id");
         if (appIdTmp == null) {
           storeStrData("app_id", user!.uid);
           app_id = user!.uid;
         }
+
         var generatedImgsTmp = await getIntData("images_generated");
         if (generatedImgsTmp == null) {
           print("generatedImgsTmp == null");
@@ -415,8 +410,7 @@ class MyUser extends ChangeNotifier {
           imagesGenerated = generatedImgsTmp;
           print("generatedImgsTmp not null");
         }
-        print("Anonymous");
-        appIdTmp = await getStrData("app_id");
+
         print("appIdTmp:");
         print(appIdTmp);
         print("images_generated");

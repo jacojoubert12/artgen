@@ -74,7 +74,6 @@ class _Mainviewstate extends State<MainScreen> {
         setViewMode: this.setViewMode);
 
     getDeviceInfo();
-    user.initMyUser();
   }
 
   void setDfaultResolution() {
@@ -126,6 +125,7 @@ class _Mainviewstate extends State<MainScreen> {
   void setSettingsFromSelected(var _selectedImages) {
     List<String> models = [];
     List<double> guidanceScales = [];
+    List<double> samplingSteps = [];
 
     for (var selectedImg in _selectedImages) {
       if (selectedImg.toString().contains('img2img')) continue;
@@ -148,10 +148,15 @@ class _Mainviewstate extends State<MainScreen> {
     double? averageGuidanceScale = guidanceScales.isEmpty
         ? null
         : guidanceScales.reduce((a, b) => a + b) / guidanceScales.length;
+    double? averageSamplingSteps = samplingSteps.isEmpty
+        ? null
+        : samplingSteps.reduce((a, b) => a + b) / samplingSteps.length;
 
     if (mostCommonModel != null) user.selectedModel = mostCommonModel;
     if (averageGuidanceScale != null)
       user.guidanceScaleSliderValue = averageGuidanceScale;
+    if (averageSamplingSteps != null)
+      user.samplingStepsSliderValue = averageSamplingSteps;
     print("Most common model: $mostCommonModel");
     print("Average guidance scale: $averageGuidanceScale");
   }
@@ -222,6 +227,7 @@ class _Mainviewstate extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    user.initMyUser();
   }
 
   @override
