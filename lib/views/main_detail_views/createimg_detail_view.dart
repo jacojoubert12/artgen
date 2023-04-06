@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:artgen/auth_gate.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
@@ -11,7 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../constants.dart';
 import '../../responsive.dart';
@@ -486,7 +485,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         WidgetSpan(
                           child: Text(
                             '',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.pink),
                           ),
                         ),
                       ],
@@ -522,7 +521,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         WidgetSpan(
                           child: Text(
                             '',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.pink),
                           ),
                         ),
                       ],
@@ -534,10 +533,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
               loading
                   ? Expanded(
                       child: Column(children: [
+                      SizedBox(height: kDefaultPadding),
                       SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator()),
+                          width: 200,
+                          height: 200,
+                          child: SpinKitThreeBounce(color: Colors.pink)),
                       Text('')
                     ]))
                   : Expanded(
@@ -579,7 +579,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                     generatedImgUrls.length < 3 ? 1 : 3,
                                 mainAxisSpacing: 0,
                                 crossAxisSpacing: 0,
-                                childAspectRatio: aspectRatio,
+                                childAspectRatio: 1,
                               ),
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
@@ -678,7 +678,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           Color.fromARGB(255, 10, 6, 20)
                         ])),
                     child: uploading
-                        ? CircularProgressIndicator()
+                        ? SpinKitThreeBounce(color: Colors.pink)
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,

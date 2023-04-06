@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -386,10 +387,11 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
               Expanded(
                 child: loading
                     ? Column(children: [
+                        SizedBox(height: kDefaultPadding),
                         SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator()),
+                            width: 200,
+                            height: 200,
+                            child: SpinKitThreeBounce(color: Colors.pink)),
                         Text('')
                       ])
                     : ImageGridView(

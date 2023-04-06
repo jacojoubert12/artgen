@@ -39,7 +39,7 @@ class _ImageListViewState extends State<ImageListView> {
   //           snapshot.data.toString(),
   //         );
   //       }
-  //       return const Center(child: CircularProgressIndicator());
+  //       return const Center(child: SpinKitThreeBounce(color: Colors.pink)());
   //     },
   //   ),
   // );
@@ -69,7 +69,7 @@ class _ImageListViewState extends State<ImageListView> {
   //           );
   //         }
   //       }
-  //       return const Center(child: CircularProgressIndicator());
+  //       return const Center(child: SpinKitThreeBounce(color: Colors.pink)());
   //     },
   //   );
   // }

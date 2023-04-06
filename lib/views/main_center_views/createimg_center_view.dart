@@ -5,6 +5,7 @@ import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -192,8 +193,8 @@ class _ImgGridViewState extends State<ImgGridView> {
     if (jsonMap['_source']['nsfw_probs'] != null) {
       double nsfwProb = jsonMap['_source']['nsfw_probs'][0];
       isNsfw = nsfwProb > user.nsfwFilterSliderValue;
-      print("NSFW Value");
-      print(nsfwProb);
+      // print("NSFW Value");
+      // print(nsfwProb);
     }
 
     if (!imageUrls.contains(url) && !isNsfw) {
@@ -394,10 +395,11 @@ class _ImgGridViewState extends State<ImgGridView> {
               Expanded(
                 child: loading
                     ? Column(children: [
+                        SizedBox(height: kDefaultPadding),
                         SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator()),
+                            width: 200,
+                            height: 200,
+                            child: SpinKitThreeBounce(color: Colors.pink)),
                         Text('')
                       ])
                     : ImageGridView(

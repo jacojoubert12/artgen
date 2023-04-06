@@ -44,7 +44,7 @@ class FireStoreManager {
   //           }
   //         }
   //         return moods!.length == 0
-  //             ? CircularProgressIndicator(color: Colors.red)
+  //             ? SpinKitThreeBounce(color: Colors.pink)(color: Colors.red)
   //             : listView;
   //       });
   // }
@@ -60,7 +60,7 @@ class FireStoreManager {
   //         if (snapshot.hasError) {
   //           print("getdefaultmoods snapshot error");
   //           print(snapshot.error);
-  //           return CircularProgressIndicator(color: Colors.yellowAccent);
+  //           return SpinKitThreeBounce(color: Colors.pink)(color: Colors.yellowAccent);
   //         } else if (snapshot.hasData) {
   //           print("getDefaultMoods snapshot.hasData");
   //           if (snapshot.data!.length > 0) moods = snapshot.data;
@@ -78,7 +78,7 @@ class FireStoreManager {
   //           }
   //         }
   //         return moods!.length == 0
-  //             ? CircularProgressIndicator(color: Colors.red)
+  //             ? SpinKitThreeBounce(color: Colors.pink)(color: Colors.red)
   //             : listView;
   //       });
   // }

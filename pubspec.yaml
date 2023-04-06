@@ -60,6 +60,7 @@ dependencies:
   mqtt5_client: ^3.3.7
   purchases_flutter: ^4.11.1
   web_socket_channel: ^2.3.0
+  flutter_spinkit: ^5.1.0
 
 
 dev_dependencies:

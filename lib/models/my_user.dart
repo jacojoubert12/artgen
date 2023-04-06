@@ -516,7 +516,7 @@ class MyUser extends ChangeNotifier {
 //                       ),
 //                     );
 //                   } else {
-//                     return CircularProgressIndicator();
+//                     return SpinKitThreeBounce(color: Colors.pink)();
 //                   }
 //                 },
 //               ),

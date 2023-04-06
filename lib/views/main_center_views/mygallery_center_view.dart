@@ -311,7 +311,7 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                         // SizedBox(
                         // width: 20,
                         // height: 20,
-                        // child: CircularProgressIndicator()),
+                        // child: SpinKitThreeBounce(color: Colors.pink)()),
                         // Text(''),
                         child: Image.network("assets/images/tmp_image.png"))
                     // ])
