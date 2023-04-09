@@ -28,7 +28,7 @@ class MyWebsockets {
     print("Connecting to WebSocket");
 
     webSocketChannel = WebSocketChannel.connect(
-      Uri.parse('ws://localhost:8765'),
+      Uri.parse('wss://ws.artgen.fun:8765'),
     );
     webSocketChannel!.stream.listen(
       (event) {
