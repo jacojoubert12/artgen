@@ -25,6 +25,7 @@ class MyWebsockets {
   }
 
   Future<void> _wsConnect() async {
+    // close(); ?? To test with this...
     print("Connecting to WebSocket");
 
     webSocketChannel = WebSocketChannel.connect(
@@ -51,7 +52,7 @@ class MyWebsockets {
   void _reconnectWS() {
     if (!_explicitClose) {
       // Check if the close was explicit before reconnecting
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(Duration(seconds: 5), () {
         _wsConnect();
       });
     }

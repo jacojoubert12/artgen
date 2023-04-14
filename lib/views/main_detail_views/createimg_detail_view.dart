@@ -103,7 +103,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
           showGeneratedImages(message);
         });
       },
-      topic: "img-gen-res-${user.selectedModel}",
+      topic: "img-gen-url-res-${user.selectedModel}",
     );
   }
 
