@@ -4,10 +4,7 @@ import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
 import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../constants.dart';
@@ -15,9 +12,7 @@ import '../../responsive.dart';
 import 'image_details_view.dart';
 
 import 'dart:async';
-import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 import 'package:artgen/components/file_picker_mobile.dart'
     if (dart.library.html) 'package:artgen/components/file_picker_web.dart';
