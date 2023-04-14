@@ -1,20 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
-import 'dart:js';
-
 import 'package:artgen/auth_gate.dart';
-import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutterfire_ui/auth.dart';
-// import 'package:firebase_firestore/firebase_firestore.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'local_storage_access_mobile.dart'
+    if (dart.library.html) 'local_storage_access_web.dart';
 
 class MyUser extends ChangeNotifier {
   User? user;
@@ -31,7 +24,6 @@ class MyUser extends ChangeNotifier {
   String pubTopic = "mdjrny_v4";
   Map<int, dynamic> packageMap = {};
   Map<String, dynamic> userInfo = {};
-  final Storage _localStorage = window.localStorage;
   List<String> modelList = [];
   String selectedModel = '';
   String subTopic = "img-gen-res";
@@ -195,11 +187,11 @@ class MyUser extends ChangeNotifier {
     print("modelList:");
     print(modelList);
     modelList.length == 0
-        ? {modelList.add("no available models"), selectedModel = modelList[0]}
+        ? {modelList.add("*"), selectedModel = modelList[0]}
         : selectedModel == ''
             ? selectedModel = modelList[0]
             : selectedModel = selectedModel;
-    modelList.insert(0, '*');
+    if (!modelList.contains('*')) modelList.insert(0, '*');
     notifyListeners();
     return modelList;
   }
@@ -233,57 +225,6 @@ class MyUser extends ChangeNotifier {
     DocumentReference ref =
         FirebaseFirestore.instance.collection(collection).doc(documentId);
     await ref.update({field: FieldValue.increment(value)});
-  }
-
-  Future<String?> getStrData(String key) async {
-    if (kIsWeb) {
-      String? value = _localStorage[key];
-      return value;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(key);
-    }
-  }
-
-  Future<void> storeStrData(String key, String? value) async {
-    if (kIsWeb) {
-      _localStorage[key] = value!;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString(key, value!);
-    }
-  }
-
-  Future<int?> getIntData(String key) async {
-    if (kIsWeb) {
-      String? strValue = _localStorage[key];
-      if (strValue == null) {
-        return 0;
-      }
-      int? value;
-      try {
-        value = int.tryParse(strValue);
-      } catch (_) {
-        value = 0;
-      }
-      print("getIntData");
-      print(value);
-      return value;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getInt(key) ?? 0;
-    }
-  }
-
-  Future<void> storeIntData(String key, int? value) async {
-    if (kIsWeb) {
-      print("storeIntData");
-      print(value);
-      _localStorage[key] = value.toString();
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setInt(key, value!);
-    }
   }
 
   updateImagesGenerated() {
@@ -412,7 +353,6 @@ class MyUser extends ChangeNotifier {
           imagesGenerated = generatedImgsTmp;
           print("generatedImgsTmp not null");
         }
-
         print("appIdTmp:");
         print(appIdTmp);
         print("images_generated");

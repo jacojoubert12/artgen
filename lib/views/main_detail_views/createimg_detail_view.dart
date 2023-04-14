@@ -4,8 +4,6 @@ import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
 import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +18,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+
+import 'package:artgen/components/file_picker_mobile.dart'
+    if (dart.library.html) 'package:artgen/components/file_picker_web.dart';
 
 class CreateImgDetailView extends StatefulWidget {
   CreateImgDetailView({
@@ -228,94 +229,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       loading = true;
     });
     startRetryTimer();
-  }
-
-  Future<void> uploadFile() async {
-    String filename = "";
-    if (kIsWeb) {
-      final result = await FilePickerWeb.platform
-          .pickFiles(allowMultiple: false, type: FileType.image);
-
-      if (result == null) {
-        setState(() {
-          uploading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("No file was selected"),
-          ),
-        );
-      } else {
-        Uint8List uploadfile = result.files.single.bytes!;
-        filename = result.files.single.name;
-        if (uploadfile.length / 1000.0 / 1000.0 > 3) {
-          setState(() {
-            uploading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Upload file too large. Max size = 3MB"),
-            ),
-          );
-          print("upload size too large");
-        }
-
-        try {
-          await storage
-              .ref('uploads/$filename')
-              .putData(uploadfile, SettableMetadata(contentType: 'image/png'));
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Upload completed")),
-          );
-          print("Upload done");
-        } on firebase_core.FirebaseException catch (e) {
-          print(e);
-        }
-      }
-    } else {
-      final result = await FilePicker.platform
-          .pickFiles(allowMultiple: false, type: FileType.image);
-
-      if (result == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("No file was selected"),
-          ),
-        );
-      } else {
-        final path = result.files.single.path!;
-        filename = result.files.single.name;
-        File file = File(path);
-        int len = await file.length();
-        if (len / 1000.0 / 1000.0 > 3) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Upload file too large. Max size = 3MB"),
-            ),
-          );
-        }
-
-        try {
-          await storage.ref('uploads/$filename').putFile(file);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Upload completed")),
-          );
-          print("Upload done");
-        } on firebase_core.FirebaseException catch (e) {
-          print(e);
-        }
-      }
-    }
-
-    String url = await storage.ref('uploads/$filename').getDownloadURL();
-
-    setState(() {
-      uploadImg2ImgImages.add(url);
-      _selectedImageUrls!.add(url);
-      // print(_selectedImages);
-      _selectedImages!.add({'img2img': url});
-      uploading = false;
-    });
   }
 
   @override
@@ -691,7 +604,18 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                               setState(() {
                                 uploading = true;
                               });
-                              uploadFile();
+                              String? url = await uploadFile(context, storage);
+
+                              // Check if the upload was successful
+                              if (url != null) {
+                                setState(() {
+                                  _selectedImageUrls!.add(url);
+                                  _selectedImages!.add(url);
+                                });
+                              }
+                              setState(() {
+                                uploading = false;
+                              });
                             },
                           ),
                   ),

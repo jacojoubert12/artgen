@@ -1,4 +1,3 @@
-import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
@@ -6,14 +5,11 @@ import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
-import 'package:mqtt5_client/mqtt5_browser_client.dart';
-import 'package:mqtt5_client/mqtt5_client.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
 class MyGalleryCenterView extends StatefulWidget {
@@ -89,7 +85,6 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   @override
   void initState() {
     super.initState();
-    // setupWSClient();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;

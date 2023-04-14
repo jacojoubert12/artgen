@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
@@ -212,6 +212,12 @@ class _ImgGridViewState extends State<ImgGridView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: !Responsive.isDesktop(context)
+          ? AppBar(
+              title: Text('ArtGen'),
+              backgroundColor: kButtonLightPurple,
+            )
+          : null,
       key: _scaffoldKey,
       drawer: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 250),
@@ -224,24 +230,14 @@ class _ImgGridViewState extends State<ImgGridView> {
           right: false,
           child: Column(
             children: [
+              SizedBox(
+                  height:
+                      Responsive.isMobile(context) ? kDefaultHeight * 2 : 0),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: kDefaultPadding),
                 child: Row(
                   children: [
-                    // Once user click the menu icon the menu shows like drawer
-                    // Also we want to hide this menu icon on desktop
-                    if (!Responsive.isDesktop(context))
-                      IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: kButtonLightPurple,
-                        ),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                     Expanded(
                       flex: 4,
                       child: TextField(
@@ -254,128 +250,139 @@ class _ImgGridViewState extends State<ImgGridView> {
                         },
                         decoration: InputDecoration(
                           hintStyle: TextStyle(
-                            fontSize: 12,
-                            color: Color.fromARGB(255, 144, 142, 142),
+                            fontSize: kTextFontSize,
+                            color: kTextColorLightGrey,
                           ),
                           hintText: "Search for inspiration",
                           fillColor: kTextFieldBackgroundColor,
                           filled: true,
                           suffixIcon: Padding(
-                            padding: const EdgeInsets.only(right: 20),
+                            padding: EdgeInsets.only(
+                                right: Responsive.isDesktop(context)
+                                    ? kDefaultWidth
+                                    : 0),
                             child: Icon(
                               Icons.search,
                               color: kButtonLightPurple,
                             ),
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(kDefaultBorderRadius)),
                             borderSide: BorderSide(
                                 color: kTextFieldBackgroundColor, width: 2),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: kDefaultWidth * 2),
+                    SizedBox(
+                        width: Responsive.isDesktop(context)
+                            ? kDefaultWidth * 2
+                            : kDefaultWidth),
                     Expanded(
                       flex: 4,
                       child: Container(
                         // height: 40,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-
-                              // color: Color.fromARGB(44, 215, 4, 170),
-                              ),
-                          child: DropdownButton<String>(
-                            value: user.selectedModel,
-                            borderRadius: BorderRadius.circular(20),
-                            itemHeight: 50,
-                            items: user.modelList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                user.selectedModel = newValue!;
-                                user.pubTopic = user.selectedModel;
-                                getFeaturedImageUrls();
-                              });
-                            },
+                            color: kTextFieldBackgroundColor,
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(kDefaultBorderRadius)),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: user.selectedModel,
+                              borderRadius: BorderRadius.circular(20),
+                              itemHeight: 50,
+                              items: user.modelList
+                                  .map<DropdownMenuItem<String>>(
+                                      (String dropDownText) {
+                                return DropdownMenuItem<String>(
+                                    value: dropDownText,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: kDefaultWidth),
+                                        Expanded(
+                                          child: Text(
+                                            dropDownText,
+                                            maxLines: 1,
+                                            softWrap: false,
+                                            style: TextStyle(
+                                              fontSize: kTextFontSize,
+                                              color: kTextColorLightGrey,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ));
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  user.selectedModel = newValue!;
+                                  user.pubTopic = user.selectedModel;
+                                  getFeaturedImageUrls();
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    // Expanded(
-                    //   flex: 1,
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(left: 40),
-                    //     width: 40,
-                    //     height: 40,
-                    //     child: CircleAvatar(
-                    //       backgroundImage: NetworkImage(_avatarImage),
-                    //     ),
-                    //   ),
-                    // ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 20),
-                        width: 45,
-                        height: 45,
-                        child: CircleAvatar(
-                            backgroundImage: NetworkImage(_avatarImage)),
+                    if (Responsive.isDesktop(context))
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20),
+                          width: 45,
+                          height: 45,
+                          child: CircleAvatar(
+                              backgroundImage: NetworkImage(_avatarImage)),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
               SizedBox(height: kDefaultPadding),
-              Responsive.isMobile(context)
-                  ? Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        "Selected images",
-                        style: TextStyle(
-                          fontFamily:
-                              'custom font', // remove this if don't have custom font
-                          fontSize: 15.0, // text size
-                          color: Color.fromARGB(255, 144, 142, 142),
-                          // text color
+              if (Responsive.isMobile(context))
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Selected images",
+                          style: TextStyle(
+                            fontFamily:
+                                'custom font', // remove this if don't have custom font
+                            fontSize: 15.0, // text size
+                            color: Color.fromARGB(255, 144, 142, 142),
+                            // text color
+                          ),
                         ),
                       ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    ),
-              Responsive.isMobile(context)
-                  ? Container(
-                      width: double.infinity,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromARGB(255, 77, 75, 75),
-                            width: 2.0,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(5),
+                      SizedBox(height: kDefaultHeight / 2),
+                      Container(
+                        width: double.infinity,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Color.fromARGB(255, 77, 75, 75),
+                              width: 2.0,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: ImageListView(
+                          updateSelectedImages: widget.updateSelectedImages,
+                          selectedImages: _selectedImages,
+                          selectedImageUrls: _selectedImageUrls,
+                        ),
                       ),
-                      child: ImageListView(
-                        updateSelectedImages: widget.updateSelectedImages,
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                      ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    ),
-              SizedBox(
-                  height:
-                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
+                      SizedBox(height: kDefaultHeight),
+                    ],
+                  ),
+                ),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20.0),
@@ -391,7 +398,7 @@ class _ImgGridViewState extends State<ImgGridView> {
               ),
               SizedBox(
                   height:
-                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
+                      Responsive.isMobile(context) ? kDefaultHeight / 2 : 0),
               Expanded(
                 child: loading
                     ? Column(children: [
@@ -414,14 +421,12 @@ class _ImgGridViewState extends State<ImgGridView> {
               SizedBox(height: kDefaultPadding),
               if (Responsive.isMobile(context))
                 Container(
-                  height: 35.0,
+                  height: 50.0,
                   width: 350,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(colors: [
-                        Color.fromARGB(255, 61, 2, 50),
-                        Color.fromARGB(255, 10, 6, 20)
-                      ])),
+                    borderRadius: BorderRadius.circular(10),
+                    color: kPurple,
+                  ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       // shadowColor: Colors.transparent,
@@ -430,7 +435,10 @@ class _ImgGridViewState extends State<ImgGridView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: Text('Create'),
+                    child: Text(
+                      'Create',
+                      style: TextStyle(fontSize: 18),
+                    ),
                     onPressed: () {
                       widget.showDetailView!();
                     },

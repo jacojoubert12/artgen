@@ -8,13 +8,12 @@ import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:convert';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ExploreCenterView extends StatefulWidget {
   ExploreCenterView(
@@ -73,7 +72,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  // MQTTClientManager mqttClientManager = MQTTClientManager();
+
   String pubTopic = "search";
   String pubTopicFeatured = "featured";
   // String subTopic = '';
@@ -90,7 +89,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   @override
   void initState() {
     super.initState();
-    // setupWSClient();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
@@ -170,7 +168,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     print("JSON Encoded query:");
     print(jsonEncode(query));
     featuredWs.sendMessage(query);
-
     setState(() {
       user.modelList = user.modelList;
       loading = true;
