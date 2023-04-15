@@ -75,6 +75,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     _selectedImageUrls = widget.selectedImageUrls;
 
     user.loggedInUserFutureForImgGen.then((_) {
+      if (user.user?.photoURL != null) {
+        setState(() {
+          _avatarImage = user.user!.photoURL!;
+        });
+      }
       setupWebsockets();
     });
   }

@@ -95,6 +95,11 @@ class _ImgGridViewState extends State<ImgGridView> {
       user.haveCheckpointFiles.then((_) {
         print("Goind to get Featured Images...");
         getFeaturedImageUrls();
+        if (user.user?.photoURL != null) {
+          setState(() {
+            _avatarImage = user.user!.photoURL!;
+          });
+        }
       });
     });
   }

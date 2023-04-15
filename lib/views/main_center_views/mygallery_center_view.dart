@@ -90,6 +90,11 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     // imageUrls = widget.imageUrls;
     // images = widget.images;
     user.loggedInUserFuture.then((_) {
+      if (user.user?.photoURL != null) {
+        setState(() {
+          _avatarImage = user.user!.photoURL!;
+        });
+      }
       setupWebsockets();
       user.haveCheckpointFiles.then((_) {
         print("Goind to get Featured Images...");
