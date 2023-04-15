@@ -5,7 +5,8 @@ import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
@@ -91,6 +92,7 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     _images = widget.images;
     user.loggedInUserFuture.then((_) {
       print("User logged in, setting up gallery websocket");
+      // _avatarImage = user.user!.photoURL!;
       setupWebsockets();
       getGalleryImageUrls();
     });
@@ -175,10 +177,10 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 250),
-        child: SideMenu(setViewMode: widget.setViewMode),
-      ),
+      // drawer: ConstrainedBox(
+      //   constraints: BoxConstraints(maxWidth: 250),
+      //   child: SideMenu(setViewMode: widget.setViewMode),
+      // ),
       body: Container(
         padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
         color: kBgDarkColor,
@@ -193,16 +195,16 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                   children: [
                     // Once user click the menu icon the menu shows like drawer
                     // Also we want to hide this menu icon on desktop
-                    if (!Responsive.isDesktop(context))
-                      IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: kButtonLightPurple,
-                        ),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
+                    // if (!Responsive.isDesktop(context))
+                    //   IconButton(
+                    //     icon: Icon(
+                    //       Icons.menu,
+                    //       color: kButtonLightPurple,
+                    //     ),
+                    //     onPressed: () {
+                    //       _scaffoldKey.currentState!.openDrawer();
+                    //     },
+                    //   ),
                     SizedBox(width: 5),
                     Expanded(
                       flex: 5,
@@ -271,11 +273,19 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                             style: BorderStyle.solid),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: ImageListView(
-                        updateSelectedImages: widget.updateSelectedImages,
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                      ),
+                      // child: ImageGridView(
+                      //     selectedImages: _selectedImages,
+                      //     selectedImageUrls: _selectedImageUrls,
+                      //     updateSelectedImages:
+                      //         centerViewUpdateSelectedImages, //widget.updateSelectedImages,
+                      //     showDetailView: widget.showDetailView,
+                      //     imageUrls: _imageUrls,
+                      //     images: _images),
+                      // child: ImageListView(
+                      //   updateSelectedImages: widget.updateSelectedImages,
+                      //   selectedImages: _selectedImages,
+                      //   selectedImageUrls: _selectedImageUrls,
+                      // ),
                     )
                   : SizedBox(
                       height: 0,
@@ -301,15 +311,15 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                       Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
               Expanded(
                 child: loading
-                    ? Container(
-                        // ? Column(children: [
-                        // SizedBox(
-                        // width: 20,
-                        // height: 20,
-                        // child: SpinKitThreeBounce(color: Colors.pink)()),
-                        // Text(''),
-                        child: Image.network("assets/images/tmp_image.png"))
-                    // ])
+                    ? Column(children: [
+                        SizedBox(height: kDefaultPadding),
+                        SizedBox(
+                            width: 200,
+                            height: 200,
+                            child:
+                                SpinKitThreeBounce(color: kButtonLightPurple)),
+                        Text('')
+                      ])
                     : ImageGridView(
                         selectedImages: _selectedImages,
                         selectedImageUrls: _selectedImageUrls,

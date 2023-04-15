@@ -282,7 +282,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                     Expanded(
                       flex: 4,
                       child: Container(
-                        // height: 40,
+                        height: 40,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: kTextFieldBackgroundColor,
@@ -291,6 +291,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
+                              dropdownColor: kDropDownGrey,
                               isExpanded: true,
                               value: user.selectedModel,
                               borderRadius: BorderRadius.circular(20),
@@ -383,19 +384,19 @@ class _ImgGridViewState extends State<ImgGridView> {
                     ],
                   ),
                 ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Text(
-                  "Select up to 5 Images",
-                  style: TextStyle(
-                    fontFamily:
-                        'custom font', // remove this if don't have custom font
-                    fontSize: 15.0, // text size
-                    color: Color.fromARGB(255, 144, 142, 142), // text color
-                  ),
-                ),
-              ),
+              // Container(
+              //   alignment: Alignment.centerLeft,
+              //   padding: const EdgeInsets.only(left: 20.0),
+              //   child: Text(
+              //     "Select up to 5 Images",
+              //     style: TextStyle(
+              //       fontFamily:
+              //           'custom font', // remove this if don't have custom font
+              //       fontSize: 15.0, // text size
+              //       color: Color.fromARGB(255, 144, 142, 142), // text color
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                   height:
                       Responsive.isMobile(context) ? kDefaultHeight / 2 : 0),
@@ -406,7 +407,8 @@ class _ImgGridViewState extends State<ImgGridView> {
                         SizedBox(
                             width: 200,
                             height: 200,
-                            child: SpinKitThreeBounce(color: Colors.pink)),
+                            child:
+                                SpinKitThreeBounce(color: kButtonLightPurple)),
                         Text('')
                       ])
                     : ImageGridView(
@@ -425,7 +427,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                   width: 350,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: kPurple,
+                    color: kButtonLightPurple,
                   ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(

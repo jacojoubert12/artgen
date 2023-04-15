@@ -24,9 +24,12 @@ const kBackgroundPrimColor = Color(0xFF292a34);
 const kSideMenuIconsColor = Color.fromARGB(255, 118, 12, 87);
 const kButtonPurple = Color.fromARGB(255, 15, 11, 22);
 const kButtonLightPurple = Color.fromARGB(255, 181, 9, 130);
+const kButtonLightPurpleTransparent = Color.fromARGB(85, 181, 9, 129);
 const kTextFieldBackgroundColor = Color.fromARGB(180, 79, 79, 79);
 const kTextFieldBoarderColor = Color.fromARGB(180, 28, 28, 28);
-const kTextColorLightGrey = Color.fromARGB(255, 144, 142, 142);
+const kTextColorLightGrey = Color.fromARGB(255, 208, 205, 205);
+const kPink = Color.fromRGBO(233, 30, 99, 1);
+const kDropDownGrey = Color.fromARGB(255, 79, 79, 79);
 
 const kDefaultPadding = 20.0;
 const kDefaultWidth = 10.0;

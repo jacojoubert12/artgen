@@ -106,15 +106,15 @@ class _SideMenuState extends State<SideMenu> {
                   color: Color.fromARGB(255, 255, 255, 255), // text color
                 ),
               ),
-              Text(
-                "User Plan",
-                style: TextStyle(
-                  fontFamily:
-                      'custom font', // remove this if don't have custom font
-                  fontSize: 10.0, // text size
-                  color: Color.fromARGB(255, 255, 255, 255), // text color
-                ),
-              ),
+              // Text(
+              //   "User Plan",
+              //   style: TextStyle(
+              //     fontFamily:
+              //         'custom font', // remove this if don't have custom font
+              //     fontSize: 10.0, // text size
+              //     color: Color.fromARGB(255, 255, 255, 255), // text color
+              //   ),
+              // ),
               // Menu Items
               SideMenuItem(
                 press: () {

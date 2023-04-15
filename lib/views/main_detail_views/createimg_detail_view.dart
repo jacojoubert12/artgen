@@ -273,7 +273,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   //         ),
                   // ),
                   Expanded(
-                    flex: 5,
+                    flex: 1,
                     child: Container(
                       height: 35,
                       alignment: Alignment.center,
@@ -429,7 +429,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         WidgetSpan(
                           child: Text(
                             '',
-                            style: TextStyle(color: Colors.pink),
+                            style: TextStyle(color: kTextFieldBoarderColor),
                           ),
                         ),
                       ],
@@ -445,7 +445,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       SizedBox(
                           width: 200,
                           height: 200,
-                          child: SpinKitThreeBounce(color: Colors.pink)),
+                          child: SpinKitThreeBounce(color: kButtonLightPurple)),
                       Text('')
                     ]))
                   : Expanded(
@@ -527,13 +527,15 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   //     :
                   Container(
                     height: 40,
-                    width: 300,
+                    width: 200,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 61, 2, 50),
-                          Color.fromARGB(255, 10, 6, 20)
-                        ])),
+                      borderRadius: BorderRadius.circular(10),
+                      color: kButtonLightPurple,
+                      // gradient: LinearGradient(colors: [
+                      //   Color.fromARGB(255, 61, 2, 50),
+                      //   Color.fromARGB(255, 10, 6, 20)
+                      // ])
+                    ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
@@ -580,13 +582,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                     height: 40,
                     width: 80,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 61, 2, 50),
-                          Color.fromARGB(255, 10, 6, 20)
-                        ])),
+                      borderRadius: BorderRadius.circular(10),
+                      color: kButtonLightPurple,
+                    ),
                     child: uploading
-                        ? SpinKitThreeBounce(color: Colors.pink)
+                        ? SpinKitThreeBounce(color: kButtonLightPurple)
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
@@ -632,7 +632,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       },
                       style: ElevatedButton.styleFrom(
                           primary: Color.fromARGB(255, 181, 9, 130),
-                          onPrimary: Colors.black,
+                          // onPrimary: Colors.black,
                           shape: CircleBorder()),
                     ),
                   ),

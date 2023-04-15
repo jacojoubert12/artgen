@@ -20,7 +20,7 @@ class MyUser extends ChangeNotifier {
   int imagesGenerated = 2;
   int imagesToGenerate = 0;
   int activePackage = 0;
-  int imageLimit = 500;
+  int imageLimit = 5;
   String pubTopic = "mdjrny_v4";
   Map<int, dynamic> packageMap = {};
   Map<String, dynamic> userInfo = {};
@@ -362,7 +362,7 @@ class MyUser extends ChangeNotifier {
   }
 
   bool showLogin(BuildContext context, Map<String, dynamic> query) {
-    shouldGetPackages ? getPackages() : print('Already got packages?');
+    shouldGetPackages ? getPackages() : print('Already got packages');
     // shouldGetCurrentPackage //Optimise later
     // ? getCurrentPackage()
     // : print("Already got current package?");
