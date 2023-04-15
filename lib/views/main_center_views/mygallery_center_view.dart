@@ -166,7 +166,37 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     return Scaffold(
       appBar: !Responsive.isDesktop(context)
           ? AppBar(
-              title: Text('ArtGen'),
+              title: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 35,
+                      alignment: Alignment.center,
+                      child: Text(
+                        "My Gallery",
+                        style: TextStyle(
+                          fontFamily:
+                              'custom font', // remove this if don't have custom font
+                          fontSize: 20.0, // text size
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // if (Responsive.isDesktop(context))
+                  Container(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(_avatarImage)),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                ],
+              ),
               backgroundColor: kButtonLightPurple,
             )
           : null,
@@ -188,25 +218,40 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 18,
-                      child: Text(''),
-                    ),
-                    if (Responsive.isDesktop(context))
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 20),
-                          width: 45,
-                          height: 45,
-                          child: CircleAvatar(
-                              backgroundImage: NetworkImage(_avatarImage)),
-                        ),
-                      ),
-                  ],
-                ),
+                child: Responsive.isDesktop(context)
+                    ? Row(
+                        children: [
+                          SizedBox(width: 50),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              height: 35,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "My Gallery",
+                                style: TextStyle(
+                                  fontFamily:
+                                      'custom font', // remove this if don't have custom font
+                                  fontSize: 20.0, // text size
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // if (Responsive.isDesktop(context))
+                          Container(
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              width: 45,
+                              height: 45,
+                              child: CircleAvatar(
+                                  backgroundImage: NetworkImage(_avatarImage)),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      )
+                    : SizedBox(width: MediaQuery.maybeOf(context)!.size.width),
               ),
               SizedBox(height: kDefaultPadding),
               Expanded(
