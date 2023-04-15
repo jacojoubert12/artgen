@@ -282,7 +282,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                     Expanded(
                       flex: 4,
                       child: Container(
-                        // height: 40,
+                        height: 40,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: kTextFieldBackgroundColor,

@@ -1,3 +1,4 @@
+import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
@@ -5,31 +6,33 @@ import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'dart:convert';
 
 class MyGalleryCenterView extends StatefulWidget {
   MyGalleryCenterView(
       {Key? key,
       this.setViewMode,
-      this.selectedImages,
-      this.selectedImageUrls,
-      this.updateSelectedImages,
+      // this.selectedImages,
+      // this.selectedImageUrls,
+      // this.updateSelectedImages,
       this.showDetailView})
       : super(key: key) {
     // _initAd();
   }
   final Function? setViewMode;
-  final Function? updateSelectedImages;
+  // final Function? updateSelectedImages;
   final Function? showDetailView;
-  final selectedImages;
-  final selectedImageUrls;
-  final List<String> imageUrls = [];
-  final List<dynamic> images = [];
+  // final selectedImages;
+  // final selectedImageUrls;
+  // final List<String> imageUrls = [];
+  // final List<dynamic> images = [];
 
   // late InterstitialAd _interstitialAd;
   // bool _isAdLoaded = false;
@@ -57,22 +60,19 @@ class MyGalleryCenterView extends StatefulWidget {
 
 class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Set<dynamic>? _selectedImages;
-  Set<String>? _selectedImageUrls;
-  List<String> _imageUrls = [];
-  List<dynamic> _images = [];
+  // Set<dynamic>? _selectedImages;
+  // Set<String>? _selectedImageUrls;
+  // List<String> imageUrls = [];
+  // List<dynamic> images = [];
   final pink = const Color(0xFFFACCCC);
   final grey = const Color(0xFFF2F2F7);
   bool loading = false;
-  bool getFeatured = true;
   int retries = 0;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-  // MQTTClientManager mqttClientManager = MQTTClientManager();
   String pubTopic = "search";
-  String pubTopicFeatured = "gallery";
-  // String subTopic = '';
+  String pubTopicFeatured = "featured";
   String searchString = '';
 
   String _avatarImage =
@@ -85,14 +85,16 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   @override
   void initState() {
     super.initState();
-    _selectedImages = widget.selectedImages;
-    _selectedImageUrls = widget.selectedImageUrls;
-    _imageUrls = widget.imageUrls;
-    _images = widget.images;
+    // _selectedImages = widget.selectedImages;
+    // _selectedImageUrls = widget.selectedImageUrls;
+    // imageUrls = widget.imageUrls;
+    // images = widget.images;
     user.loggedInUserFuture.then((_) {
-      print("User logged in, setting up gallery websocket");
       setupWebsockets();
-      getGalleryImageUrls();
+      user.haveCheckpointFiles.then((_) {
+        print("Goind to get Featured Images...");
+        getGalleryImageUrls();
+      });
     });
   }
 
@@ -116,8 +118,6 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   }
 
   getGalleryImageUrls() {
-    getFeatured = true;
-
     var query = {
       'user': user.user!.uid,
       'pos': 0,
@@ -135,14 +135,6 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     });
   }
 
-  centerViewUpdateSelectedImages(_selectedImages, _selectedImageUrls) {
-    setState(() {
-      // _selectedImages = widget.selectedImages;
-      // _selectedImageUrls = widget.selectedImageUrls;
-      // widget.updateSelectedImages!(_selectedImages, _selectedImageUrls);
-    });
-  }
-
   void showSearchResults(String message) {
     bool isNsfw = false;
     loading = false;
@@ -155,8 +147,6 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     if (jsonMap['_source']['nsfw_probs'] != null) {
       double nsfwProb = jsonMap['_source']['nsfw_probs'][0];
       isNsfw = nsfwProb > user.nsfwFilterSliderValue;
-      print("NSFW Value");
-      print(nsfwProb);
     }
 
     if (!imageUrls.contains(url) && !isNsfw) {
@@ -165,8 +155,8 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     }
 
     setState(() {
-      _imageUrls = imageUrls;
-      _images = images;
+      imageUrls = imageUrls;
+      images = images;
       loading = false;
     });
   }
@@ -174,6 +164,12 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: !Responsive.isDesktop(context)
+          ? AppBar(
+              title: Text('ArtGen'),
+              backgroundColor: kButtonLightPurple,
+            )
+          : null,
       key: _scaffoldKey,
       drawer: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 250),
@@ -186,164 +182,100 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
           right: false,
           child: Column(
             children: [
+              SizedBox(
+                  height:
+                      Responsive.isMobile(context) ? kDefaultHeight * 2 : 0),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: kDefaultPadding),
                 child: Row(
                   children: [
-                    // Once user click the menu icon the menu shows like drawer
-                    // Also we want to hide this menu icon on desktop
-                    if (!Responsive.isDesktop(context))
-                      IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: kButtonLightPurple,
-                        ),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    SizedBox(width: 5),
                     Expanded(
-                      flex: 5,
-                      child: Container(
-                        height: 35,
-                        alignment: Alignment.center,
-                        child: Text(
-                          "My Gallery",
-                          style: TextStyle(
-                            fontFamily:
-                                'custom font', // remove this if don't have custom font
-                            fontSize: 20.0, // text size
-                            color: Color.fromARGB(255, 144, 142, 142),
-                          ),
+                      flex: 18,
+                      child: Text(''),
+                    ),
+                    if (Responsive.isDesktop(context))
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20),
+                          width: 45,
+                          height: 45,
+                          child: CircleAvatar(
+                              backgroundImage: NetworkImage(_avatarImage)),
                         ),
                       ),
-                    ),
-                    // Container(
-                    //   margin: EdgeInsets.only(left: 40),
-                    //   width: 40,
-                    //   height: 40,
-                    //   child: CircleAvatar(
-                    //     backgroundImage: NetworkImage(_avatarImage),
-                    //   ),
-                    // ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: 20),
-                      width: 45,
-                      height: 45,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(_avatarImage),
-                      ),
-                    ),
-                    SizedBox(width: 5),
                   ],
                 ),
               ),
               SizedBox(height: kDefaultPadding),
-              Responsive.isMobile(context)
-                  ? Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        "",
-                        style: TextStyle(
-                          fontFamily:
-                              'custom font', // remove this if don't have custom font
-                          fontSize: 15.0, // text size
-                          color: Color.fromARGB(255, 144, 142, 142),
-                          // text color
-                        ),
-                      ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    ),
-              Responsive.isMobile(context)
-                  ? Container(
-                      width: double.infinity,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromARGB(255, 77, 75, 75),
-                            width: 2.0,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: ImageListView(
-                        updateSelectedImages: widget.updateSelectedImages,
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                      ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    ),
-              SizedBox(
-                  height:
-                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Text(
-                  "",
-                  style: TextStyle(
-                    fontFamily:
-                        'custom font', // remove this if don't have custom font
-                    fontSize: 15.0, // text size
-                    color: Color.fromARGB(255, 144, 142, 142), // text color
-                  ),
-                ),
-              ),
-              SizedBox(
-                  height:
-                      Responsive.isMobile(context) ? kDefaultPadding / 2 : 0),
               Expanded(
                 child: loading
-                    ? Container(
-                        // ? Column(children: [
-                        // SizedBox(
-                        // width: 20,
-                        // height: 20,
-                        // child: SpinKitThreeBounce(color: Colors.pink)()),
-                        // Text(''),
-                        child: Image.network("assets/images/tmp_image.png"))
-                    // ])
-                    : ImageGridView(
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                        updateSelectedImages:
-                            centerViewUpdateSelectedImages, //widget.updateSelectedImages,
-                        showDetailView: widget.showDetailView,
-                        imageUrls: _imageUrls,
-                        images: _images),
+                    ? Column(children: [
+                        SizedBox(height: kDefaultPadding),
+                        SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: SpinKitThreeBounce(color: Colors.pink)),
+                        Text('')
+                      ])
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: imageUrls.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: imageUrls.length < 3 ? 1 : 3,
+                          mainAxisSpacing: 0,
+                          crossAxisSpacing: 0,
+                          childAspectRatio: 1,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ImageDetailsModal(
+                                    selectedImageUrl: imageUrls[index],
+                                  );
+                                },
+                              );
+                              setState(() {});
+                            },
+                            child: FadeInImage(
+                              placeholder:
+                                  AssetImage('assets/images/tmp_image.png'),
+                              image: NetworkImage(imageUrls[index]),
+                            ),
+                          );
+                        },
+                      ),
               ),
               SizedBox(height: kDefaultPadding),
-              if (Responsive.isMobile(context))
-                Container(
-                  height: 35.0,
-                  width: 350,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(colors: [
-                        Color.fromARGB(255, 61, 2, 50),
-                        Color.fromARGB(255, 10, 6, 20)
-                      ])),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // shadowColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text('Create'),
-                    onPressed: () {
-                      widget.showDetailView!();
-                    },
-                  ),
-                ),
+              // if (Responsive.isMobile(context))
+              //   Container(
+              //     height: 50.0,
+              //     width: 350,
+              //     decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(10),
+              //       color: kPurple,
+              //     ),
+              //     child: ElevatedButton(
+              //       style: ElevatedButton.styleFrom(
+              //         // shadowColor: Colors.transparent,
+              //         backgroundColor: Colors.transparent,
+              //         shadowColor: Colors.transparent,
+              //         shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(10)),
+              //       ),
+              //       child: Text(
+              //         'Create',
+              //         style: TextStyle(fontSize: 18),
+              //       ),
+              //       onPressed: () {
+              //         widget.showDetailView!();
+              //       },
+              //     ),
+              //   ),
               SizedBox(height: kDefaultPadding),
             ],
           ),
@@ -380,47 +312,61 @@ class ImageGridView extends StatefulWidget {
 class _ImageGridViewState extends State<ImageGridView> {
   Set<String>? _selectedImageUrls;
   Set<dynamic>? _selectedImages;
-  List<String> _imageUrls = [];
-  List<dynamic> _images = [];
+  List<String> imageUrls = [];
+  List<dynamic> images = [];
 
   @override
   void initState() {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    _images = widget.images;
-    _imageUrls = widget.imageUrls;
+    images = widget.images;
+    imageUrls = widget.imageUrls;
   }
 
   @override
   Widget build(BuildContext context) {
-    _images = widget.images;
-    _imageUrls = widget.imageUrls;
+    images = widget.images;
+    imageUrls = widget.imageUrls;
     return MasonryGridView.count(
-      crossAxisCount: Responsive.isMobile(context) ? 3 : 8,
+      crossAxisCount: 4,
       mainAxisSpacing: 0,
       crossAxisSpacing: 0,
       shrinkWrap: true,
-      itemCount: _imageUrls.length,
+      itemCount: imageUrls.length,
       itemBuilder: (BuildContext context, int index) {
-        final imageUrl = _imageUrls[index];
-        // final imageFull = _images[index];
-        // final isSelected = _selectedImageUrls!.contains(imageUrl);
+        final imageUrl = imageUrls[index];
+        final imageFull = images[index];
+        final isSelected = _selectedImageUrls!.contains(imageUrl);
         return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: isSelected ? Colors.blue : Colors.transparent,
+              width: 2.0,
+            ),
+          ),
           child: GestureDetector(
             onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return ImageDetailsModal(
-                    selectedImageUrl: imageUrl,
-                  );
-                },
-              );
-              setState(() {});
+              setState(() {
+                print("Selected image Details: ");
+                print(imageFull);
+                print(imageUrl);
+                if (isSelected) {
+                  _selectedImageUrls!.remove(imageUrl);
+                  _selectedImages!.remove(imageFull);
+                } else {
+                  if (_selectedImageUrls!.length < 5) {
+                    // Limit the number of selected images to 5
+                    _selectedImageUrls!.add(imageUrl);
+                    _selectedImages!.add(imageFull);
+                  }
+                }
+                widget.updateSelectedImages!(
+                    _selectedImages, _selectedImageUrls);
+              });
             },
             child: FadeInImage(
-              placeholder: AssetImage("assets/images/tmp_image.png"),
+              placeholder: AssetImage('assets/images/tmp_image.png'),
               image: NetworkImage(imageUrl),
             ),
           ),

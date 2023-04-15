@@ -51,7 +51,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   bool loading = false;
   int retries = 0;
   int timeoutRetries = 0;
-  int retryDurationInSeconds = 60;
+  int retryDurationInSeconds = 180;
   bool uploading = false;
   List<String> uploadImg2ImgImages = [];
   String pubTopic = '';

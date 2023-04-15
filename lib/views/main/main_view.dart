@@ -111,8 +111,8 @@ class _Mainviewstate extends State<MainScreen> {
   }
 
   setViewMode(viewMode) {
-    if (Responsive.isMobile(context)) Navigator.pop(context);
-    if (Responsive.isMobile(context)) Navigator.pop(context);
+    // if (Responsive.isMobile(context)) Navigator.pop(context);
+    // if (Responsive.isMobile(context)) Navigator.pop(context);
     setState(() {
       viewMode == ViewMode.create
           ? shouldShowDetailView = true
