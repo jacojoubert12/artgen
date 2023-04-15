@@ -49,16 +49,15 @@ dependencies:
   url_launcher: ^6.1.8
   share_plus: ^6.3.0
   lite_rolling_switch: ^1.0.0
-  device_info_plus: ^8.0.0
+  device_info_plus: ^8.2.0
   platform_device_id: ^1.0.1
   localstorage: ^4.0.0+1
-  file_picker: ^5.2.5
+  file_picker: ^5.2.9
   firebase_storage: ^11.0.10
   shared_preferences: ^2.0.17
-  google_mobile_ads: ^2.3.0
+  google_mobile_ads: ^2.4.0
   waterfall_flow: ^3.0.2
-  mqtt5_client: ^3.3.7
-  purchases_flutter: ^4.11.1
+  purchases_flutter: ^4.11.2
   web_socket_channel: ^2.3.0
   flutter_spinkit: ^5.1.0
 

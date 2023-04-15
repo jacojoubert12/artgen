@@ -1,4 +1,4 @@
-package com.example.artgen
+package com.enginosoft.artgen
 
 import io.flutter.embedding.android.FlutterActivity
 
