@@ -37,6 +37,11 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   int _totalImagesGenerated = 0;
 
   Future _getDataFromDatabase() async {
+    if (user.user?.photoURL != null) {
+      setState(() {
+        _avatarImage = user.user!.photoURL!;
+      });
+    }
     await FirebaseFirestore.instance
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)

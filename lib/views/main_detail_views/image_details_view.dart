@@ -1,6 +1,7 @@
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/constants.dart';
 import 'package:artgen/responsive.dart';
+import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
@@ -18,6 +19,11 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
   @override
   Widget build(BuildContext context) {
+    if (user.user?.photoURL != null) {
+      setState(() {
+        _avatarImage = user.user!.photoURL!;
+      });
+    }
     return Scaffold(
       body: Container(
         // color: kBgDarkColor,

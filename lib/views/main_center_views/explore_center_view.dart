@@ -2,6 +2,7 @@ import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
+import 'package:artgen/views/main_detail_views/image_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -18,20 +19,20 @@ class ExploreCenterView extends StatefulWidget {
   ExploreCenterView(
       {Key? key,
       this.setViewMode,
-      this.selectedImages,
-      this.selectedImageUrls,
-      this.updateSelectedImages,
+      // this.selectedImages,
+      // this.selectedImageUrls,
+      // this.updateSelectedImages,
       this.showDetailView})
       : super(key: key) {
     // _initAd();
   }
   final Function? setViewMode;
-  final Function? updateSelectedImages;
+  // final Function? updateSelectedImages;
   final Function? showDetailView;
-  final selectedImages;
-  final selectedImageUrls;
-  final List<String> imageUrls = [];
-  final List<dynamic> images = [];
+  // final selectedImages;
+  // final selectedImageUrls;
+  // final List<String> imageUrls = [];
+  // final List<dynamic> images = [];
 
   // late InterstitialAd _interstitialAd;
   // bool _isAdLoaded = false;
@@ -59,10 +60,10 @@ class ExploreCenterView extends StatefulWidget {
 
 class _ExploreCenterViewState extends State<ExploreCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Set<dynamic>? _selectedImages;
-  Set<String>? _selectedImageUrls;
-  List<String> _imageUrls = [];
-  List<dynamic> _images = [];
+  // Set<dynamic>? _selectedImages;
+  // Set<String>? _selectedImageUrls;
+  // List<String> imageUrls = [];
+  // List<dynamic> images = [];
   final pink = const Color(0xFFFACCCC);
   final grey = const Color(0xFFF2F2F7);
   bool loading = false;
@@ -86,11 +87,16 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   @override
   void initState() {
     super.initState();
-    _selectedImages = widget.selectedImages;
-    _selectedImageUrls = widget.selectedImageUrls;
-    _imageUrls = widget.imageUrls;
-    _images = widget.images;
+    // _selectedImages = widget.selectedImages;
+    // _selectedImageUrls = widget.selectedImageUrls;
+    // imageUrls = widget.imageUrls;
+    // images = widget.images;
     user.loggedInUserFuture.then((_) {
+      if (user.user?.photoURL != null) {
+        setState(() {
+          _avatarImage = user.user!.photoURL!;
+        });
+      }
       setupWebsockets();
       user.haveCheckpointFiles.then((_) {
         print("Goind to get Featured Images...");
@@ -173,14 +179,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     });
   }
 
-  centerViewUpdateSelectedImages(_selectedImages, _selectedImageUrls) {
-    setState(() {
-      _selectedImages = widget.selectedImages;
-      _selectedImageUrls = widget.selectedImageUrls;
-      widget.updateSelectedImages!(_selectedImages, _selectedImageUrls);
-    });
-  }
-
   void showSearchResults(String message) {
     bool isNsfw = false;
     loading = false;
@@ -193,8 +191,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     if (jsonMap['_source']['nsfw_probs'] != null) {
       double nsfwProb = jsonMap['_source']['nsfw_probs'][0];
       isNsfw = nsfwProb > user.nsfwFilterSliderValue;
-      // print("NSFW Value");
-      // print(nsfwProb);
     }
 
     if (!imageUrls.contains(url) && !isNsfw) {
@@ -203,8 +199,8 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     }
 
     setState(() {
-      _imageUrls = imageUrls;
-      _images = images;
+      imageUrls = imageUrls;
+      images = images;
       loading = false;
     });
   }
@@ -239,7 +235,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                 child: Row(
                   children: [
                     Expanded(
-                      flex: 4,
+                      flex: 9,
                       child: TextField(
                         textAlign: TextAlign.center,
                         onSubmitted: (value) {
@@ -253,7 +249,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                             fontSize: kTextFontSize,
                             color: kTextColorLightGrey,
                           ),
-                          hintText: "Search for inspiration",
+                          hintText: "Search",
                           fillColor: kTextFieldBackgroundColor,
                           filled: true,
                           suffixIcon: Padding(
@@ -280,9 +276,9 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                             ? kDefaultWidth * 2
                             : kDefaultWidth),
                     Expanded(
-                      flex: 4,
+                      flex: 9,
                       child: Container(
-                        // height: 40,
+                        height: 40,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: kTextFieldBackgroundColor,
@@ -344,61 +340,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                 ),
               ),
               SizedBox(height: kDefaultPadding),
-              if (Responsive.isMobile(context))
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Selected images",
-                          style: TextStyle(
-                            fontFamily:
-                                'custom font', // remove this if don't have custom font
-                            fontSize: 15.0, // text size
-                            color: Color.fromARGB(255, 144, 142, 142),
-                            // text color
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: kDefaultHeight / 2),
-                      Container(
-                        width: double.infinity,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Color.fromARGB(255, 77, 75, 75),
-                              width: 2.0,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: ImageListView(
-                          updateSelectedImages: widget.updateSelectedImages,
-                          selectedImages: _selectedImages,
-                          selectedImageUrls: _selectedImageUrls,
-                        ),
-                      ),
-                      SizedBox(height: kDefaultHeight),
-                    ],
-                  ),
-                ),
-              // Container(
-              //   alignment: Alignment.centerLeft,
-              //   padding: const EdgeInsets.only(left: 20.0),
-              //   child: Text(
-              //     "Select up to 5 Images",
-              //     style: TextStyle(
-              //       fontFamily:
-              //           'custom font', // remove this if don't have custom font
-              //       fontSize: 15.0, // text size
-              //       color: Color.fromARGB(255, 144, 142, 142), // text color
-              //     ),
-              //   ),
-              // ),
-              SizedBox(
-                  height:
-                      Responsive.isMobile(context) ? kDefaultHeight / 2 : 0),
               Expanded(
                 child: loading
                     ? Column(children: [
@@ -410,41 +351,63 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                                 SpinKitThreeBounce(color: kButtonLightPurple)),
                         Text('')
                       ])
-                    : ImageGridView(
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                        updateSelectedImages:
-                            centerViewUpdateSelectedImages, //widget.updateSelectedImages,
-                        showDetailView: widget.showDetailView,
-                        imageUrls: _imageUrls,
-                        images: _images),
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: imageUrls.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: imageUrls.length < 3 ? 1 : 3,
+                          mainAxisSpacing: 0,
+                          crossAxisSpacing: 0,
+                          childAspectRatio: 1,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ImageDetailsModal(
+                                    selectedImageUrl: imageUrls[index],
+                                  );
+                                },
+                              );
+                              setState(() {});
+                            },
+                            child: FadeInImage(
+                              placeholder:
+                                  AssetImage('assets/images/tmp_image.png'),
+                              image: NetworkImage(imageUrls[index]),
+                            ),
+                          );
+                        },
+                      ),
               ),
               SizedBox(height: kDefaultPadding),
-              if (Responsive.isMobile(context))
-                Container(
-                  height: 50.0,
-                  width: 350,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: kPurple,
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // shadowColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text(
-                      'Create',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    onPressed: () {
-                      widget.showDetailView!();
-                    },
-                  ),
-                ),
+              // if (Responsive.isMobile(context))
+              //   Container(
+              //     height: 50.0,
+              //     width: 350,
+              //     decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(10),
+              //       color: kPurple,
+              //     ),
+              //     child: ElevatedButton(
+              //       style: ElevatedButton.styleFrom(
+              //         // shadowColor: Colors.transparent,
+              //         backgroundColor: Colors.transparent,
+              //         shadowColor: Colors.transparent,
+              //         shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(10)),
+              //       ),
+              //       child: Text(
+              //         'Create',
+              //         style: TextStyle(fontSize: 18),
+              //       ),
+              //       onPressed: () {
+              //         widget.showDetailView!();
+              //       },
+              //     ),
+              //   ),
               SizedBox(height: kDefaultPadding),
             ],
           ),
@@ -481,31 +444,31 @@ class ImageGridView extends StatefulWidget {
 class _ImageGridViewState extends State<ImageGridView> {
   Set<String>? _selectedImageUrls;
   Set<dynamic>? _selectedImages;
-  List<String> _imageUrls = [];
-  List<dynamic> _images = [];
+  List<String> imageUrls = [];
+  List<dynamic> images = [];
 
   @override
   void initState() {
     super.initState();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    _images = widget.images;
-    _imageUrls = widget.imageUrls;
+    images = widget.images;
+    imageUrls = widget.imageUrls;
   }
 
   @override
   Widget build(BuildContext context) {
-    _images = widget.images;
-    _imageUrls = widget.imageUrls;
+    images = widget.images;
+    imageUrls = widget.imageUrls;
     return MasonryGridView.count(
       crossAxisCount: 4,
       mainAxisSpacing: 0,
       crossAxisSpacing: 0,
       shrinkWrap: true,
-      itemCount: _imageUrls.length,
+      itemCount: imageUrls.length,
       itemBuilder: (BuildContext context, int index) {
-        final imageUrl = _imageUrls[index];
-        final imageFull = _images[index];
+        final imageUrl = imageUrls[index];
+        final imageFull = images[index];
         final isSelected = _selectedImageUrls!.contains(imageUrl);
         return Container(
           decoration: BoxDecoration(
