@@ -1,3 +1,5 @@
+import 'package:universal_platform/universal_platform.dart';
+
 import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/models/websockets.dart';
@@ -33,26 +35,6 @@ class ImgGridView extends StatefulWidget {
   final List<String> imageUrls = [];
   final List<dynamic> images = [];
 
-  // late InterstitialAd _interstitialAd;
-  // bool _isAdLoaded = false;
-
-  // void _initAd() {
-  //   InterstitialAd.load(
-  //     adUnitId: '<ad unit id>',
-  //     request: AdRequest(),
-  //     adLoadCallback: InterstitialAdLoadCallback(
-  //         onAdLoaded: onAdLoaded,
-  //         onAdFailedToLoad: (error) {
-  //           print('InterstitialAd failed to load: $error');
-  //         }),
-  //   );
-  // }
-
-  // void onAdLoaded(InterstitialAd ad) {
-  //   _interstitialAd = ad;
-  //   _isAdLoaded = true;
-  // }
-
   @override
   State<ImgGridView> createState() => _ImgGridViewState();
 }
@@ -83,9 +65,13 @@ class _ImgGridViewState extends State<ImgGridView> {
   List<String> imageUrls = [];
   List<dynamic> images = [];
 
+  BannerAd? bannerAd;
+
   @override
   void initState() {
     super.initState();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd = AdManager.createBannerAd()..load();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
     _imageUrls = widget.imageUrls;
@@ -108,7 +94,13 @@ class _ImgGridViewState extends State<ImgGridView> {
   void dispose() {
     searchWs.close();
     featuredWs.close();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd?.dispose();
     super.dispose();
+  }
+
+  Widget _buildBannerAdWidget() {
+    return AdWidget(ad: bannerAd!);
   }
 
   void setupWebsockets() {
@@ -198,8 +190,6 @@ class _ImgGridViewState extends State<ImgGridView> {
     if (jsonMap['_source']['nsfw_probs'] != null) {
       double nsfwProb = jsonMap['_source']['nsfw_probs'][0];
       isNsfw = nsfwProb > user.nsfwFilterSliderValue;
-      // print("NSFW Value");
-      // print(nsfwProb);
     }
 
     if (!imageUrls.contains(url) && !isNsfw) {
@@ -451,7 +441,15 @@ class _ImgGridViewState extends State<ImgGridView> {
                     },
                   ),
                 ),
-              SizedBox(height: kDefaultPadding),
+
+              if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+                Container(
+                  width: bannerAd!.size.width.toDouble(),
+                  height: bannerAd!.size.height.toDouble(),
+                  child: _buildBannerAdWidget(),
+                )
+              else
+                SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

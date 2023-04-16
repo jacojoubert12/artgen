@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:universal_platform/universal_platform.dart';
+import 'package:artgen/components/adMob_view.dart';
 import 'package:artgen/components/horisontal_image_listview.dart';
 import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/components/settings_navigation_drawer.dart';
@@ -6,6 +8,7 @@ import 'package:artgen/models/websockets.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../constants.dart';
 import '../../responsive.dart';
@@ -63,6 +66,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Map<String, dynamic> query = {};
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+  BannerAd? bannerAd;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -71,6 +75,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   @override
   void initState() {
     super.initState();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd = AdManager.createBannerAd()..load();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
 
@@ -82,12 +88,20 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       }
       setupWebsockets();
     });
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd = AdManager.createBannerAd()..load();
   }
 
   @override
   void dispose() {
     imgGenWs.close();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd?.dispose();
     super.dispose();
+  }
+
+  Widget _buildBannerAdWidget() {
+    return AdWidget(ad: bannerAd!);
   }
 
   Future<void> setupWebsockets() async {
@@ -689,9 +703,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: kDefaultPadding,
-              ),
+              if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+                Container(
+                  width: bannerAd!.size.width.toDouble(),
+                  height: bannerAd!.size.height.toDouble(),
+                  child: _buildBannerAdWidget(),
+                )
+              else
+                SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

@@ -10,6 +10,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:universal_platform/universal_platform.dart';
 import '../../../constants.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -27,32 +28,7 @@ class ExploreCenterView extends StatefulWidget {
     // _initAd();
   }
   final Function? setViewMode;
-  // final Function? updateSelectedImages;
   final Function? showDetailView;
-  // final selectedImages;
-  // final selectedImageUrls;
-  // final List<String> imageUrls = [];
-  // final List<dynamic> images = [];
-
-  // late InterstitialAd _interstitialAd;
-  // bool _isAdLoaded = false;
-
-  // void _initAd() {
-  //   InterstitialAd.load(
-  //     adUnitId: '<ad unit id>',
-  //     request: AdRequest(),
-  //     adLoadCallback: InterstitialAdLoadCallback(
-  //         onAdLoaded: onAdLoaded,
-  //         onAdFailedToLoad: (error) {
-  //           print('InterstitialAd failed to load: $error');
-  //         }),
-  //   );
-  // }
-
-  // void onAdLoaded(InterstitialAd ad) {
-  //   _interstitialAd = ad;
-  //   _isAdLoaded = true;
-  // }
 
   @override
   State<ExploreCenterView> createState() => _ExploreCenterViewState();
@@ -60,15 +36,12 @@ class ExploreCenterView extends StatefulWidget {
 
 class _ExploreCenterViewState extends State<ExploreCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  // Set<dynamic>? _selectedImages;
-  // Set<String>? _selectedImageUrls;
-  // List<String> imageUrls = [];
-  // List<dynamic> images = [];
   final pink = const Color(0xFFFACCCC);
   final grey = const Color(0xFFF2F2F7);
   bool loading = false;
   int retries = 0;
   bool getFeatured = true;
+  BannerAd? bannerAd;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -87,10 +60,8 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   @override
   void initState() {
     super.initState();
-    // _selectedImages = widget.selectedImages;
-    // _selectedImageUrls = widget.selectedImageUrls;
-    // imageUrls = widget.imageUrls;
-    // images = widget.images;
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd = AdManager.createBannerAd()..load();
     user.loggedInUserFuture.then((_) {
       if (user.user?.photoURL != null) {
         setState(() {
@@ -109,7 +80,13 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   void dispose() {
     searchWs.close();
     featuredWs.close();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd?.dispose();
     super.dispose();
+  }
+
+  Widget _buildBannerAdWidget() {
+    return AdWidget(ad: bannerAd!);
   }
 
   void setupWebsockets() {
@@ -383,32 +360,14 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                       ),
               ),
               SizedBox(height: kDefaultPadding),
-              // if (Responsive.isMobile(context))
-              //   Container(
-              //     height: 50.0,
-              //     width: 350,
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(10),
-              //       color: kPurple,
-              //     ),
-              //     child: ElevatedButton(
-              //       style: ElevatedButton.styleFrom(
-              //         // shadowColor: Colors.transparent,
-              //         backgroundColor: Colors.transparent,
-              //         shadowColor: Colors.transparent,
-              //         shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(10)),
-              //       ),
-              //       child: Text(
-              //         'Create',
-              //         style: TextStyle(fontSize: 18),
-              //       ),
-              //       onPressed: () {
-              //         widget.showDetailView!();
-              //       },
-              //     ),
-              //   ),
-              SizedBox(height: kDefaultPadding),
+              if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+                Container(
+                  width: bannerAd!.size.width.toDouble(),
+                  height: bannerAd!.size.height.toDouble(),
+                  child: _buildBannerAdWidget(),
+                )
+              else
+                SizedBox(height: kDefaultPadding),
             ],
           ),
         ),

@@ -70,7 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '133553272540',
     projectId: 'artgen-66569',
     storageBucket: 'artgen-66569.appspot.com',
-    iosClientId: '133553272540-lsvdah19pjatietpecghlph2qv4gdh0h.apps.googleusercontent.com',
+    iosClientId:
+        '133553272540-lsvdah19pjatietpecghlph2qv4gdh0h.apps.googleusercontent.com',
     iosBundleId: 'com.enginosoft.artgen',
   );
 }
