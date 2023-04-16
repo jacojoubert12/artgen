@@ -44,7 +44,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
           width: Responsive.isDesktop(context)
               ? MediaQuery.of(context).size.width * 0.6
               : MediaQuery.of(context).size.width * 0.95,
-          height: MediaQuery.of(context).size.height * 0.78,
+          height: MediaQuery.of(context).size.height * 0.85,
           decoration: BoxDecoration(
               color: kBgDarkColor,
               borderRadius: BorderRadius.only(
@@ -93,21 +93,33 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.samplingStepsSliderValue,
-                max: 150,
-                min: 1,
-                divisions: 149,
-                label: user.samplingStepsSliderValue.round().toString(),
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.samplingStepsSliderValue = value;
-                  });
-                },
-              ),
+              SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackShape: RoundedRectSliderTrackShape(),
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                    overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                  ),
+                  child: Container(
+                    width: kDefaultWidth * 35,
+                    child: Slider(
+                      value: user.samplingStepsSliderValue,
+
+                      max: 150,
+                      min: 1,
+                      divisions: 149,
+                      label: user.samplingStepsSliderValue.round().toString(),
+                      activeColor:
+                          kButtonLightPurple, // Set the active color here
+                      inactiveColor:
+                          kButtonLightPurpleTransparent, // Set the inactive color here
+                      onChanged: (double value) {
+                        setState(() {
+                          user.samplingStepsSliderValue = value;
+                        });
+                      },
+                    ),
+                  )),
+
               // SizedBox(height: kDefaultPadding),
               Text(
                 "Resolution",
@@ -120,25 +132,37 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.resolutionSliderValue,
-                max: user.resolutionSteps - 1,
-                min: 0,
-                divisions: 9,
-                label:
-                    "${user.widths[user.resolutionSliderValue.toInt()]} x ${user.heights[user.resolutionSliderValue.toInt()]}",
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.resolutionSliderValue = value;
-                    user.widthSliderValue =
-                        user.widths[user.resolutionSliderValue.toInt()];
-                    user.heightSliderValue =
-                        user.heights[user.resolutionSliderValue.toInt()];
-                  });
-                },
+
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.resolutionSliderValue,
+                    max: user.resolutionSteps - 1,
+                    min: 0,
+                    divisions: 9,
+                    label:
+                        "${user.widths[user.resolutionSliderValue.toInt()]} x ${user.heights[user.resolutionSliderValue.toInt()]}",
+                    activeColor:
+                        kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                        kButtonLightPurpleTransparent, // Set the inactive color here
+                    onChanged: (double value) {
+                      setState(() {
+                        user.resolutionSliderValue = value;
+                        user.widthSliderValue =
+                            user.widths[user.resolutionSliderValue.toInt()];
+                        user.heightSliderValue =
+                            user.heights[user.resolutionSliderValue.toInt()];
+                      });
+                    },
+                  ),
+                ),
               ),
               // SizedBox(height: kDefaultPadding),
               Text(
@@ -152,20 +176,31 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.widthSliderValue,
-                max: 2048,
-                min: 64,
-                divisions: 1984,
-                label: user.widthSliderValue.round().toString(),
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.widthSliderValue = value;
-                  });
-                },
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.widthSliderValue,
+                    max: 2048,
+                    min: 64,
+                    divisions: 1984,
+                    label: user.widthSliderValue.round().toString(),
+                    activeColor:
+                        kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                        kButtonLightPurpleTransparent, // Set the inactive color here
+                    onChanged: (double value) {
+                      setState(() {
+                        user.widthSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
               ),
               // SizedBox(height: kDefaultPadding),
               Text(
@@ -179,20 +214,31 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.heightSliderValue,
-                max: 2048,
-                min: 64,
-                divisions: 1984,
-                label: user.heightSliderValue.round().toString(),
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.heightSliderValue = value;
-                  });
-                },
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.heightSliderValue,
+                    max: 2048,
+                    min: 64,
+                    divisions: 1984,
+                    label: user.heightSliderValue.round().toString(),
+                    activeColor:
+                        kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                        kButtonLightPurpleTransparent, // Set the inactive color here
+                    onChanged: (double value) {
+                      setState(() {
+                        user.heightSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
               ),
               // SizedBox(height: kDefaultPadding),
               Text(
@@ -206,20 +252,31 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.guidanceScaleSliderValue,
-                max: 30,
-                min: 1,
-                divisions: 29,
-                label: user.guidanceScaleSliderValue.round().toString(),
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.guidanceScaleSliderValue = value;
-                  });
-                },
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.guidanceScaleSliderValue,
+                    max: 30,
+                    min: 1,
+                    divisions: 29,
+                    label: user.guidanceScaleSliderValue.round().toString(),
+                    activeColor:
+                        kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                        kButtonLightPurpleTransparent, // Set the inactive color here
+                    onChanged: (double value) {
+                      setState(() {
+                        user.guidanceScaleSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
               ),
               // SizedBox(height: kDefaultPadding),
               Text(
@@ -233,20 +290,31 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.denoisingStrengthSliderValue,
-                max: 1,
-                min: 0,
-                divisions: 101,
-                label: user.denoisingStrengthSliderValue.toString(),
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.denoisingStrengthSliderValue = value;
-                  });
-                },
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.denoisingStrengthSliderValue,
+                    max: 1,
+                    min: 0,
+                    divisions: 101,
+                    label: user.denoisingStrengthSliderValue.toString(),
+                    activeColor:
+                        kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                        kButtonLightPurpleTransparent, // Set the inactive color here
+                    onChanged: (double value) {
+                      setState(() {
+                        user.denoisingStrengthSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
               ),
               // SizedBox(height: kDefaultPadding),
               Text(
@@ -260,20 +328,31 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   // text color
                 ),
               ),
-              Slider(
-                value: user.batchSizeSliderValue,
-                max: 100,
-                min: 1,
-                divisions: 99,
-                label: user.batchSizeSliderValue.round().toString(),
-                activeColor: kButtonLightPurple, // Set the active color here
-                inactiveColor:
-                    kButtonLightPurpleTransparent, // Set the inactive color here
-                onChanged: (double value) {
-                  setState(() {
-                    user.batchSizeSliderValue = value;
-                  });
-                },
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.batchSizeSliderValue,
+                    max: 100,
+                    min: 1,
+                    divisions: 99,
+                    label: user.batchSizeSliderValue.round().toString(),
+                    activeColor:
+                        kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                        kButtonLightPurpleTransparent, // Set the inactive color here
+                    onChanged: (double value) {
+                      setState(() {
+                        user.batchSizeSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
               ),
 
               //Dropdown

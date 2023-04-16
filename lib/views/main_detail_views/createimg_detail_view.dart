@@ -42,7 +42,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Set<String>? _selectedImageUrls;
   List<String> generatedImgUrls = [
     // "https://e1.pngegg.com/pngimages/866/743/png-clipart-waves-s-black-dot.png"),
-    "assets/images/tmp_image.png"
+    // "assets/images/tmp_image.png"
     // AssetImage('assets/images/tmp_image.png'),
     // "http://localhost:5000/output/" + "output.png"
     // "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
@@ -213,8 +213,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   generateImage() async {
     print("Generate Images");
-    retryDurationInSeconds = (user.batchSizeSliderValue * 60) as int;
-    ;
+    retryDurationInSeconds = (user.batchSizeSliderValue.toInt() * 180);
     print("JSON Encoded query:");
     print(jsonEncode(query));
     setupWebsockets();
@@ -273,7 +272,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   //         ),
                   // ),
                   Expanded(
-                    flex: 1,
+                    flex: 3,
                     child: Container(
                       height: 35,
                       alignment: Alignment.center,
@@ -283,7 +282,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           fontFamily:
                               'custom font', // remove this if don't have custom font
                           fontSize: 20.0, // text size
-                          color: Color.fromARGB(255, 142, 142, 142),
+                          color: kTextColorLightGrey,
                         ),
                       ),
                     ),
@@ -314,127 +313,158 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   ),
                 ],
               ),
-              SizedBox(height: kDefaultPadding),
-              if (Responsive.isMobile(context))
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    "Selected images",
-                    style: TextStyle(
-                      fontFamily:
-                          'custom font', // remove this if don't have custom font
-                      fontSize: 15.0, // text size
-                      color: Color.fromARGB(255, 142, 142, 142),
-                      // text color
-                    ),
-                  ),
-                ),
-              SizedBox(height: kDefaultPadding / 2),
-              Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 80,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Color.fromARGB(255, 77, 75, 75),
-                      width: 2.0,
-                      style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                // height: _selectedImageUrls!.length == 0 ? 0 : 100,
-                child: (_selectedImageUrls!.length > 0)
-                    ? ImageListView(
-                        updateSelectedImages: widget.updateSelectedImages,
-                        selectedImages: _selectedImages,
-                        selectedImageUrls: _selectedImageUrls,
-                      )
-                    : Text(
-                        "Select images in search view if you would like to make use of their prompts",
-                        style: TextStyle(
-                          fontFamily:
-                              'custom font', // remove this if don't have custom font
-                          fontSize: 12.0, // text size
-                          color: Color.fromARGB(255, 142, 142, 142),
-                          // text color
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    SizedBox(height: kDefaultPadding),
+                    if (Responsive.isMobile(context))
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          "Selected images",
+                          style: TextStyle(
+                            fontFamily: 'custom font',
+                            fontSize: 15.0,
+                            color: kTextColorLightGrey,
+                          ),
                         ),
                       ),
-              ),
-              SizedBox(height: kDefaultPadding),
-              TextField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                onChanged: (value) {
-                  _promptTxt = value;
-                },
-                decoration: InputDecoration(
-                  hintStyle: TextStyle(
-                    fontSize: 12,
-                    color: Color.fromARGB(255, 142, 142, 142),
-                  ),
-                  // hintText: "Search for specific topics",
-                  contentPadding: EdgeInsets.symmetric(vertical: 30),
-                  label: Text.rich(
-                    TextSpan(
-                      children: <InlineSpan>[
-                        WidgetSpan(
-                          child: Text(
-                            'Prompt',
-                            style: TextStyle(
-                              fontFamily:
-                                  'custom font', // remove this if don't have custom font
-                              fontSize: 12.0, // text size
-                              color: Color.fromARGB(255, 142, 142, 142),
-
-                              // text color
+                    SizedBox(height: kDefaultPadding / 2),
+                    Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Color.fromARGB(255, 77, 75, 75),
+                            width: 2.0,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: (_selectedImageUrls!.length > 0)
+                          ? ImageListView(
+                              updateSelectedImages: widget.updateSelectedImages,
+                              selectedImages: _selectedImages,
+                              selectedImageUrls: _selectedImageUrls,
+                            )
+                          : Text(
+                              "Select images in search view to make use of their prompts",
+                              style: TextStyle(
+                                fontFamily: 'custom font',
+                                fontSize: 11.0,
+                                color: kTextColorLightGrey,
+                              ),
                             ),
-                          ),
-                        ),
-                        WidgetSpan(
-                          child: Text(
-                            '',
-                            style: TextStyle(color: Colors.pink),
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(height: kDefaultPadding),
-              TextField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                onChanged: (value) {
-                  _negpromptTxt = value;
-                },
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 20),
-                  label: Text.rich(
-                    TextSpan(
-                      children: <InlineSpan>[
-                        WidgetSpan(
-                          child: Text(
-                            'Negative Prompt',
-                            style: TextStyle(
-                              fontFamily:
-                                  'custom font', // remove this if don't have custom font
-                              fontSize: 12.0, // text size
-                              color: Color.fromARGB(255, 142, 142, 142),
-
-                              // text color
-                            ),
+                    SizedBox(height: kDefaultPadding),
+                    TextField(
+                      style: TextStyle(
+                        color: kTextColorLightGrey,
+                      ),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      onChanged: (value) {
+                        _promptTxt = value;
+                      },
+                      cursorColor: Color.fromARGB(255, 77, 75, 75),
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                          fontSize: 10,
+                          color: kTextColorLightGrey,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 30, horizontal: 12),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 77, 75, 75),
+                            width: 1.0,
                           ),
                         ),
-                        WidgetSpan(
-                          child: Text(
-                            '',
-                            style: TextStyle(color: kTextFieldBoarderColor),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: kButtonLightPurple,
+                            width: 1.0,
                           ),
                         ),
-                      ],
+                        label: Text.rich(
+                          TextSpan(
+                            children: <InlineSpan>[
+                              WidgetSpan(
+                                child: Text(
+                                  'Prompt',
+                                  style: TextStyle(
+                                    fontFamily: 'custom font',
+                                    fontSize: 11.0,
+                                    color: kTextColorLightGrey,
+                                  ),
+                                ),
+                              ),
+                              WidgetSpan(
+                                child: Text(
+                                  '',
+                                  style: TextStyle(color: Colors.pink),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(height: kDefaultPadding),
+                    TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      onChanged: (value) {
+                        _negpromptTxt = value;
+                      },
+                      cursorColor: Color.fromARGB(255, 77, 75, 75),
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 77, 75, 75),
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: kButtonLightPurple,
+                            width: 1.0,
+                          ),
+                        ),
+                        label: Text.rich(
+                          TextSpan(
+                            children: <InlineSpan>[
+                              WidgetSpan(
+                                child: Text(
+                                  'Negative Prompt',
+                                  style: TextStyle(
+                                    fontFamily: 'custom font',
+                                    fontSize: 12.0,
+                                    color: kTextColorLightGrey,
+                                  ),
+                                ),
+                              ),
+                              WidgetSpan(
+                                child: Text(
+                                  '',
+                                  style:
+                                      TextStyle(color: kTextFieldBoarderColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: kDefaultPadding),
@@ -455,8 +485,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           double availableWidth = constraints.maxWidth;
                           double aspectRatio = availableWidth /
                               MediaQuery.of(context).size.height;
-
-                          if (generatedImgUrls.length == 1) {
+                          if (generatedImgUrls.length == 0) {
+                            return Container(
+                              child: Image.asset('assets/images/tmp_image.png'),
+                            );
+                          } else if (generatedImgUrls.length == 1) {
                             return GestureDetector(
                               onTap: () {
                                 showDialog(
@@ -549,7 +582,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         user.showLogin(context, query)
                             ? {
                                 user.imagesToGenerate =
-                                    (user.batchSizeSliderValue as int?)!,
+                                    (user.batchSizeSliderValue.toInt()),
                                 generateImage()
                               }
                             : showDialog(
