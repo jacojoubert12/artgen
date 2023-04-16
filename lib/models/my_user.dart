@@ -20,7 +20,7 @@ class MyUser extends ChangeNotifier {
   int imagesGenerated = 2;
   int imagesToGenerate = 0;
   int activePackage = 0;
-  int imageLimit = 5;
+  int imageLimit = 0;
   String pubTopic = "mdjrny_v4";
   Map<int, dynamic> packageMap = {};
   Map<String, dynamic> userInfo = {};

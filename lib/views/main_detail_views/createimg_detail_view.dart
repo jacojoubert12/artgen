@@ -165,10 +165,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   concatPrompts() {
     //TODo: Add NLP to cleanup the prompt and remove duplicate sentences when selected images have overlapping prompts
-    //Ensure the sise #GPT4All? Basically rewrite the prompt to improve it
+    //Ensure the size #GPT4All? Basically rewrite the prompt to improve it
+    print("Before contactPrompts");
     prompt = "";
     negprompt = "";
+    print(_selectedImages);
     for (var jsonString in _selectedImages!) {
+      print(jsonString);
       if (jsonString != null) {
         print(jsonString);
         if (jsonString.toString().contains('img2img')) continue;
@@ -184,6 +187,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
         // json = jsonEncode(jsonString['negprompt']);
         // negprompt += jsonDecode(json) + " ";
       }
+      print("After contactPrompts");
     }
 
     List<String> img2imgList = [];
@@ -624,7 +628,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       color: kButtonLightPurple,
                     ),
                     child: uploading
-                        ? SpinKitThreeBounce(color: kButtonLightPurple)
+                        ? SpinKitThreeBounce(color: kWhite)
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
@@ -634,6 +638,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                             ),
                             child: Text('Upload'),
                             onPressed: () async {
+                              if (user.user!.isAnonymous) {
+                                user.showLogin(context, Map<String, dynamic>());
+                                return;
+                              }
                               setState(() {
                                 uploading = true;
                               });
@@ -642,8 +650,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                               // Check if the upload was successful
                               if (url != null) {
                                 setState(() {
+                                  uploadImg2ImgImages.add(url);
                                   _selectedImageUrls!.add(url);
-                                  _selectedImages!.add(url);
+                                  print(_selectedImages);
+                                  _selectedImages!.add({'img2img': url});
                                 });
                               }
                               setState(() {
