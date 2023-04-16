@@ -20,9 +20,29 @@ class AdHelper {
 
   static String get interstitialAdUnitId {
     if (UniversalPlatform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/1033173712';
+      return 'ca-app-pub-9114002398812345/1674218674';
     } else if (UniversalPlatform.isIOS) {
-      return 'ca-app-pub-3940256099942544/1033173712';
+      return '<YOUR_IOS_BANNER_AD_UNIT_ID>';
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
+
+  static String get rewardedAdUnitId {
+    if (UniversalPlatform.isAndroid) {
+      return 'ca-app-pub-9114002398812345/1437866218';
+    } else if (UniversalPlatform.isIOS) {
+      return '<YOUR_IOS_REWARDED_AD_UNIT_ID>';
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
+
+  static String get rewardedInterstitialAdUnitId {
+    if (UniversalPlatform.isAndroid) {
+      return 'ca-app-pub-9114002398812345/9100695828';
+    } else if (UniversalPlatform.isIOS) {
+      return '<YOUR_IOS_REWARDED_INTERSTITIAL_AD_UNIT_ID>';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -58,6 +78,50 @@ class AdManager {
       ),
     );
 
+    return completer.future;
+  }
+
+  static Future<RewardedAd> createRewardedAd() async {
+    RewardedAd? rewardedAd;
+    final Completer<RewardedAd> completer = Completer<RewardedAd>();
+
+    RewardedAd.load(
+      adUnitId: AdHelper.rewardedAdUnitId,
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          rewardedAd = ad;
+          completer.complete(rewardedAd);
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('Rewarded ad failed to load: $error');
+          completer.completeError(error);
+        },
+      ),
+    );
+
+    return completer.future;
+  }
+
+  static Future<RewardedInterstitialAd> createRewardedInterstitialAd() async {
+    RewardedInterstitialAd? rewardedInterstitialAd;
+    final Completer<RewardedInterstitialAd> completer =
+        Completer<RewardedInterstitialAd>();
+
+    RewardedInterstitialAd.load(
+      adUnitId: AdHelper.rewardedInterstitialAdUnitId,
+      request: AdRequest(),
+      rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          rewardedInterstitialAd = ad;
+          completer.complete(rewardedInterstitialAd);
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('Rewarded interstitial ad failed to load: $error');
+          completer.completeError(error);
+        },
+      ),
+    );
     return completer.future;
   }
 }

@@ -94,8 +94,9 @@ class _ImgGridViewState extends State<ImgGridView> {
   void dispose() {
     searchWs.close();
     featuredWs.close();
-    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
       bannerAd?.dispose();
+    }
     super.dispose();
   }
 

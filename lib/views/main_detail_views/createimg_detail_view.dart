@@ -66,7 +66,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   Map<String, dynamic> query = {};
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+
   BannerAd? bannerAd;
+  InterstitialAd? interstitialAd;
 
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -95,13 +97,73 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   @override
   void dispose() {
     imgGenWs.close();
-    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
       bannerAd?.dispose();
+      interstitialAd?.dispose();
+    }
     super.dispose();
   }
 
   Widget _buildBannerAdWidget() {
     return AdWidget(ad: bannerAd!);
+  }
+
+  Future<void> _showInterstitialAd() async {
+    interstitialAd = await AdManager.createInterstitialAd();
+    await interstitialAd!.show();
+  }
+
+  Future<void> _showRewardedAd() async {
+    try {
+      final RewardedAd rewardedAd = await AdManager.createRewardedAd();
+      rewardedAd.show(
+        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+          // Reward the user for watching the ad (e.g., give in-app currency or points)
+          print('User earned reward: ${reward.amount} ${reward.type}');
+        },
+      );
+      rewardedAd.fullScreenContentCallback =
+          FullScreenContentCallback<RewardedAd>(
+        onAdDismissedFullScreenContent: (RewardedAd ad) {
+          print('Rewarded Ad did dismiss fullscreen content');
+          ad.dispose();
+        },
+        onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+          print('Rewarded Ad failed to show fullscreen content: $error');
+          ad.dispose();
+        },
+      );
+    } on Exception catch (e) {
+      print('Failed to show Rewarded Ad: $e');
+    }
+  }
+
+  Future<void> _showRewardedInterstitialAd() async {
+    try {
+      final RewardedInterstitialAd rewardedInterstitialAd =
+          await AdManager.createRewardedInterstitialAd();
+      rewardedInterstitialAd.show(
+        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+          // Reward the user for watching the ad (e.g., give in-app currency or points)
+          print('User earned reward: ${reward.amount} ${reward.type}');
+        },
+      );
+      rewardedInterstitialAd.fullScreenContentCallback =
+          FullScreenContentCallback<RewardedInterstitialAd>(
+        onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
+          print('Rewarded Interstitial Ad did dismiss fullscreen content');
+          ad.dispose();
+        },
+        onAdFailedToShowFullScreenContent:
+            (RewardedInterstitialAd ad, AdError error) {
+          print(
+              'Rewarded Interstitial Ad failed to show fullscreen content: $error');
+          ad.dispose();
+        },
+      );
+    } on Exception catch (e) {
+      print('Failed to show Rewarded Interstitial Ad: $e');
+    }
   }
 
   Future<void> setupWebsockets() async {
@@ -606,7 +668,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                             ? {
                                 user.imagesToGenerate =
                                     (user.batchSizeSliderValue.toInt()),
-                                generateImage()
+                                generateImage(),
+                                // _showInterstitialAd()
+                                // _showRewardedAd()
+                                _showRewardedInterstitialAd()
                               }
                             : showDialog(
                                 context: context,
