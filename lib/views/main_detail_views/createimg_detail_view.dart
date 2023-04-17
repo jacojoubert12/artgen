@@ -186,10 +186,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   Future<void> startRetryTimer() async {
     await Future.delayed(Duration(seconds: retryDurationInSeconds));
-
+    print("Would have retried");
     if (loading && timeoutRetries < 5) {
       print("Timeout, going to retry");
-      generateImage();
+      // generateImage();
       timeoutRetries++;
     } else if (timeoutRetries >= 5) {
       timeoutRetries = 0;
@@ -444,107 +444,117 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                             ),
                     ),
                     SizedBox(height: kDefaultPadding),
-                    TextField(
-                      style: TextStyle(
-                        color: kTextColorLightGrey,
-                      ),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      onChanged: (value) {
-                        _promptTxt = value;
-                      },
-                      cursorColor: Color.fromARGB(255, 77, 75, 75),
-                      decoration: InputDecoration(
-                        hintStyle: TextStyle(
-                          fontSize: 10,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: TextField(
+                        style: TextStyle(
                           color: kTextColorLightGrey,
                         ),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 30, horizontal: 12),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 77, 75, 75),
-                            width: 1.0,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5, // Set max number of lines to 5
+                        onChanged: (value) {
+                          _promptTxt = value;
+                        },
+                        cursorColor: Color.fromARGB(255, 77, 75, 75),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(
+                            fontSize: 10,
+                            color: kTextColorLightGrey,
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: kButtonLightPurple,
-                            width: 1.0,
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 30, horizontal: 12),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 77, 75, 75),
+                              width: 1.0,
+                            ),
                           ),
-                        ),
-                        label: Text.rich(
-                          TextSpan(
-                            children: <InlineSpan>[
-                              WidgetSpan(
-                                child: Text(
-                                  'Prompt',
-                                  style: TextStyle(
-                                    fontFamily: 'custom font',
-                                    fontSize: 11.0,
-                                    color: kTextColorLightGrey,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              color: kButtonLightPurple,
+                              width: 1.0,
+                            ),
+                          ),
+                          label: Text.rich(
+                            TextSpan(
+                              children: <InlineSpan>[
+                                WidgetSpan(
+                                  child: Text(
+                                    'Prompt',
+                                    style: TextStyle(
+                                      fontFamily: 'custom font',
+                                      fontSize: 11.0,
+                                      color: kTextColorLightGrey,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              WidgetSpan(
-                                child: Text(
-                                  '',
-                                  style: TextStyle(color: Colors.pink),
+                                WidgetSpan(
+                                  child: Text(
+                                    '',
+                                    style:
+                                        TextStyle(color: kTextColorLightGrey),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(height: kDefaultPadding),
-                    TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      onChanged: (value) {
-                        _negpromptTxt = value;
-                      },
-                      cursorColor: Color.fromARGB(255, 77, 75, 75),
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 77, 75, 75),
-                            width: 1.0,
-                          ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: TextField(
+                        style: TextStyle(
+                          color: kTextColorLightGrey,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: kButtonLightPurple,
-                            width: 1.0,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5, // Set max number of lines to 5
+                        onChanged: (value) {
+                          _negpromptTxt = value;
+                        },
+                        cursorColor: Color.fromARGB(255, 77, 75, 75),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 12),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 77, 75, 75),
+                              width: 1.0,
+                            ),
                           ),
-                        ),
-                        label: Text.rich(
-                          TextSpan(
-                            children: <InlineSpan>[
-                              WidgetSpan(
-                                child: Text(
-                                  'Negative Prompt',
-                                  style: TextStyle(
-                                    fontFamily: 'custom font',
-                                    fontSize: 12.0,
-                                    color: kTextColorLightGrey,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              color: kButtonLightPurple,
+                              width: 1.0,
+                            ),
+                          ),
+                          label: Text.rich(
+                            TextSpan(
+                              children: <InlineSpan>[
+                                WidgetSpan(
+                                  child: Text(
+                                    'Negative Prompt',
+                                    style: TextStyle(
+                                      fontFamily: 'custom font',
+                                      fontSize: 12.0,
+                                      color: kTextColorLightGrey,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              WidgetSpan(
-                                child: Text(
-                                  '',
-                                  style:
-                                      TextStyle(color: kTextFieldBoarderColor),
+                                WidgetSpan(
+                                  child: Text(
+                                    '',
+                                    style:
+                                        TextStyle(color: kTextColorLightGrey),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
