@@ -11,6 +11,7 @@ import 'local_storage_access_mobile.dart'
 
 class MyUser extends ChangeNotifier {
   User? user;
+  int age = 0;
   String? app_id;
   bool userInitDone = false;
   bool shouldLogin = true;

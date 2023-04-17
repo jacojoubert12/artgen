@@ -24,8 +24,8 @@ class _AuthGateState extends State<AuthGate> {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return SignInScreen(providerConfigs: [
-              EmailProviderConfiguration(),
-              FacebookProviderConfiguration(clientId: "297726269218671"),
+              // EmailProviderConfiguration(),
+              // FacebookProviderConfiguration(clientId: "297726269218671"),
               GoogleProviderConfiguration(
                   clientId:
                       "596167850151-2lhh2fviql4dkl1jisngt57plikc03qv.apps.googleusercontent.com")
