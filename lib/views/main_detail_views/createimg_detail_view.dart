@@ -687,9 +687,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text("Popup title"),
-                                    content:
-                                        Text("You have reached your limit"),
+                                    title: Text("Please Login"),
+                                    content: Text(
+                                        "Please Login to use this feature"),
                                     actions: <Widget>[
                                       Container(
                                         height: 80,

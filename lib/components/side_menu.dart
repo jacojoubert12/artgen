@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterfire_ui/auth.dart';
+// import 'package:flutterfire_ui/auth.dart';
 import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutterfire_ui/auth.dart';
+// import 'package:flutterfire_ui/auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
@@ -224,7 +224,7 @@ class _SideMenuState extends State<SideMenu> {
               ),
 
               SizedBox(height: 5),
-              SignOutButton(),
+              // SignOutButton(),
               SizedBox(height: kDefaultPadding),
 
               // SizedBox(height: kDefaultPadding * 2),

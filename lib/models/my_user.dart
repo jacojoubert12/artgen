@@ -391,18 +391,18 @@ class MyUser extends ChangeNotifier {
     } else {
       print("user logged in");
     }
-    if (shouldShowPackages) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SubscriptionView();
-        },
-      );
-      return false;
-    } else {
-      logImgGenRequest(query);
-      print("user packages still valid");
-    }
+    // if (shouldShowPackages) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return SubscriptionView();
+    //     },
+    //   );
+    //   return false;
+    // } else {
+    //   logImgGenRequest(query);
+    //   print("user packages still valid");
+    // }
     return true;
   }
 }

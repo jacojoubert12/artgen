@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:artgen/auth_gate.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:universal_platform/universal_platform.dart';
 
 import '../../../constants.dart';
 
@@ -56,6 +59,33 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
         });
       }
     });
+  }
+
+  Future<void> _signOut() async {
+    try {
+      GoogleSignIn googleSignIn;
+      if (!UniversalPlatform.isAndroid && !UniversalPlatform.isIOS) {
+        googleSignIn = GoogleSignIn(
+            clientId:
+                "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com");
+      } else {
+        googleSignIn = GoogleSignIn();
+      }
+
+      // Sign out from Google
+      await googleSignIn.signOut();
+
+      // Sign out from Firebase Auth
+      await FirebaseAuth.instance.signOut();
+
+      // Set user.user to null
+      setState(() {
+        user.user = null;
+      });
+    } catch (error) {
+      print("Error signing out: $error");
+    }
+    user.shouldLogin = true;
   }
 
   @override
@@ -431,13 +461,16 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                //save profile
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (context) {
-                                //     return SubscriptionView();
-                                //   },
-                                // );
+                                if (user.user?.isAnonymous ?? true) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AuthGate();
+                                    },
+                                  );
+                                } else {
+                                  _signOut();
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -445,7 +478,9 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(32.0)),
                               ),
-                              child: Text('Save'),
+                              child: (user.user?.isAnonymous ?? true)
+                                  ? Text("Login")
+                                  : Text("Logout"),
                             ),
                           ),
                         ],
