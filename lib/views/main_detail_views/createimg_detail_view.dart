@@ -451,7 +451,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           color: kTextColorLightGrey,
                         ),
                         keyboardType: TextInputType.multiline,
-                        maxLines: 5, // Set max number of lines to 5
+                        maxLines: 3, // Set max number of lines to 5
                         onChanged: (value) {
                           _promptTxt = value;
                         },
@@ -462,7 +462,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                             color: kTextColorLightGrey,
                           ),
                           contentPadding: EdgeInsets.symmetric(
-                              vertical: 30, horizontal: 12),
+                              vertical: 10, horizontal: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
@@ -511,14 +511,14 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           color: kTextColorLightGrey,
                         ),
                         keyboardType: TextInputType.multiline,
-                        maxLines: 5, // Set max number of lines to 5
+                        maxLines: 2, // Set max number of lines to 5
                         onChanged: (value) {
                           _negpromptTxt = value;
                         },
                         cursorColor: Color.fromARGB(255, 77, 75, 75),
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 12),
+                              vertical: 10, horizontal: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
