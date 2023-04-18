@@ -344,85 +344,45 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                           //   },
                           // ),
                           SizedBox(height: 30.0),
-<<<<<<< HEAD
-                          Text(
-                            "NSFW Filter",
-                            style: TextStyle(
-                              fontFamily:
-                                  'custom font', // remove this if don't have custom font
-                              fontSize: 12.0, // text size
-                              color: kTextColorLightGrey,
-                              // text color
-                            ),
-                          ),
-                          SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                trackShape: RoundedRectSliderTrackShape(),
-                                thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 12.0),
-                                overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: 28.0),
-                              ),
-                              child: Container(
-                                width: kDefaultWidth * 35,
-                                child: Slider(
-                                  value: user.nsfwFilterSliderValue,
-
-=======
-                          user.age >= 18 ? Text("NSFW Filter") : Text(""),
                           user.age >= 18
-                              ? Slider(
-                                  value: user.nsfwFilterSliderValue,
->>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
-                                  max: 1,
-                                  min: 0,
-                                  divisions: 101,
-                                  label: user.nsfwFilterSliderValue
-                                      .toStringAsFixed(2),
-<<<<<<< HEAD
-
-                                  activeColor:
-                                      kButtonLightPurple, // Set the active color here
-                                  inactiveColor:
-                                      kButtonLightPurpleTransparent, // Set the inactive color here
-=======
->>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
-                                  onChanged: (double value) {
-                                    setState(() {
-                                      user.nsfwFilterSliderValue = value;
-                                    });
-                                  },
-<<<<<<< HEAD
-                                ),
-                              )),
-                          // Slider(
-                          //   value: user.nsfwFilterSliderValue,
-                          //   max: 1,
-                          //   min: 0,
-                          //   divisions: 101,
-                          //   label:
-                          //       user.nsfwFilterSliderValue.toStringAsFixed(2),
-                          //   onChanged: (double value) {
-                          //     setState(() {
-                          //       user.nsfwFilterSliderValue = value;
-                          //     });
-                          //   },
-                          // ),
-                          SizedBox(height: 30.0),
-                          Text(
-                            'Total Images Generated: $_totalImagesGenerated',
-                            style: TextStyle(
-                              fontFamily:
-                                  'custom font', // remove this if don't have custom font
-                              fontSize: 12.0, // text size
-                              color: kTextColorLightGrey,
-                              // text color
-                            ),
-                          ),
-=======
+                              ? Text(
+                                  "NSFW Filter",
+                                  style: TextStyle(
+                                    fontFamily:
+                                        'custom font', // remove this if don't have custom font
+                                    fontSize: 12.0, // text size
+                                    color: kTextColorLightGrey,
+                                    // text color
+                                  ),
+                                )
+                              : Text(""),
+                          user.age >= 18
+                              ? SliderTheme(
+                                  data: SliderTheme.of(context).copyWith(
+                                    trackShape: RoundedRectSliderTrackShape(),
+                                    thumbShape: RoundSliderThumbShape(
+                                        enabledThumbRadius: 12.0),
+                                    overlayShape: RoundSliderOverlayShape(
+                                        overlayRadius: 28.0),
+                                  ),
+                                  child: Container(
+                                    width: kDefaultWidth * 35,
+                                    child: Slider(
+                                      value: user.nsfwFilterSliderValue,
+                                      max: 1,
+                                      min: 0,
+                                      divisions: 101,
+                                      label: user.nsfwFilterSliderValue
+                                          .toStringAsFixed(2),
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          user.nsfwFilterSliderValue = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
                                 )
                               : Text(''),
->>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
                           SizedBox(height: 30.0),
                           Text(
                             'Subscription Plan:',

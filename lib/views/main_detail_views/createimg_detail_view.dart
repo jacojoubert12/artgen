@@ -504,33 +504,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       ),
                     ),
                     SizedBox(height: kDefaultPadding),
-<<<<<<< HEAD
-                    TextField(
-                      style: TextStyle(
-                        color: kTextColorLightGrey,
-                      ),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      onChanged: (value) {
-                        _negpromptTxt = value;
-                      },
-                      cursorColor: Color.fromARGB(255, 77, 75, 75),
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 77, 75, 75),
-                            width: 1.0,
-                          ),
-=======
                     SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: TextField(
                         style: TextStyle(
                           color: kTextColorLightGrey,
->>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
                         ),
                         keyboardType: TextInputType.multiline,
                         maxLines: 5, // Set max number of lines to 5
