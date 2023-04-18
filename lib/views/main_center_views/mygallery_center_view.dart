@@ -175,10 +175,10 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
             )
           : null,
       key: _scaffoldKey,
-      // drawer: ConstrainedBox(
-      //   constraints: BoxConstraints(maxWidth: 250),
-      //   child: SideMenu(setViewMode: widget.setViewMode),
-      // ),
+      drawer: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 250),
+        child: SideMenu(setViewMode: widget.setViewMode),
+      ),
       body: Container(
         padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
         color: kBgDarkColor,
@@ -235,7 +235,8 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                         SizedBox(
                             width: 200,
                             height: 200,
-                            child: SpinKitThreeBounce(color: Colors.pink)),
+                            child:
+                                SpinKitThreeBounce(color: kButtonLightPurple)),
                         Text('')
                       ])
                     : GridView.builder(

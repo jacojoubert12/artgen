@@ -187,7 +187,37 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     return Scaffold(
       appBar: !Responsive.isDesktop(context)
           ? AppBar(
-              title: Text('ArtGen'),
+              title: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 35,
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Explore",
+                        style: TextStyle(
+                          fontFamily:
+                              'custom font', // remove this if don't have custom font
+                          fontSize: 20.0, // text size
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // if (Responsive.isDesktop(context))
+                  Container(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(_avatarImage)),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                ],
+              ),
               backgroundColor: kButtonLightPurple,
             )
           : null,

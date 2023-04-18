@@ -23,6 +23,42 @@ class _AboutCenterViewState extends State<AboutCenterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: !Responsive.isDesktop(context)
+          ? AppBar(
+              title: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 35,
+                      alignment: Alignment.center,
+                      child: Text(
+                        "About",
+                        style: TextStyle(
+                          fontFamily:
+                              'custom font', // remove this if don't have custom font
+                          fontSize: 20.0, // text size
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // if (Responsive.isDesktop(context))
+                  // Container(
+                  //   child: Container(
+                  //     margin: EdgeInsets.only(left: 20),
+                  //     width: 45,
+                  //     height: 45,
+                  //     child: CircleAvatar(
+                  //         backgroundImage: NetworkImage(_avatarImage)),
+                  //   ),
+                  // ),
+                  SizedBox(width: 5),
+                ],
+              ),
+              backgroundColor: kButtonLightPurple,
+            )
+          : null,
       key: _scaffoldKey,
       drawer: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 250),
@@ -36,27 +72,27 @@ class _AboutCenterViewState extends State<AboutCenterView> {
           child: Column(
             children: [
               // This is our Seearch bar
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                child: Row(
-                  children: [
-                    // Once user click the menu icon the menu shows like drawer
-                    // Also we want to hide this menu icon on desktop
-                    if (!Responsive.isDesktop(context))
-                      IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: kButtonLightPurple,
-                        ),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+              //   child: Row(
+              //     children: [
+              //       // Once user click the menu icon the menu shows like drawer
+              //       // Also we want to hide this menu icon on desktop
+              //       if (!Responsive.isDesktop(context))
+              //         IconButton(
+              //           icon: Icon(
+              //             Icons.menu,
+              //             color: kButtonLightPurple,
+              //           ),
+              //           onPressed: () {
+              //             _scaffoldKey.currentState!.openDrawer();
+              //           },
+              //         ),
+              //       if (!Responsive.isDesktop(context)) SizedBox(width: 5),
+              //     ],
+              //   ),
+              // ),
               Expanded(
                 child: Column(
                   children: <Widget>[
@@ -74,7 +110,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                         fontFamily:
                             'custom font', // remove this if don't have custom font
                         fontSize: 20.0, // text size
-                        color: Colors.black, // text color
+                        color: kTextColorLightGrey, // text color
                       ),
                     ),
                     Text(
@@ -83,7 +119,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                         fontFamily:
                             'custom font', // remove this if don't have custom font
                         fontSize: 15.0, // text size
-                        color: Colors.black, // text color
+                        color: kTextColorLightGrey, // text color
                       ),
                     ),
                     SizedBox(height: kDefaultPadding),
@@ -93,7 +129,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                         fontFamily:
                             'custom font', // remove this if don't have custom font
                         fontSize: 20.0, // text size
-                        color: Colors.black, // text color
+                        color: kTextColorLightGrey, // text color
                       ),
                     ),
                     Text(
@@ -102,7 +138,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                         fontFamily:
                             'custom font', // remove this if don't have custom font
                         fontSize: 15.0, // text size
-                        color: Colors.black, // text color
+                        color: kTextColorLightGrey, // text color
                       ),
                     ),
                   ],

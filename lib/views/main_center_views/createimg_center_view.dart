@@ -237,6 +237,9 @@ class _ImgGridViewState extends State<ImgGridView> {
                     Expanded(
                       flex: 4,
                       child: TextField(
+                        style: TextStyle(
+                          color: kTextColorLightGrey,
+                        ),
                         textAlign: TextAlign.center,
                         onSubmitted: (value) {
                           setState(() {

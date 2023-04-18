@@ -501,6 +501,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                     ),
                     SizedBox(height: kDefaultPadding),
                     TextField(
+                      style: TextStyle(
+                        color: kTextColorLightGrey,
+                      ),
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       onChanged: (value) {
