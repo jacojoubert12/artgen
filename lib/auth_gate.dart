@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:artgen/views/main/main_view.dart';
@@ -5,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class AuthGate extends StatefulWidget {
   AuthGate({Key? key}) : super(key: key);
@@ -27,17 +31,73 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
+  getAgeInfo() async {
+    final uri = Uri.parse(
+        'https://people.googleapis.com/v1/people/me?personFields=birthdays&access_token=${user.accessToken}');
+    final response = await http.get(uri);
+
+    final jsonData = json.decode(response.body);
+    print("jsonData:");
+    print(jsonData);
+
+    if (jsonData['birthdays'] != null) {
+      DateTime lastDateOfBirth = DateTime.now();
+      bool yearPresent = false;
+
+      // Iterate through the birthdays list and find the last date with a 'year' field
+      for (final birthday in jsonData['birthdays']) {
+        if (birthday['date'] != null && birthday['date']['year'] != null) {
+          yearPresent = true;
+          lastDateOfBirth = DateTime(
+            birthday['date']['year'],
+            birthday['date']['month'],
+            birthday['date']['day'],
+          );
+        }
+      }
+
+      if (lastDateOfBirth != null && yearPresent) {
+        print("Last dateOfBirth");
+        print(lastDateOfBirth);
+
+        final age = DateTime.now().difference(lastDateOfBirth).inDays ~/ 365;
+        print("Age: $age");
+        user.age = age;
+      } else if (!yearPresent) {
+        print("Year not present in any birthday");
+      } else {
+        print("No birthdays found in the response");
+      }
+    } else {
+      print("No birthdays found in the response");
+    }
+  }
+
+  setUserInfo(User currentUser) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        documentSnapshot.reference.set({'package': 1, 'age': user.age});
+      }
+    });
+  }
+
   Future<void> _signInWithGoogle() async {
     GoogleSignIn googleSignIn;
     try {
       if (!UniversalPlatform.isAndroid && !UniversalPlatform.isIOS) {
         googleSignIn = GoogleSignIn(
             clientId:
-                "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com");
+                "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com",
+            scopes: ['https://www.googleapis.com/auth/user.birthday.read']);
+        ;
       } else {
-        googleSignIn = GoogleSignIn();
+        googleSignIn = GoogleSignIn(
+            scopes: ['https://www.googleapis.com/auth/user.birthday.read']);
       }
-      // final googleSignIn = GoogleSignIn();
       final googleSignInAccount = await googleSignIn.signIn();
       if (googleSignInAccount != null) {
         final googleSignInAuthentication =
@@ -52,7 +112,15 @@ class _AuthGateState extends State<AuthGate> {
             await FirebaseAuth.instance.signInWithCredential(credential);
         final currentUser = authResult.user;
 
+        print(authResult);
+        final accessToken = authResult.credential?.accessToken;
+        print("accessToken");
+        print(accessToken);
+        user.accessToken = accessToken!;
+        await getAgeInfo();
+
         if (currentUser != null) {
+          setUserInfo(currentUser);
           setState(() {
             user.user = currentUser;
           });

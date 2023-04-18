@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:artgen/auth_gate.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
@@ -9,7 +7,6 @@ import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import 'package:universal_platform/universal_platform.dart';
 
 import '../../../constants.dart';
@@ -39,6 +36,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   String _profileImg = '';
   int _totalImagesGenerated = 0;
 
+  //TODO Move to my_user - get some structure on when to get data and where to store it
   Future _getDataFromDatabase() async {
     if (user.user?.photoURL != null) {
       setState(() {
@@ -90,21 +88,8 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
 
   @override
   void initState() {
-    getAgeInfo();
-    _getDataFromDatabase();
+    // _getDataFromDatabase();
     super.initState();
-  }
-
-  getAgeInfo() async {
-    final token = await FirebaseAuth.instance.currentUser!.getIdToken();
-    final uri = Uri.parse(
-        'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=$token');
-    final response = await http.get(uri);
-
-    final jsonData = json.decode(response.body);
-    final dateOfBirth = jsonData['birthday'];
-
-    user.age = DateTime.now().difference(dateOfBirth).inDays ~/ 365;
   }
 
   @override
@@ -376,7 +361,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                           SizedBox(height: 30.0),
                           user.age >= 18
                               ? Text(
-                                  "NSFW Filter",
+                                  "Safe <-- Filter NSFW --> Unsafe",
                                   style: TextStyle(
                                     fontFamily:
                                         'custom font', // remove this if don't have custom font
@@ -385,7 +370,16 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                     // text color
                                   ),
                                 )
-                              : Text(""),
+                              : Text(
+                                  "18+ Age must be verified on your Google account to enable some settings",
+                                  style: TextStyle(
+                                    fontFamily:
+                                        'custom font', // remove this if don't have custom font
+                                    fontSize: 12.0, // text size
+                                    color: kTextColorLightGrey,
+                                    // text color
+                                  ),
+                                ),
                           user.age >= 18
                               ? SliderTheme(
                                   data: SliderTheme.of(context).copyWith(

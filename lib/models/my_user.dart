@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'package:artgen/auth_gate.dart';
-import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'local_storage_access_mobile.dart'
     if (dart.library.html) 'local_storage_access_web.dart';
 
 class MyUser extends ChangeNotifier {
   User? user;
+  String accessToken = '';
   int age = 0;
   String? app_id;
   bool userInitDone = false;
@@ -296,6 +294,7 @@ class MyUser extends ChangeNotifier {
         activePackage = userInfo['package'];
         imageLimit = packageMap[activePackage]['img_limit'];
         imagesGenerated = userInfo['images_generated'];
+        age = userInfo['age'];
         print("activePackage");
         print(activePackage);
         print("packageMap[activePackage]['img_limit']");
@@ -311,7 +310,7 @@ class MyUser extends ChangeNotifier {
       } else {
         activePackage = 0;
         !user!.isAnonymous
-            ? documentSnapshot.reference.set({'package': 1})
+            ? documentSnapshot.reference.set({'package': 1, 'age': age})
             : print("Anonamous user");
         // print('Document does not exist on the database');
       }
