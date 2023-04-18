@@ -1,13 +1,13 @@
+import 'dart:convert';
+
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
-import 'package:websafe_svg/websafe_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutterfire_ui/auth.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../constants.dart';
 
@@ -56,6 +56,25 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
         });
       }
     });
+  }
+
+  @override
+  void initState() {
+    getAgeInfo();
+    _getDataFromDatabase();
+    super.initState();
+  }
+
+  getAgeInfo() async {
+    final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+    final uri = Uri.parse(
+        'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=$token');
+    final response = await http.get(uri);
+
+    final jsonData = json.decode(response.body);
+    final dateOfBirth = jsonData['birthday'];
+
+    user.age = DateTime.now().difference(dateOfBirth).inDays ~/ 365;
   }
 
   @override
@@ -325,6 +344,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                           //   },
                           // ),
                           SizedBox(height: 30.0),
+<<<<<<< HEAD
                           Text(
                             "NSFW Filter",
                             style: TextStyle(
@@ -348,21 +368,31 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 child: Slider(
                                   value: user.nsfwFilterSliderValue,
 
+=======
+                          user.age >= 18 ? Text("NSFW Filter") : Text(""),
+                          user.age >= 18
+                              ? Slider(
+                                  value: user.nsfwFilterSliderValue,
+>>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
                                   max: 1,
                                   min: 0,
                                   divisions: 101,
                                   label: user.nsfwFilterSliderValue
                                       .toStringAsFixed(2),
+<<<<<<< HEAD
 
                                   activeColor:
                                       kButtonLightPurple, // Set the active color here
                                   inactiveColor:
                                       kButtonLightPurpleTransparent, // Set the inactive color here
+=======
+>>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
                                   onChanged: (double value) {
                                     setState(() {
                                       user.nsfwFilterSliderValue = value;
                                     });
                                   },
+<<<<<<< HEAD
                                 ),
                               )),
                           // Slider(
@@ -389,6 +419,10 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                               // text color
                             ),
                           ),
+=======
+                                )
+                              : Text(''),
+>>>>>>> d5f1a311f00eb4f157db33fdc93edbc6daa2958c
                           SizedBox(height: 30.0),
                           Text(
                             'Subscription Plan:',

@@ -106,7 +106,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
 
                       max: 150,
                       min: 1,
-                      divisions: 149,
+                      divisions: 150,
                       label: user.samplingStepsSliderValue.round().toString(),
                       activeColor:
                           kButtonLightPurple, // Set the active color here
@@ -188,7 +188,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                     value: user.widthSliderValue,
                     max: 2048,
                     min: 64,
-                    divisions: 1984,
+                    divisions: 1985,
                     label: user.widthSliderValue.round().toString(),
                     activeColor:
                         kButtonLightPurple, // Set the active color here
@@ -226,7 +226,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                     value: user.heightSliderValue,
                     max: 2048,
                     min: 64,
-                    divisions: 1984,
+                    divisions: 1985,
                     label: user.heightSliderValue.round().toString(),
                     activeColor:
                         kButtonLightPurple, // Set the active color here
@@ -264,7 +264,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                     value: user.guidanceScaleSliderValue,
                     max: 30,
                     min: 1,
-                    divisions: 29,
+                    divisions: 30,
                     label: user.guidanceScaleSliderValue.round().toString(),
                     activeColor:
                         kButtonLightPurple, // Set the active color here
@@ -340,7 +340,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                     value: user.batchSizeSliderValue,
                     max: 100,
                     min: 1,
-                    divisions: 99,
+                    divisions: 100,
                     label: user.batchSizeSliderValue.round().toString(),
                     activeColor:
                         kButtonLightPurple, // Set the active color here

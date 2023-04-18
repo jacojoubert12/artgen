@@ -11,6 +11,7 @@ import 'local_storage_access_mobile.dart'
 
 class MyUser extends ChangeNotifier {
   User? user;
+  int age = 0;
   String? app_id;
   bool userInitDone = false;
   bool shouldLogin = true;
@@ -34,7 +35,7 @@ class MyUser extends ChangeNotifier {
   List<double> heights = [512, 512, 512, 512, 512, 460, 576, 640, 704, 768];
 
   //ImgGen Settings
-  double samplingStepsSliderValue = 20;
+  double samplingStepsSliderValue = 50;
   double resolutionSteps = 10;
   double resolutionSliderValue = 9;
   double widthSliderValue = 512;
