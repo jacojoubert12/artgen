@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:artgen/auth_gate.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/subscription_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import '../../../constants.dart';
 
@@ -36,6 +36,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   String _profileImg = '';
   int _totalImagesGenerated = 0;
 
+  //TODO Move to my_user - get some structure on when to get data and where to store it
   Future _getDataFromDatabase() async {
     if (user.user?.photoURL != null) {
       setState(() {
@@ -58,23 +59,37 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
     });
   }
 
-  @override
-  void initState() {
-    getAgeInfo();
-    _getDataFromDatabase();
-    super.initState();
+  Future<void> _signOut() async {
+    try {
+      GoogleSignIn googleSignIn;
+      if (!UniversalPlatform.isAndroid && !UniversalPlatform.isIOS) {
+        googleSignIn = GoogleSignIn(
+            clientId:
+                "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com");
+      } else {
+        googleSignIn = GoogleSignIn();
+      }
+
+      // Sign out from Google
+      await googleSignIn.signOut();
+
+      // Sign out from Firebase Auth
+      await FirebaseAuth.instance.signOut();
+
+      // Set user.user to null
+      setState(() {
+        user.user = null;
+      });
+    } catch (error) {
+      print("Error signing out: $error");
+    }
+    user.shouldLogin = true;
   }
 
-  getAgeInfo() async {
-    final token = await FirebaseAuth.instance.currentUser!.getIdToken();
-    final uri = Uri.parse(
-        'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=$token');
-    final response = await http.get(uri);
-
-    final jsonData = json.decode(response.body);
-    final dateOfBirth = jsonData['birthday'];
-
-    user.age = DateTime.now().difference(dateOfBirth).inDays ~/ 365;
+  @override
+  void initState() {
+    // _getDataFromDatabase();
+    super.initState();
   }
 
   @override
@@ -346,7 +361,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                           SizedBox(height: 30.0),
                           user.age >= 18
                               ? Text(
-                                  "NSFW Filter",
+                                  "Safe <-- Filter NSFW --> Unsafe",
                                   style: TextStyle(
                                     fontFamily:
                                         'custom font', // remove this if don't have custom font
@@ -355,7 +370,16 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                     // text color
                                   ),
                                 )
-                              : Text(""),
+                              : Text(
+                                  "18+ Age must be verified on your Google account to enable some settings",
+                                  style: TextStyle(
+                                    fontFamily:
+                                        'custom font', // remove this if don't have custom font
+                                    fontSize: 12.0, // text size
+                                    color: kTextColorLightGrey,
+                                    // text color
+                                  ),
+                                ),
                           user.age >= 18
                               ? SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
@@ -431,13 +455,16 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                //save profile
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (context) {
-                                //     return SubscriptionView();
-                                //   },
-                                // );
+                                if (user.user?.isAnonymous ?? true) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AuthGate();
+                                    },
+                                  );
+                                } else {
+                                  _signOut();
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -445,7 +472,9 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(32.0)),
                               ),
-                              child: Text('Save'),
+                              child: (user.user?.isAnonymous ?? true)
+                                  ? Text("Login")
+                                  : Text("Logout"),
                             ),
                           ),
                         ],

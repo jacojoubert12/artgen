@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "133553272540",
+    "firebase_url": "https://artgen-66569-default-rtdb.firebaseio.com",
     "project_id": "artgen-66569",
     "storage_bucket": "artgen-66569.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "133553272540-ndbpl7k1ssj7j8n4hefopfdv3qv4oait.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.enginosoft.artgen",
+            "certificate_hash": "c09011b989230faa99015dea120bdfce47b5a0d6"
+          }
+        },
         {
           "client_id": "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com",
           "client_type": 3
@@ -29,6 +38,13 @@
             {
               "client_id": "133553272540-4ogfuqk8arc28p49c3ors56pvhhs35ih.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "133553272540-lsvdah19pjatietpecghlph2qv4gdh0h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.enginosoft.artgen"
+              }
             }
           ]
         }
