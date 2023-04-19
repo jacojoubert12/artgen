@@ -197,7 +197,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
     if (jsonMap['_source']['details']['parameters'] != null) {
       hasPrompt =
-          jsonMap['_source']['details']['parameters']['prompt'].lenght > 30;
+          jsonMap['_source']['details']['parameters']['prompt'].length > 30;
     }
 
     if (!imageUrls.contains(url) && !isNsfw && hasPrompt) {

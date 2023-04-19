@@ -50,6 +50,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   bool loading = false;
   int retries = 0;
+  bool showUpload = true;
   int timeoutRetries = 0;
   int retryDurationInSeconds = 180;
   bool uploading = false;
@@ -78,8 +79,10 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       bannerAd = AdManager.createBannerAd()..load();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
-    if (widget.img2ImgImages != null)
+    if (widget.img2ImgImages != null) {
       uploadImg2ImgImages = widget.img2ImgImages!;
+      showUpload = false;
+    }
 
     user.loggedInUserFutureForImgGen.then((_) {
       if (user.user?.photoURL != null) {
@@ -746,48 +749,53 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                     ),
                   ),
                   SizedBox(width: kDefaultPadding),
-                  Container(
-                    height: 40,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: kButtonLightPurple,
-                    ),
-                    child: uploading
-                        ? SpinKitThreeBounce(color: kWhite)
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                            child: Text('Upload'),
-                            onPressed: () async {
-                              if (user.user!.isAnonymous) {
-                                user.showLogin(context, Map<String, dynamic>());
-                                return;
-                              }
-                              setState(() {
-                                uploading = true;
-                              });
-                              String? url = await uploadFile(context, storage);
-
-                              // Check if the upload was successful
-                              if (url != null) {
-                                setState(() {
-                                  uploadImg2ImgImages.add(url);
-                                  _selectedImageUrls!.add(url);
-                                  print(_selectedImages);
-                                  _selectedImages!.add({'img2img': url});
-                                });
-                              }
-                              setState(() {
-                                uploading = false;
-                              });
-                            },
+                  showUpload
+                      ? Container(
+                          height: 40,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: kButtonLightPurple,
                           ),
-                  ),
+                          child: uploading
+                              ? SpinKitThreeBounce(color: kWhite)
+                              : ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
+                                  child: Text('Upload'),
+                                  onPressed: () async {
+                                    if (user.user!.isAnonymous) {
+                                      user.showLogin(
+                                          context, Map<String, dynamic>());
+                                      return;
+                                    }
+                                    setState(() {
+                                      uploading = true;
+                                    });
+                                    String? url =
+                                        await uploadFile(context, storage);
+
+                                    // Check if the upload was successful
+                                    if (url != null) {
+                                      setState(() {
+                                        uploadImg2ImgImages.add(url);
+                                        _selectedImageUrls!.add(url);
+                                        print(_selectedImages);
+                                        _selectedImages!.add({'img2img': url});
+                                      });
+                                    }
+                                    setState(() {
+                                      uploading = false;
+                                    });
+                                  },
+                                ),
+                        )
+                      : Text(''),
                   SizedBox(height: kDefaultPadding),
                   Container(
                     alignment: Alignment.topRight,
