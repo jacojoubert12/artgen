@@ -1,13 +1,17 @@
-import 'dart:convert';
+import 'dart:math';
 
-import 'package:artgen/components/rounded_button.dart';
 import 'package:artgen/constants.dart';
 import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main/main_view.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
+
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:universal_html/html.dart' as html;
 
 class ImageDetailsModal extends StatefulWidget {
   ImageDetailsModal({Key? key, this.selectedImageUrl, this.selectedImageMeta})
@@ -60,6 +64,39 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
     }
 
     super.initState();
+  }
+
+  Future<void> downloadAndSaveImage(String imageUrl, String fileName) async {
+    // Download the image
+    final response = await http.get(Uri.parse(imageUrl));
+
+    if (kIsWeb) {
+      // Web
+      final mimeType =
+          response.headers['content-type'] ?? 'application/octet-stream';
+      final blob = html.Blob([response.bodyBytes], mimeType);
+      final anchor =
+          html.AnchorElement(href: html.Url.createObjectUrlFromBlob(blob));
+      anchor.download = fileName;
+      anchor.click();
+      anchor.remove();
+    } else {
+      // Get the local storage directory
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = await getExternalStorageDirectory();
+      } else if (Platform.isIOS) {
+        directory = await getApplicationDocumentsDirectory();
+      } else {
+        throw UnsupportedError('Unsupported platform');
+      }
+
+      // Create the file with the given file name in the local storage directory
+      final file = File('${directory?.path}/$fileName');
+
+      // Write the downloaded image data to the file
+      await file.writeAsBytes(response.bodyBytes);
+    }
   }
 
   @override
@@ -202,6 +239,28 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                                 shape: CircleBorder()),
                           )
                         : Text(''),
+                    ElevatedButton(
+                      child: Icon(
+                        Icons.download,
+                        size: 20.0,
+                      ),
+                      onPressed: () {
+                        downloadAndSaveImage(
+                                widget.selectedImageUrl,
+                                widget.selectedImageUrl.substring(
+                                    widget.selectedImageUrl.length - 40))
+                            .then((_) {
+                          print('Image downloaded and saved successfully');
+                        }).catchError((error) {
+                          print('Error downloading and saving image: $error');
+                        });
+                        setState(() {});
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shadowColor: Colors.transparent,
+                          primary: Color.fromARGB(255, 181, 9, 130),
+                          shape: CircleBorder()),
+                    )
                   ],
                 ),
               ),
