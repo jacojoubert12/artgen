@@ -43,7 +43,7 @@ class MyUser extends ChangeNotifier {
   // double batchCountSliderValue = 1;
   double batchSizeSliderValue = 1;
 
-  double nsfwFilterSliderValue = 0.5;
+  double nsfwFilterSliderValue = 0.3;
 
   MyUser() {
     // initMyUser();

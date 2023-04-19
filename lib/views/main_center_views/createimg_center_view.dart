@@ -251,7 +251,9 @@ class _ImgGridViewState extends State<ImgGridView> {
                         onSubmitted: (value) {
                           setState(() {
                             searchString = value;
-                            getSearchImageUrls(value);
+                            List<String> words = searchString.split(' ');
+                            words.forEach((word) => getSearchImageUrls(word));
+                            // getSearchImageUrls(value);
                           });
                         },
                         decoration: InputDecoration(
