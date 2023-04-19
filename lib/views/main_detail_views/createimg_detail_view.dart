@@ -28,9 +28,11 @@ class CreateImgDetailView extends StatefulWidget {
     this.selectedImageUrls,
     this.updateSelectedImages,
     this.showDetailView,
+    this.img2ImgImages,
   }) : super(key: key);
   final selectedImages;
   final selectedImageUrls;
+  final List<String>? img2ImgImages;
   final Function? updateSelectedImages;
   final Function? showDetailView;
   final Function? setViewMode;
@@ -43,13 +45,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Set<dynamic>? _selectedImages;
   Set<String>? _selectedImageUrls;
-  List<String> generatedImgUrls = [
-    // "https://e1.pngegg.com/pngimages/866/743/png-clipart-waves-s-black-dot.png"),
-    // "assets/images/tmp_image.png"
-    // AssetImage('assets/images/tmp_image.png'),
-    // "http://localhost:5000/output/" + "output.png"
-    // "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
-  ];
+  Map<String, dynamic> generatedImagesMeta = {};
+  List<String> generatedImgUrls = [];
 
   bool loading = false;
   int retries = 0;
@@ -81,6 +78,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       bannerAd = AdManager.createBannerAd()..load();
     _selectedImages = widget.selectedImages;
     _selectedImageUrls = widget.selectedImageUrls;
+    if (widget.img2ImgImages != null)
+      uploadImg2ImgImages = widget.img2ImgImages!;
 
     user.loggedInUserFutureForImgGen.then((_) {
       if (user.user?.photoURL != null) {
@@ -191,7 +190,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       print("Timeout, going to retry");
       // generateImage();
       timeoutRetries++;
-    } else if (timeoutRetries >= 5) {
+    } else if (timeoutRetries >= 1) {
       timeoutRetries = 0;
       setState(() {
         loading = false;
@@ -200,15 +199,49 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   void showGeneratedImages(String message) {
-    final Set<String> imageUrls = Set();
-    var response = jsonDecode(message);
-    print(response);
-    for (var img in response) {
-      print(img);
-      imageUrls.add(img);
+    List<String> imgUrls = [];
+
+    print(message);
+    var jsonData = jsonDecode(message);
+    print('Could not do decode?');
+
+    print(jsonData);
+
+    var details = jsonData['details'];
+    var info = jsonData['info'];
+    var nsfw_probs = jsonData['nsfw_probs'];
+    var model = jsonData['model'];
+    var host = jsonData['host'];
+    var genTimestamp = jsonData['@gen_timestamp'];
+
+    generatedImagesMeta = {
+      'details': details,
+      'info': info,
+      'nsfw_probs': nsfw_probs,
+      'model': model,
+      'host': host,
+      'gen_timestamp': genTimestamp
+    };
+
+    print('generatedImagesMeta');
+    print(generatedImagesMeta);
+
+    var count = 0;
+    if (jsonData['urls'] != null) {
+      for (String url in jsonData['urls']) {
+        if (nsfw_probs[count] < user.nsfwFilterSliderValue)
+          imgUrls.add(url);
+        else
+          generatedImagesMeta['nsfw_probs'].removeAt(count);
+        count += 1;
+      }
     }
+
+    print('imgUrls');
+    print(imgUrls);
+
     setState(() {
-      generatedImgUrls = imageUrls.toList();
+      generatedImgUrls = imgUrls;
       loading = false;
     });
   }
@@ -593,6 +626,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                   builder: (context) {
                                     return ImageDetailsModal(
                                       selectedImageUrl: generatedImgUrls[0],
+                                      selectedImageMeta: generatedImagesMeta,
                                     );
                                   },
                                 );
@@ -627,6 +661,8 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                         return ImageDetailsModal(
                                           selectedImageUrl:
                                               generatedImgUrls[index],
+                                          selectedImageMeta:
+                                              generatedImagesMeta,
                                         );
                                       },
                                     );

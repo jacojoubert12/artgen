@@ -186,8 +186,8 @@ class _ImgGridViewState extends State<ImgGridView> {
 
     // print(jsonMap['_source']['details']['images']['images'][0]);
     // print(jsonMap);
-    // String url = jsonMap['_source']['details']['images']['images'][0];
-    String url = jsonMap['_source']['details']['images']['thumbnails'][0];
+    String url = jsonMap['_source']['details']['images']['images'][0];
+    // String url = jsonMap['_source']['details']['images']['thumbnails'][0];
 
     if (jsonMap['_source']['nsfw_probs'] != null) {
       double nsfwProb = jsonMap['_source']['nsfw_probs'][0];

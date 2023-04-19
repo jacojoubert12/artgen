@@ -375,6 +375,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                                 builder: (context) {
                                   return ImageDetailsModal(
                                     selectedImageUrl: imageUrls[index],
+                                    selectedImageMeta: images[index],
                                   );
                                 },
                               );

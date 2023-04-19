@@ -256,6 +256,7 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                                 builder: (context) {
                                   return ImageDetailsModal(
                                     selectedImageUrl: imageUrls[index],
+                                    selectedImageMeta: images[index],
                                   );
                                 },
                               );
