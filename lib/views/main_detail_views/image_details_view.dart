@@ -28,7 +28,7 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
   int width = 0;
   int height = 0;
   int steps = 0;
-  int guidance = 0;
+  double guidance = 0;
   //seed needed at some point?
 
   @override
@@ -139,7 +139,7 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                         user.widthSliderValue = width.toDouble();
                         user.heightSliderValue = height.toDouble();
                         user.samplingStepsSliderValue = steps.toDouble();
-                        user.guidanceScaleSliderValue = guidance.toDouble();
+                        user.guidanceScaleSliderValue = guidance;
                         Set<String> selectedImageUrl = Set();
                         selectedImageUrl.add(widget.selectedImageUrl);
                         var selectedImages = [
@@ -161,45 +161,47 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                           primary: Color.fromARGB(255, 181, 9, 130),
                           shape: CircleBorder()),
                     ),
-                    ElevatedButton(
-                      child: Icon(
-                        Icons.refresh,
-                        size: 20.0,
-                      ),
-                      onPressed: () {
-                        user.widthSliderValue = width.toDouble();
-                        user.heightSliderValue = height.toDouble();
-                        user.samplingStepsSliderValue = steps.toDouble();
-                        user.guidanceScaleSliderValue = guidance.toDouble();
-                        var selectedImages = [];
-                        selectedImages.add({});
-                        selectedImages[0] = {
-                          '_source': {
-                            'details': {
-                              'parameters': {
-                                'prompt': prompt,
-                                'negative_prompt': neg_prompt
-                              }
-                            }
-                          }
-                        };
-                        Set<String> selectedImageUrl = Set();
-                        selectedImageUrl.add(widget.selectedImageUrl);
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return CreateImgDetailView(
-                                selectedImageUrls: selectedImageUrl,
-                                selectedImages: selectedImages.toSet());
-                          },
-                        );
-                        setState(() {});
-                      },
-                      style: ElevatedButton.styleFrom(
-                          shadowColor: Colors.transparent,
-                          primary: Color.fromARGB(255, 181, 9, 130),
-                          shape: CircleBorder()),
-                    ),
+                    prompt.length > 30
+                        ? ElevatedButton(
+                            child: Icon(
+                              Icons.refresh,
+                              size: 20.0,
+                            ),
+                            onPressed: () {
+                              user.widthSliderValue = width.toDouble();
+                              user.heightSliderValue = height.toDouble();
+                              user.samplingStepsSliderValue = steps.toDouble();
+                              user.guidanceScaleSliderValue = guidance;
+                              var selectedImages = [];
+                              selectedImages.add({});
+                              selectedImages[0] = {
+                                '_source': {
+                                  'details': {
+                                    'parameters': {
+                                      'prompt': prompt,
+                                      'negative_prompt': neg_prompt
+                                    }
+                                  }
+                                }
+                              };
+                              Set<String> selectedImageUrl = Set();
+                              selectedImageUrl.add(widget.selectedImageUrl);
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return CreateImgDetailView(
+                                      selectedImageUrls: selectedImageUrl,
+                                      selectedImages: selectedImages.toSet());
+                                },
+                              );
+                              setState(() {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shadowColor: Colors.transparent,
+                                primary: Color.fromARGB(255, 181, 9, 130),
+                                shape: CircleBorder()),
+                          )
+                        : Text(''),
                   ],
                 ),
               ),

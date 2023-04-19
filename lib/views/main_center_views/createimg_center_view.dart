@@ -181,6 +181,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   void showSearchResults(String message) {
     bool isNsfw = false;
+    bool hasPrompt = false;
     loading = false;
     var jsonMap = jsonDecode(message);
 
@@ -194,7 +195,12 @@ class _ImgGridViewState extends State<ImgGridView> {
       isNsfw = nsfwProb > user.nsfwFilterSliderValue;
     }
 
-    if (!imageUrls.contains(url) && !isNsfw) {
+    if (jsonMap['_source']['details']['parameters'] != null) {
+      hasPrompt =
+          jsonMap['_source']['details']['parameters']['prompt'].lenght > 30;
+    }
+
+    if (!imageUrls.contains(url) && !isNsfw && hasPrompt) {
       imageUrls.add(url);
       images.add(jsonMap);
     }
