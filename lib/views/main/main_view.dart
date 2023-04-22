@@ -197,9 +197,9 @@ class _Mainviewstate extends State<MainScreen> {
       case ViewMode.explore:
         centerView = ExploreCenterView(setViewMode: setViewMode);
         break;
-      case ViewMode.likes:
-        centerView = LikesCenterView(setViewMode: setViewMode);
-        break;
+      // case ViewMode.likes:
+      // centerView = LikesCenterView(setViewMode: setViewMode);
+      // break;
       case ViewMode.profile:
         centerView = ProfileCenterView(setViewMode: setViewMode);
         break;

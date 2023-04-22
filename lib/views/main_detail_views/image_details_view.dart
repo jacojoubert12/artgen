@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:artgen/constants.dart';
@@ -14,10 +15,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:universal_html/html.dart' as html;
 
 class ImageDetailsModal extends StatefulWidget {
-  ImageDetailsModal({Key? key, this.selectedImageUrl, this.selectedImageMeta})
+  ImageDetailsModal(
+      {Key? key,
+      this.selectedImageUrl,
+      this.selectedImageMeta,
+      required this.onDelete})
       : super(key: key);
   final selectedImageUrl;
   final selectedImageMeta;
+  final Function onDelete;
 
   @override
   _ImageDetailsModalState createState() => _ImageDetailsModalState();
@@ -27,6 +33,7 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
 
+  String uid = '';
   String prompt = '';
   String neg_prompt = '';
   int width = 0;
@@ -46,12 +53,15 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
 
     if (data.containsKey('details')) {
       values = data['details']['parameters'];
+      values['user'] = data['user'];
     } else if (data.containsKey('_source') &&
         data['_source'].containsKey('details')) {
       values = data['_source']['details']['parameters'];
+      values['user'] = data['_source']['user'];
     } else if (data.containsKey('_source') &&
         data['_source'].containsKey('info')) {
       values = data['_source']['details']['info'];
+      values['user'] = data['_source']['user'];
     }
 
     if (values != null) {
@@ -61,7 +71,11 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
       height = values['height'];
       steps = values['steps'];
       guidance = values['cfg_scale'];
+      uid = values['user'];
     }
+
+    print("UID:");
+    print(uid);
 
     super.initState();
   }
@@ -96,6 +110,31 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
 
       // Write the downloaded image data to the file
       await file.writeAsBytes(response.bodyBytes);
+    }
+  }
+
+  bool canDelete() {
+    print("admins:");
+    print(user.admins);
+    if (user.user?.uid == uid || user.admins.contains(user.user?.uid))
+      return true;
+    else
+      return false;
+  }
+
+  Future<void> deleteImage(String filename) async {
+    final url = Uri.parse("https://ws.artgen.fun:12004/delete_image");
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+      body: json.encode({"filename": filename}),
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      print("Deleted document IDs: ${jsonResponse['deleted_document_ids']}");
+    } else {
+      print("Failed to delete documents. Status code: ${response.statusCode}");
     }
   }
 
@@ -245,10 +284,16 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                         size: 20.0,
                       ),
                       onPressed: () {
+                        int startIndex =
+                            widget.selectedImageUrl.indexOf('images/') +
+                                'images/'.length;
+                        int endIndex = widget.selectedImageUrl.indexOf('.png') +
+                            '.png'.length;
+                        String selectedImageUrl = widget.selectedImageUrl
+                            .substring(startIndex, endIndex);
+                        deleteImage(selectedImageUrl);
                         downloadAndSaveImage(
-                                widget.selectedImageUrl,
-                                widget.selectedImageUrl.substring(
-                                    widget.selectedImageUrl.length - 40))
+                                widget.selectedImageUrl, selectedImageUrl)
                             .then((_) {
                           print('Image downloaded and saved successfully');
                         }).catchError((error) {
@@ -260,7 +305,33 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
                           shadowColor: Colors.transparent,
                           primary: Color.fromARGB(255, 181, 9, 130),
                           shape: CircleBorder()),
-                    )
+                    ),
+                    canDelete()
+                        ? ElevatedButton(
+                            child: Icon(
+                              Icons.delete,
+                              size: 20.0,
+                            ),
+                            onPressed: () {
+                              int startIndex =
+                                  widget.selectedImageUrl.indexOf('images/') +
+                                      'images/'.length;
+                              int endIndex =
+                                  widget.selectedImageUrl.indexOf('.png') +
+                                      '.png'.length;
+
+                              String selectedImageUrl = widget.selectedImageUrl
+                                  .substring(startIndex, endIndex);
+                              deleteImage(selectedImageUrl);
+                              widget.onDelete(widget.selectedImageUrl);
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shadowColor: Colors.transparent,
+                                primary: Color.fromARGB(255, 181, 9, 130),
+                                shape: CircleBorder()),
+                          )
+                        : Text(''),
                   ],
                 ),
               ),

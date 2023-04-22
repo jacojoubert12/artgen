@@ -80,6 +80,11 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
 
   void setupWebsockets() {
     print("setupWebsockets()");
+    try {
+      galleryWs.close();
+    } catch (e) {
+      print('Error closing searchWs: $e');
+    }
 
     galleryWs = MyWebsockets(
       onMessageReceived: (message) {
@@ -257,6 +262,12 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                                   return ImageDetailsModal(
                                     selectedImageUrl: imageUrls[index],
                                     selectedImageMeta: images[index],
+                                    onDelete: (String deletedImageUrl) {
+                                      setState(() {
+                                        imageUrls.removeAt(index);
+                                        images.removeAt(index);
+                                      });
+                                    },
                                   );
                                 },
                               );

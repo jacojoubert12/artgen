@@ -170,7 +170,13 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
 
   Future<void> setupWebsockets() async {
     print("setupWebsockets()");
-    while (user.user == null) await Future.delayed(Duration(seconds: 1));
+    try {
+      imgGenWs.close();
+    } catch (e) {
+      print('Error closing searchWs: $e');
+    }
+
+    // while (user.user == null) await Future.delayed(Duration(seconds: 1));
 
     while (user.selectedModel.length == 0)
       await Future.delayed(Duration(seconds: 1));
@@ -630,6 +636,11 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                     return ImageDetailsModal(
                                       selectedImageUrl: generatedImgUrls[0],
                                       selectedImageMeta: generatedImagesMeta,
+                                      onDelete: (String deletedImageUrl) {
+                                        setState(() {
+                                          generatedImgUrls.removeAt(0);
+                                        });
+                                      },
                                     );
                                   },
                                 );
@@ -662,11 +673,16 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                                       context: context,
                                       builder: (context) {
                                         return ImageDetailsModal(
-                                          selectedImageUrl:
-                                              generatedImgUrls[index],
-                                          selectedImageMeta:
-                                              generatedImagesMeta,
-                                        );
+                                            selectedImageUrl:
+                                                generatedImgUrls[index],
+                                            selectedImageMeta:
+                                                generatedImagesMeta,
+                                            onDelete: (String deletedImageUrl) {
+                                              setState(() {
+                                                generatedImgUrls
+                                                    .removeAt(index);
+                                              });
+                                            });
                                       },
                                     );
                                     setState(() {});

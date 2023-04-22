@@ -106,6 +106,17 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   void setupWebsockets() {
     print("setupWebsockets()");
+    try {
+      searchWs.close();
+    } catch (e) {
+      print('Error closing searchWs: $e');
+    }
+    try {
+      featuredWs.close();
+    } catch (e) {
+      print('Error closing searchWs: $e');
+    }
+
     searchWs = MyWebsockets(
       onMessageReceived: (message) {
         setState(() {

@@ -57,9 +57,15 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
   List<String> imageUrls = [];
   List<dynamic> images = [];
 
+  ScrollController _scrollController = ScrollController();
+  int searchSize = 100;
+  int scrollBottoms = 0;
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
+
     if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
       bannerAd = AdManager.createBannerAd()..load();
     user.loggedInUserFuture.then((_) {
@@ -76,10 +82,49 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     });
   }
 
+  void _onScroll() {
+    double maxScrollExtent = _scrollController.position.maxScrollExtent;
+    double currentScrollPosition = _scrollController.position.pixels;
+
+    // Calculate the distance to the bottom
+    double distanceToBottom = maxScrollExtent - currentScrollPosition;
+
+    // Define the threshold in pixels (e.g., the height of 5 grid items)
+    double thresholdInPixels = 5000;
+
+    if (distanceToBottom <= thresholdInPixels) {
+      scrollBottoms += 1;
+      if (getFeatured) {
+        var query = {
+          'model': user.pubTopic,
+          'pos': searchSize * scrollBottoms + searchSize,
+          'size': searchSize,
+          'uid': user.user?.uid,
+          'topic': 'featured-search'
+        };
+        featuredWs.sendMessage(query);
+      } else {
+        List<String> words = searchString.split(' ');
+        words.forEach((word) {
+          var query = {
+            'keywords': word,
+            'pos': searchSize * scrollBottoms + searchSize,
+            'size': searchSize,
+            'uid': user.user?.uid,
+            'topic': 'keyword-search'
+          };
+          searchWs.sendMessage(query);
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     searchWs.close();
     featuredWs.close();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
       bannerAd?.dispose();
     super.dispose();
@@ -91,6 +136,17 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   void setupWebsockets() {
     print("setupWebsockets()");
+    try {
+      searchWs.close();
+    } catch (e) {
+      print('Error closing searchWs: $e');
+    }
+
+    try {
+      featuredWs.close();
+    } catch (e) {
+      print('Error closing featuredWs: $e');
+    }
     searchWs = MyWebsockets(
       onMessageReceived: (message) {
         setState(() {
@@ -112,13 +168,14 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   getSearchImageUrls([String q = "featured"]) async {
     getFeatured = false;
+    scrollBottoms = 0;
     imageUrls = [];
     images = [];
 
     var query = {
       'keywords': q,
       'pos': 0,
-      'size': 100,
+      'size': searchSize,
       'uid': user.user?.uid,
       'topic': 'keyword-search'
     };
@@ -135,13 +192,14 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
 
   getFeaturedImageUrls() async {
     getFeatured = true;
+    scrollBottoms = 0;
     imageUrls = [];
     images = [];
 
     var query = {
       'model': user.pubTopic,
       'pos': 0,
-      'size': 100,
+      'size': searchSize,
       'uid': user.user?.uid,
       'topic': 'featured-search'
     };
@@ -361,6 +419,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                         Text('')
                       ])
                     : GridView.builder(
+                        controller: _scrollController,
                         shrinkWrap: true,
                         itemCount: imageUrls.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -378,6 +437,12 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                                   return ImageDetailsModal(
                                     selectedImageUrl: imageUrls[index],
                                     selectedImageMeta: images[index],
+                                    onDelete: (String deletedImageUrl) {
+                                      setState(() {
+                                        imageUrls.removeAt(index);
+                                        images.removeAt(index);
+                                      });
+                                    },
                                   );
                                 },
                               );

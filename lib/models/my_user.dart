@@ -31,6 +31,7 @@ class MyUser extends ChangeNotifier {
   String gallerySubTopic = "gallery-search-res";
   List<double> widths = [768, 704, 640, 576, 512, 460, 512, 512, 512, 512];
   List<double> heights = [512, 512, 512, 512, 512, 460, 576, 640, 704, 768];
+  List<String> admins = [];
 
   //ImgGen Settings
   double samplingStepsSliderValue = 50;
@@ -53,6 +54,17 @@ class MyUser extends ChangeNotifier {
     await guestLogin();
     getUniqueCheckpointFiles();
     setSubTopicAsync().then((_) => userInitDone = true);
+    getAdminUsers();
+  }
+
+  void getAdminUsers() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('admins');
+    QuerySnapshot querySnapshot = await collectionRef.get();
+    for (DocumentSnapshot docSnapshot in querySnapshot.docs) {
+      String name = docSnapshot.id;
+      admins.add(name);
+    }
   }
 
   Future<void> get loggedInUserFuture {
