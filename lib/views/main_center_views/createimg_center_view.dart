@@ -65,11 +65,16 @@ class _ImgGridViewState extends State<ImgGridView> {
   List<String> imageUrls = [];
   List<dynamic> images = [];
 
+  ScrollController _scrollController = ScrollController();
+  int searchSize = 100;
+  int scrollBottoms = 0;
+
   BannerAd? bannerAd;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
       bannerAd = AdManager.createBannerAd()..load();
     _selectedImages = widget.selectedImages;
@@ -94,10 +99,49 @@ class _ImgGridViewState extends State<ImgGridView> {
   void dispose() {
     searchWs.close();
     featuredWs.close();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
       bannerAd?.dispose();
     }
     super.dispose();
+  }
+
+  void _onScroll() {
+    double maxScrollExtent = _scrollController.position.maxScrollExtent;
+    double currentScrollPosition = _scrollController.position.pixels;
+
+    // Calculate the distance to the bottom
+    double distanceToBottom = maxScrollExtent - currentScrollPosition;
+
+    // Define the threshold in pixels (e.g., the height of 5 grid items)
+    double thresholdInPixels = 5000;
+
+    if (distanceToBottom <= thresholdInPixels) {
+      scrollBottoms += 1;
+      if (getFeatured) {
+        var query = {
+          'model': user.pubTopic,
+          'pos': searchSize * scrollBottoms,
+          'size': searchSize,
+          'uid': user.user?.uid,
+          'topic': 'featured-search'
+        };
+        featuredWs.sendMessage(query);
+      } else {
+        List<String> words = searchString.split(' ');
+        words.forEach((word) {
+          var query = {
+            'keywords': word,
+            'pos': searchSize * scrollBottoms,
+            'size': searchSize,
+            'uid': user.user?.uid,
+            'topic': 'keyword-search'
+          };
+          searchWs.sendMessage(query);
+        });
+      }
+    }
   }
 
   Widget _buildBannerAdWidget() {
@@ -138,6 +182,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   getSearchImageUrls([String q = "featured"]) async {
     getFeatured = false;
+    scrollBottoms = 0;
     imageUrls = [];
     images = [];
 
@@ -161,6 +206,7 @@ class _ImgGridViewState extends State<ImgGridView> {
 
   getFeaturedImageUrls() async {
     getFeatured = true;
+    scrollBottoms = 0;
     imageUrls = [];
     images = [];
 

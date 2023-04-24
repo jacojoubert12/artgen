@@ -82,6 +82,17 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
     });
   }
 
+  @override
+  void dispose() {
+    searchWs.close();
+    featuredWs.close();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+      bannerAd?.dispose();
+    super.dispose();
+  }
+
   void _onScroll() {
     double maxScrollExtent = _scrollController.position.maxScrollExtent;
     double currentScrollPosition = _scrollController.position.pixels;
@@ -97,7 +108,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
       if (getFeatured) {
         var query = {
           'model': user.pubTopic,
-          'pos': searchSize * scrollBottoms + searchSize,
+          'pos': searchSize * scrollBottoms,
           'size': searchSize,
           'uid': user.user?.uid,
           'topic': 'featured-search'
@@ -108,7 +119,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
         words.forEach((word) {
           var query = {
             'keywords': word,
-            'pos': searchSize * scrollBottoms + searchSize,
+            'pos': searchSize * scrollBottoms,
             'size': searchSize,
             'uid': user.user?.uid,
             'topic': 'keyword-search'
@@ -117,17 +128,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
         });
       }
     }
-  }
-
-  @override
-  void dispose() {
-    searchWs.close();
-    featuredWs.close();
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
-      bannerAd?.dispose();
-    super.dispose();
   }
 
   Widget _buildBannerAdWidget() {

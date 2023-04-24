@@ -47,9 +47,14 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   List<String> imageUrls = [];
   List<dynamic> images = [];
 
+  ScrollController _scrollController = ScrollController();
+  int searchSize = 100;
+  int scrollBottoms = 0;
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
       bannerAd = AdManager.createBannerAd()..load();
     user.loggedInUserFuture.then((_) {
@@ -70,8 +75,36 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   void dispose() {
     galleryWs.close();
     super.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
       bannerAd?.dispose();
+  }
+
+  void _onScroll() {
+    double maxScrollExtent = _scrollController.position.maxScrollExtent;
+    double currentScrollPosition = _scrollController.position.pixels;
+
+    // Calculate the distance to the bottom
+    double distanceToBottom = maxScrollExtent - currentScrollPosition;
+
+    // Define the threshold in pixels (e.g., the height of 5 grid items)
+    double thresholdInPixels = 5000;
+
+    if (distanceToBottom <= thresholdInPixels) {
+      scrollBottoms += 1;
+      List<String> words = searchString.split(' ');
+      words.forEach((word) {
+        var query = {
+          'user': user.user!.uid,
+          'pos': searchSize * scrollBottoms,
+          'size': searchSize,
+          'uid': user.user?.uid,
+          'topic': 'gallery-search'
+        };
+        galleryWs.sendMessage(query);
+      });
+    }
   }
 
   Widget _buildBannerAdWidget() {
@@ -97,6 +130,7 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
   }
 
   getGalleryImageUrls() {
+    scrollBottoms = 0;
     var query = {
       'user': user.user!.uid,
       'pos': 0,
@@ -109,7 +143,7 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
     galleryWs.sendMessage(query);
 
     setState(() {
-      user.modelList = user.modelList;
+      // user.modelList = user.modelList; ?
       loading = true;
     });
   }
@@ -245,6 +279,7 @@ class _MyGalleryCenterViewState extends State<MyGalleryCenterView> {
                         Text('')
                       ])
                     : GridView.builder(
+                        controller: _scrollController,
                         shrinkWrap: true,
                         itemCount: imageUrls.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
