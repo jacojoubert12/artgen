@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:artgen/views/main/main_view.dart';
@@ -8,7 +9,11 @@ typedef WebSocketCallback = void Function(String message);
 class MyWebsockets {
   WebSocketCallback? onMessageReceived;
   WebSocketChannel? webSocketChannel;
-  bool _explicitClose = false; // Add this flag
+  bool _explicitClose = false;
+  bool _reconnecting = false;
+  String _topic = '';
+  bool _didDisconnect = false;
+  String lastSub = '';
 
   MyWebsockets._internal({this.onMessageReceived}) {
     _setupWSClient();
@@ -20,12 +25,12 @@ class MyWebsockets {
     if (topic != null) {
       print("subscribing to ${topic}");
       instance._subscribeToTopic(topic);
+      instance._topic = topic;
     }
     return instance;
   }
 
   Future<void> _wsConnect() async {
-    // close(); ?? To test with this...
     print("Connecting to WebSocket");
 
     webSocketChannel = WebSocketChannel.connect(
@@ -33,13 +38,13 @@ class MyWebsockets {
     );
     webSocketChannel!.stream.listen(
       (event) {
-        // print("WS Response:");
+        print("WS Response:");
         if (onMessageReceived != null) {
           onMessageReceived!(event);
         }
       },
       onError: (error) {
-        print('Error: $error');
+        print('Websocket Error: $error');
         _reconnectWS();
       },
       onDone: () {
@@ -47,13 +52,39 @@ class MyWebsockets {
         _reconnectWS();
       },
     );
+
+    if (_topic.isNotEmpty) {
+      _subscribeToTopic("img-gen-url-res-${user.selectedModel}");
+      _didDisconnect = false;
+    }
+
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      if (webSocketChannel == null || webSocketChannel!.closeCode != null) {
+        _didDisconnect = true;
+        print("Websocket Disconnected - Cancel Timer");
+        timer.cancel();
+      } else {
+        print("Websocket Send Ping");
+        if (_didDisconnect || lastSub != user.selectedModel) {
+          _subscribeToTopic("img-gen-url-res-${user.selectedModel}");
+        }
+        lastSub = user.selectedModel; //Todo Rather make listener
+        webSocketChannel?.sink.add(jsonEncode({'type': 'ping'}));
+      }
+    });
   }
 
   void _reconnectWS() {
-    if (!_explicitClose) {
-      // Check if the close was explicit before reconnecting
+    if (!_explicitClose && !_reconnecting) {
+      _reconnecting = true;
       Future.delayed(Duration(seconds: 5), () {
-        _wsConnect();
+        print("Websocket reconecting...");
+        _wsConnect().then((_) {
+          _reconnecting = false;
+          if (_didDisconnect) {
+            _subscribeToTopic(_topic);
+          }
+        });
       });
     }
   }
@@ -70,6 +101,9 @@ class MyWebsockets {
   Future<void> _setupWSClient() async {
     await _wsConnect();
   }
+
+  bool get isOpen =>
+      webSocketChannel != null && webSocketChannel!.closeCode == null;
 
   void close() {
     _explicitClose = true;

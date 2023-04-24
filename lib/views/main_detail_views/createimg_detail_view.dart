@@ -55,6 +55,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   int retryDurationInSeconds = 180;
   bool uploading = false;
   List<String> uploadImg2ImgImages = [];
+  String lastSubTopic = '';
   String pubTopic = '';
   String prompt = "";
   String negprompt = "";
@@ -111,75 +112,81 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   }
 
   Future<void> _showInterstitialAd() async {
-    interstitialAd = await AdManager.createInterstitialAd();
-    await interstitialAd!.show();
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
+      interstitialAd = await AdManager.createInterstitialAd();
+      await interstitialAd!.show();
+    }
   }
 
   Future<void> _showRewardedAd() async {
-    try {
-      final RewardedAd rewardedAd = await AdManager.createRewardedAd();
-      rewardedAd.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-          // Reward the user for watching the ad (e.g., give in-app currency or points)
-          print('User earned reward: ${reward.amount} ${reward.type}');
-        },
-      );
-      rewardedAd.fullScreenContentCallback =
-          FullScreenContentCallback<RewardedAd>(
-        onAdDismissedFullScreenContent: (RewardedAd ad) {
-          print('Rewarded Ad did dismiss fullscreen content');
-          ad.dispose();
-        },
-        onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-          print('Rewarded Ad failed to show fullscreen content: $error');
-          ad.dispose();
-        },
-      );
-    } on Exception catch (e) {
-      print('Failed to show Rewarded Ad: $e');
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
+      try {
+        final RewardedAd rewardedAd = await AdManager.createRewardedAd();
+        rewardedAd.show(
+          onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+            // Reward the user for watching the ad (e.g., give in-app currency or points)
+            print('User earned reward: ${reward.amount} ${reward.type}');
+          },
+        );
+        rewardedAd.fullScreenContentCallback =
+            FullScreenContentCallback<RewardedAd>(
+          onAdDismissedFullScreenContent: (RewardedAd ad) {
+            print('Rewarded Ad did dismiss fullscreen content');
+            ad.dispose();
+          },
+          onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+            print('Rewarded Ad failed to show fullscreen content: $error');
+            ad.dispose();
+          },
+        );
+      } on Exception catch (e) {
+        print('Failed to show Rewarded Ad: $e');
+      }
     }
   }
 
   Future<void> _showRewardedInterstitialAd() async {
-    try {
-      final RewardedInterstitialAd rewardedInterstitialAd =
-          await AdManager.createRewardedInterstitialAd();
-      rewardedInterstitialAd.show(
-        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-          // Reward the user for watching the ad (e.g., give in-app currency or points)
-          print('User earned reward: ${reward.amount} ${reward.type}');
-        },
-      );
-      rewardedInterstitialAd.fullScreenContentCallback =
-          FullScreenContentCallback<RewardedInterstitialAd>(
-        onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-          print('Rewarded Interstitial Ad did dismiss fullscreen content');
-          ad.dispose();
-        },
-        onAdFailedToShowFullScreenContent:
-            (RewardedInterstitialAd ad, AdError error) {
-          print(
-              'Rewarded Interstitial Ad failed to show fullscreen content: $error');
-          ad.dispose();
-        },
-      );
-    } on Exception catch (e) {
-      print('Failed to show Rewarded Interstitial Ad: $e');
+    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
+      try {
+        final RewardedInterstitialAd rewardedInterstitialAd =
+            await AdManager.createRewardedInterstitialAd();
+        rewardedInterstitialAd.show(
+          onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+            // Reward the user for watching the ad (e.g., give in-app currency or points)
+            print('User earned reward: ${reward.amount} ${reward.type}');
+          },
+        );
+        rewardedInterstitialAd.fullScreenContentCallback =
+            FullScreenContentCallback<RewardedInterstitialAd>(
+          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
+            print('Rewarded Interstitial Ad did dismiss fullscreen content');
+            ad.dispose();
+          },
+          onAdFailedToShowFullScreenContent:
+              (RewardedInterstitialAd ad, AdError error) {
+            print(
+                'Rewarded Interstitial Ad failed to show fullscreen content: $error');
+            ad.dispose();
+          },
+        );
+      } on Exception catch (e) {
+        print('Failed to show Rewarded Interstitial Ad: $e');
+      }
     }
   }
 
   Future<void> setupWebsockets() async {
     print("setupWebsockets()");
     try {
-      imgGenWs.close();
+      if (imgGenWs.isOpen) imgGenWs.close();
     } catch (e) {
       print('Error closing searchWs: $e');
     }
 
     // while (user.user == null) await Future.delayed(Duration(seconds: 1));
 
-    while (user.selectedModel.length == 0)
-      await Future.delayed(Duration(seconds: 1));
+    // while (user.selectedModel.length == 0)
+    // await Future.delayed(Duration(seconds: 1));
 
     imgGenWs = MyWebsockets(
       onMessageReceived: (message) {
@@ -190,6 +197,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       },
       topic: "img-gen-url-res-${user.selectedModel}",
     );
+    lastSubTopic = "img-gen-url-res-${user.selectedModel}";
   }
 
   Future<void> startRetryTimer() async {
@@ -253,6 +261,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
       generatedImgUrls = imgUrls;
       loading = false;
     });
+    // imgGenWs.close();
   }
 
   String escapeDangerousCharacters(String inputString) {
@@ -343,7 +352,15 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     retryDurationInSeconds = (user.batchSizeSliderValue.toInt() * 180);
     print("JSON Encoded query:");
     print(jsonEncode(query));
-    setupWebsockets();
+    if (imgGenWs.isOpen) {
+      if (lastSubTopic != "img-gen-url-res-${user.selectedModel}")
+        setupWebsockets();
+      print("WebSocket is open");
+    } else {
+      print("WebSocket is closed");
+      setupWebsockets();
+    }
+
     imgGenWs.sendMessage(query);
 
     setState(() {
