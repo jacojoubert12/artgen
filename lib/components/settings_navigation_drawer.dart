@@ -316,44 +316,45 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   ),
                 ),
               ),
-              // SizedBox(height: kDefaultPadding),
-              Text(
-                "Number of Images",
-                style: TextStyle(
-                  fontFamily:
-                      'custom font', // remove this if don't have custom font
-                  fontSize: 12.0, // text size
-                  color: kTextColorLightGrey,
 
-                  // text color
-                ),
-              ),
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackShape: RoundedRectSliderTrackShape(),
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                ),
-                child: Container(
-                  width: kDefaultWidth * 35,
-                  child: Slider(
-                    value: user.batchSizeSliderValue,
-                    max: 100,
-                    min: 1,
-                    divisions: 100,
-                    label: user.batchSizeSliderValue.round().toString(),
-                    activeColor:
-                        kButtonLightPurple, // Set the active color here
-                    inactiveColor:
-                        kButtonLightPurpleTransparent, // Set the inactive color here
-                    onChanged: (double value) {
-                      setState(() {
-                        user.batchSizeSliderValue = value;
-                      });
-                    },
-                  ),
-                ),
-              ),
+              // SizedBox(height: kDefaultPadding),
+              // Text(
+              //   "Number of Images",
+              //   style: TextStyle(
+              //     fontFamily:
+              //         'custom font', // remove this if don't have custom font
+              //     fontSize: 12.0, // text size
+              //     color: kTextColorLightGrey,
+
+              //     // text color
+              //   ),
+              // ),
+              // SliderTheme(
+              //   data: SliderTheme.of(context).copyWith(
+              //     trackShape: RoundedRectSliderTrackShape(),
+              //     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+              //     overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+              //   ),
+              //   child: Container(
+              //     width: kDefaultWidth * 35,
+              //     child: Slider(
+              //       value: user.batchSizeSliderValue,
+              //       max: 100,
+              //       min: 1,
+              //       divisions: 100,
+              //       label: user.batchSizeSliderValue.round().toString(),
+              //       activeColor:
+              //           kButtonLightPurple, // Set the active color here
+              //       inactiveColor:
+              //           kButtonLightPurpleTransparent, // Set the inactive color here
+              //       onChanged: (double value) {
+              //         setState(() {
+              //           user.batchSizeSliderValue = value;
+              //         });
+              //       },
+              //     ),
+              //   ),
+              // ),
 
               //Dropdown
               SizedBox(height: kDefaultPadding),
@@ -407,27 +408,27 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
               SizedBox(height: kDefaultPadding),
 
               //Save Button
-              Container(
-                height: 40,
-                width: 140,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kButtonLightPurple,
-                ),
-                //Save Button
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: Text('Save'),
-                ),
-              ),
+              // Container(
+              //   height: 40,
+              //   width: 140,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     color: kButtonLightPurple,
+              //   ),
+              //   //Save Button
+              //   child: ElevatedButton(
+              //     onPressed: () {
+              //       Navigator.of(context).pop();
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.transparent,
+              //       shadowColor: Colors.transparent,
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(10)),
+              //     ),
+              //     child: Text('Save'),
+              //   ),
+              // ),
               SizedBox(height: kDefaultPadding),
             ],
           ),

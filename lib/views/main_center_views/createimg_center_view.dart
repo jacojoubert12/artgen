@@ -115,7 +115,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     double distanceToBottom = maxScrollExtent - currentScrollPosition;
 
     // Define the threshold in pixels (e.g., the height of 5 grid items)
-    double thresholdInPixels = 1000;
+    double thresholdInPixels = 3000;
 
     if (distanceToBottom <= thresholdInPixels) {
       print("Goign to search more... ${scrollBottoms}");
@@ -478,6 +478,7 @@ class _ImgGridViewState extends State<ImgGridView> {
                         Text('')
                       ])
                     : ImageGridView(
+                        scrollController: _scrollController,
                         selectedImages: _selectedImages,
                         selectedImageUrls: _selectedImageUrls,
                         updateSelectedImages:
@@ -538,6 +539,7 @@ class ImageGridView extends StatefulWidget {
   final Function? showDetailView;
   final List<String> imageUrls;
   final List<dynamic> images;
+  final ScrollController? scrollController;
 
   ImageGridView(
       {Key? key,
@@ -545,6 +547,7 @@ class ImageGridView extends StatefulWidget {
       this.selectedImageUrls,
       this.selectedImages,
       this.showDetailView,
+      this.scrollController,
       required this.images,
       required this.imageUrls})
       : super(key: key);
@@ -573,6 +576,7 @@ class _ImageGridViewState extends State<ImageGridView> {
     _images = widget.images;
     _imageUrls = widget.imageUrls;
     return MasonryGridView.count(
+      controller: widget.scrollController,
       crossAxisCount: 4,
       mainAxisSpacing: 0,
       crossAxisSpacing: 0,
