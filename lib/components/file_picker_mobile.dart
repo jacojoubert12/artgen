@@ -22,10 +22,10 @@ Future<String?> uploadFile(
     filename = result.files.single.name;
     File file = File(path);
     int len = await file.length();
-    if (len / 1000.0 / 1000.0 > 3) {
+    if (len / 1000.0 / 1000.0 > 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Upload file too large. Max size = 3MB"),
+          content: Text("Upload file too large. Max size = 5MB"),
         ),
       );
       return null;

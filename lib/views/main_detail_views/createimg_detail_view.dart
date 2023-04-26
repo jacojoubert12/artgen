@@ -219,6 +219,9 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
     List<String> imgUrls = [];
 
     print(message);
+    if (message == 'false') {
+      print("Error receiving generated image, please try agina...");
+    }
     var jsonData = jsonDecode(message);
     print('Could not do decode?');
 

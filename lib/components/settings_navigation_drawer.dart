@@ -42,7 +42,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
         child: Container(
           // alignment: Alignment.center,
           width: Responsive.isDesktop(context)
-              ? MediaQuery.of(context).size.width * 0.6
+              ? MediaQuery.of(context).size.width * 0.4
               : MediaQuery.of(context).size.width * 0.95,
           height: MediaQuery.of(context).size.height * 0.85,
           decoration: BoxDecoration(
@@ -100,10 +100,11 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                     overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                   ),
                   child: Container(
-                    width: kDefaultWidth * 35,
+                    width: Responsive.isDesktop(context)
+                        ? MediaQuery.of(context).size.width * 0.35
+                        : MediaQuery.of(context).size.width * 0.8,
                     child: Slider(
                       value: user.samplingStepsSliderValue,
-
                       max: 150,
                       min: 1,
                       divisions: 150,
@@ -140,7 +141,9 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                 ),
                 child: Container(
-                  width: kDefaultWidth * 35,
+                  width: Responsive.isDesktop(context)
+                      ? MediaQuery.of(context).size.width * 0.35
+                      : MediaQuery.of(context).size.width * 0.8,
                   child: Slider(
                     value: user.resolutionSliderValue,
                     max: user.resolutionSteps - 1,
@@ -183,7 +186,9 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                 ),
                 child: Container(
-                  width: kDefaultWidth * 35,
+                  width: Responsive.isDesktop(context)
+                      ? MediaQuery.of(context).size.width * 0.35
+                      : MediaQuery.of(context).size.width * 0.8,
                   child: Slider(
                     value: user.widthSliderValue,
                     max: 2048,
@@ -221,7 +226,9 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                 ),
                 child: Container(
-                  width: kDefaultWidth * 35,
+                  width: Responsive.isDesktop(context)
+                      ? MediaQuery.of(context).size.width * 0.35
+                      : MediaQuery.of(context).size.width * 0.8,
                   child: Slider(
                     value: user.heightSliderValue,
                     max: 2048,
@@ -259,7 +266,9 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                 ),
                 child: Container(
-                  width: kDefaultWidth * 35,
+                  width: Responsive.isDesktop(context)
+                      ? MediaQuery.of(context).size.width * 0.35
+                      : MediaQuery.of(context).size.width * 0.8,
                   child: Slider(
                     value: user.guidanceScaleSliderValue,
                     max: 30,
@@ -297,7 +306,9 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                 ),
                 child: Container(
-                  width: kDefaultWidth * 35,
+                  width: Responsive.isDesktop(context)
+                      ? MediaQuery.of(context).size.width * 0.35
+                      : MediaQuery.of(context).size.width * 0.8,
                   child: Slider(
                     value: user.denoisingStrengthSliderValue,
                     max: 1,
@@ -336,7 +347,7 @@ class _SettingNavigationDrawerState extends State<SettingNavigationDrawer> {
               //     overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
               //   ),
               //   child: Container(
-              //     width: kDefaultWidth * 35,
+              //     width: Responsive.isDesktop(context) ?  MediaQuery.of(context).size.width * 0.35 : MediaQuery.of(context).size.width * 0.8,
               //     child: Slider(
               //       value: user.batchSizeSliderValue,
               //       max: 100,

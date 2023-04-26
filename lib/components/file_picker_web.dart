@@ -4,7 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-Future<String?> uploadFile(BuildContext context, FirebaseStorage storage) async {
+Future<String?> uploadFile(
+    BuildContext context, FirebaseStorage storage) async {
   String filename = "";
   final result = await FilePickerWeb.platform
       .pickFiles(allowMultiple: false, type: FileType.image);
@@ -19,10 +20,10 @@ Future<String?> uploadFile(BuildContext context, FirebaseStorage storage) async 
   } else {
     Uint8List uploadFile = result.files.single.bytes!;
     filename = result.files.single.name;
-    if (uploadFile.length / 1000.0 / 1000.0 > 3) {
+    if (uploadFile.length / 1000.0 / 1000.0 > 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Upload file too large. Max size = 3MB"),
+          content: Text("Upload file too large. Max size = 5MB"),
         ),
       );
       print("upload size too large");
