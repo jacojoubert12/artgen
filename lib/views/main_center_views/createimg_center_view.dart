@@ -117,7 +117,7 @@ class _ImgGridViewState extends State<ImgGridView> {
     // Define the threshold in pixels (e.g., the height of 5 grid items)
     double thresholdInPixels = 3000;
 
-    if (distanceToBottom <= thresholdInPixels) {
+    if (distanceToBottom <= thresholdInPixels && _images.length > 20) {
       print("Goign to search more... ${scrollBottoms}");
       scrollBottoms += 1;
       if (getFeatured) {

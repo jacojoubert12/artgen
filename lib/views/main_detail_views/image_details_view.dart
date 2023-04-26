@@ -52,17 +52,25 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
     print(data.runtimeType);
 
     if (data.containsKey('details')) {
-      values = data['details']['parameters'];
-      values['user'] = data['user'];
+      if (data['details'].containsKey('parameters')) {
+        values = data['details']['parameters'];
+        values['user'] = data['user'];
+      } else {
+        values = data['details'];
+        print(
+            "Image was just generated... Going to set user as current user...");
+        values['user'] = user.user?.uid;
+      }
     } else if (data.containsKey('_source') &&
         data['_source'].containsKey('details')) {
       values = data['_source']['details']['parameters'];
       values['user'] = data['_source']['user'];
-    } else if (data.containsKey('_source') &&
-        data['_source'].containsKey('info')) {
-      values = data['_source']['details']['info'];
-      values['user'] = data['_source']['user'];
     }
+
+    if (values['user'] == null) values['user'] = user.user?.uid;
+
+    print("Values:");
+    print(values);
 
     if (values != null) {
       prompt = values['prompt'];
@@ -162,16 +170,16 @@ class _ImageDetailsModalState extends State<ImageDetailsModal> {
             children: [
               Row(
                 children: [
-                  if (!Responsive.isDesktop(context))
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: kButtonLightPurple,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                  // if (!Responsive.isDesktop(context))
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: kButtonLightPurple,
                     ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                   if (!Responsive.isDesktop(context)) SizedBox(width: 5),
                 ],
               ),
