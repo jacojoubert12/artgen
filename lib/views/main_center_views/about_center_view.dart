@@ -1,3 +1,4 @@
+import 'package:artgen/views/main/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -16,6 +17,7 @@ class AboutCenterView extends StatefulWidget {
 class _AboutCenterViewState extends State<AboutCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String _backgroundImage = 'https://ws.artgen.fun/images/icon.png';
+  String _avatarImage = 'https://ws.artgen.fun/images/icon.png';
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,17 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                           color: Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
+                    ),
+                  ),
+                  Container(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                        user.user?.photoURL ?? _avatarImage,
+                      )),
                     ),
                   ),
                   SizedBox(width: 5),
@@ -286,7 +299,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
             ),
           ),
           Container(
-            height: 200 + kDefaultPadding,
+            height: 200 + kDefaultPadding * 2,
             width: double.maxFinite,
             color: kBgDarkColor,
             child: Image(

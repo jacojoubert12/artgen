@@ -117,6 +117,16 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                       ),
                     ),
                   ),
+                  Container(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      width: 45,
+                      height: 45,
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              user.user?.photoURL ?? _avatarImage)),
+                    ),
+                  ),
                   SizedBox(width: 5),
                 ],
               ),
