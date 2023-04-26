@@ -290,7 +290,7 @@ class _AboutCenterViewState extends State<AboutCenterView> {
             width: double.maxFinite,
             color: kBgDarkColor,
             child: Image(
-              image: AssetImage('assets/images/flower.png'),
+              image: AssetImage('assets/images/banner.png'),
               fit: BoxFit.cover,
             ),
             padding: EdgeInsets.only(bottom: kDefaultPadding),

@@ -37,7 +37,7 @@ class _SideMenuState extends State<SideMenu> {
                 width: double.maxFinite,
                 color: Color(0xFF),
                 child: Image(
-                  image: AssetImage('assets/images/flower.png'),
+                  image: AssetImage('assets/images/banner_side_menu.png'),
                 ),
                 // child: NetworkImage(bannerImage, fit: BoxFit.fitWidth),
               ),
@@ -49,7 +49,7 @@ class _SideMenuState extends State<SideMenu> {
               //     height: 80,
               //     child: CircleAvatar(
               //       // backgroundImage: NetworkImage(_avatarImage),
-              //       child: NetworkImage("assets/images/flower.png"),
+              //       child: NetworkImage("assets/images/banner.png"),
               //     ),
               //   ),
               // ),

@@ -135,7 +135,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
             width: double.maxFinite,
             color: Color.fromARGB(0, 0, 0, 0),
             child: Image(
-              image: AssetImage('assets/images/flower.png'),
+              image: AssetImage('assets/images/banner.png'),
               fit: BoxFit.cover,
             ),
           ),
