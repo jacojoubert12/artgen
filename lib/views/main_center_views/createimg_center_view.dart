@@ -57,8 +57,7 @@ class _ImgGridViewState extends State<ImgGridView> {
   String pubTopicFeatured = "featured";
   String searchString = '';
 
-  String _avatarImage =
-      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+  String _avatarImage = 'https://ws.artgen.fun/images/icon.png';
 
   late MyWebsockets searchWs;
   late MyWebsockets featuredWs;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
-import 'package:websafe_svg/websafe_svg.dart';
 
 import '../../../constants.dart';
 
@@ -17,8 +16,7 @@ class AboutCenterView extends StatefulWidget {
 
 class _AboutCenterViewState extends State<AboutCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  String bannerImage = '';
+  String _backgroundImage = 'https://ws.artgen.fun/images/icon.png';
 
   @override
   Widget build(BuildContext context) {

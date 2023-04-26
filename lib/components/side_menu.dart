@@ -39,7 +39,20 @@ class _SideMenuState extends State<SideMenu> {
                 child: Image(
                   image: AssetImage('assets/images/flower.png'),
                 ),
+                // child: NetworkImage(bannerImage, fit: BoxFit.fitWidth),
               ),
+              // Positioned(
+              //   top: MediaQuery.of(context).size.height / 2,
+              //   left: MediaQuery.of(context).size.width / 2 - 50,
+              //   child: Container(
+              //     width: 80,
+              //     height: 80,
+              //     child: CircleAvatar(
+              //       // backgroundImage: NetworkImage(_avatarImage),
+              //       child: NetworkImage("assets/images/flower.png"),
+              //     ),
+              //   ),
+              // ),
               SizedBox(height: kDefaultPadding),
               Text(
                 userName,

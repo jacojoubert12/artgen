@@ -30,7 +30,7 @@ class SubscriptionView extends StatelessWidget {
                     color: Color.fromARGB(112, 181, 5, 134),
                     image: DecorationImage(
                         image: NetworkImage(
-                            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg'),
+                            'https://ws.artgen.fun/images/icon.png'),
                         fit: BoxFit.cover)),
               ),
               Container(

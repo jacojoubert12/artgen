@@ -63,8 +63,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
   String _negpromptTxt = "";
   String deviceId = "";
   Map<String, dynamic> query = {};
-  String _avatarImage =
-      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+  String _avatarImage = 'https://ws.artgen.fun/images/icon.png';
 
   BannerAd? bannerAd;
   InterstitialAd? interstitialAd;

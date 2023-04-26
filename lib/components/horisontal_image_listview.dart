@@ -35,7 +35,7 @@ class _ImageListViewState extends State<ImageListView> {
   //         );
   //       }
   //       if (snapshot.connectionState == ConnectionState.done) {
-  //         return Image.network(
+  //         return NetworkImage(
   //           snapshot.data.toString(),
   //         );
   //       }
@@ -64,7 +64,7 @@ class _ImageListViewState extends State<ImageListView> {
   //         //   // uploading = false;
   //         // });
   //         if (snapshot.connectionState == ConnectionState.done) {
-  //           return Image.network(
+  //           return NetworkImage(
   //             snapshot.data.toString(),
   //           );
   //         }

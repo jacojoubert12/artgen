@@ -22,7 +22,7 @@
 // class _LikesCenterViewState extends State<LikesCenterView> {
 //   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 //   List<String> imgUrls = [
-//     "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+//     "https://ws.artgen.fun/images/icon.png"
 //   ];
 //   @override
 //   Widget build(BuildContext context) {
@@ -114,7 +114,7 @@
 //                           );
 //                           setState(() {});
 //                         },
-//                         child: Image.network(imgUrls[index]),
+//                         child: NetworkImage(imgUrls[index]),
 //                       ),
 //                     );
 //                   },
