@@ -308,7 +308,6 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                             searchString = value;
                             List<String> words = searchString.split(' ');
                             words.forEach((word) => getSearchImageUrls(word));
-                            // getSearchImageUrls(value);
                           });
                         },
                         decoration: InputDecoration(

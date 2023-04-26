@@ -401,21 +401,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                           ),
                   ),
                   if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: Responsive.isMobile(context)
-                  //       ? Container(
-                  //           margin: EdgeInsets.only(left: 20),
-                  //           width: 45,
-                  //           height: 45,
-                  //           child: CircleAvatar(
-                  //             backgroundImage: NetworkImage(_avatarImage),
-                  //           ),
-                  //         )
-                  //       : SizedBox(
-                  //           width: 45,
-                  //         ),
-                  // ),
                   Expanded(
                     flex: 3,
                     child: Container(
@@ -432,15 +417,6 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                       ),
                     ),
                   ),
-                  // Container(
-                  //   margin: EdgeInsets.only(left: 40),
-                  //   width: 40,
-                  //   height: 40,
-                  //   child: CircleAvatar(
-                  //     backgroundImage: NetworkImage(_avatarImage),
-                  //   ),
-                  // ),
-
                   Expanded(
                     flex: 1,
                     child: Responsive.isMobile(context)
