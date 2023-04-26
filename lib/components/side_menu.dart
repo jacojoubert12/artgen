@@ -174,7 +174,8 @@ class _SideMenuState extends State<SideMenu> {
               ),
               SizedBox(height: kDefaultPadding),
               InkWell(
-                onTap: () => launchUrl(Uri.parse('https://www.google.com')),
+                onTap: () => launchUrl(Uri.parse(
+                    'https://docs.google.com/document/d/17KdTKpDdhprAPpvhMeRsL6rp7OQuXBtUfsC0vWkdGVU/edit?usp=share_link')),
                 child: Text(
                   'Privacy Policy',
                   style: TextStyle(

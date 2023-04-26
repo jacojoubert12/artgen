@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:universal_platform/universal_platform.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants.dart';
 
@@ -125,144 +128,92 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
         constraints: BoxConstraints(maxWidth: 250),
         child: SideMenu(setViewMode: widget.setViewMode),
       ),
-      body: Container(
-        padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
-        color: kBgDarkColor,
-        child: SafeArea(
-          right: false,
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  children: <Widget>[
-                    // Background image
-                    Container(
-                        height: 200,
-                        width: double.maxFinite,
-                        color: Color(0xFF),
-                        child: Image(
-                          image: AssetImage('assets/images/flower.png'),
-                        )),
-
+      body: Column(
+        children: [
+          Container(
+            height: 200 + kDefaultPadding,
+            width: double.maxFinite,
+            color: Color.fromARGB(0, 0, 0, 0),
+            child: Image(
+              image: AssetImage('assets/images/flower.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
+              color: kBgDarkColor,
+              child: SafeArea(
+                right: false,
+                child: Column(
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 10.0),
+                      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          SizedBox(height: kDefaultPadding * 5),
-                          TextField(
-                            enabled: false,
-                            style: TextStyle(
-                              color: kTextColorLightGrey,
-                            ),
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            onChanged: (value) {
-                              _name = value;
-                            },
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 10,
-                                color: kTextColorLightGrey,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 12),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 155, 151, 151),
-                                  width: 4.0,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: kButtonLightPurple,
-                                  width: 4.0,
-                                ),
-                              ),
-                              label: Text.rich(
-                                TextSpan(
-                                  children: <InlineSpan>[
-                                    WidgetSpan(
-                                      child: Text(
-                                        'Username',
-                                        style: TextStyle(
-                                          fontFamily: 'custom font',
-                                          fontSize: 11.0,
-                                          color: kTextColorLightGrey,
-                                        ),
-                                      ),
-                                    ),
-                                    WidgetSpan(
-                                      child: Text(
-                                        '',
-                                        style: TextStyle(color: Colors.pink),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: NetworkImage(
+                              user.user?.photoURL ?? _avatarImage,
                             ),
                           ),
                           SizedBox(height: kDefaultPadding),
-                          TextField(
-                            enabled: false,
-                            style: TextStyle(
-                              color: kTextColorLightGrey,
-                            ),
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            onChanged: (value) {
-                              _email = value;
-                            },
-                            cursorColor: Color.fromARGB(255, 77, 75, 75),
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                fontSize: 10,
-                                color: kTextColorLightGrey,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 12),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 77, 75, 75),
-                                  width: 3.0,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Text(
+                              //   "User:  ",
+                              //   style: TextStyle(
+                              //     fontFamily:
+                              //         'custom font', // remove this if don't have custom font
+                              //     fontSize: 20.0, // text size
+                              //     color: kTextColorLightGrey, // text color
+                              //   ),
+                              //   textAlign: TextAlign.center,
+                              // ),
+                              // SizedBox(height: kDefaultPadding),
+                              Text(
+                                user.user?.displayName ?? "Please Login",
+                                style: TextStyle(
+                                  fontFamily:
+                                      'custom font', // remove this if don't have custom font
+                                  fontSize: 15.0, // text size
+                                  color: kTextColorLightGrey, // text color
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: kButtonLightPurple,
-                                  width: 1.0,
-                                ),
-                              ),
-                              label: Text.rich(
-                                TextSpan(
-                                  children: <InlineSpan>[
-                                    WidgetSpan(
-                                      child: Text(
-                                        'Email',
-                                        style: TextStyle(
-                                          fontFamily: 'custom font',
-                                          fontSize: 11.0,
-                                          color: kTextColorLightGrey,
-                                        ),
-                                      ),
-                                    ),
-                                    WidgetSpan(
-                                      child: Text(
-                                        '',
-                                        style: TextStyle(color: Colors.pink),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            ],
                           ),
-                          SizedBox(height: 30.0),
+                          SizedBox(height: kDefaultPadding),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              //   Text(
+                              //     "Email:  ",
+                              //     style: TextStyle(
+                              //       fontFamily:
+                              //           'custom font', // remove this if don't have custom font
+                              //       fontSize: 20.0, // text size
+                              //       color: kTextColorLightGrey, // text color
+                              //     ),
+                              //     textAlign: TextAlign.center,
+                              //   ),
+                              //   SizedBox(height: kDefaultPadding),
+                              Text(
+                                user.user?.email ?? "Please Login",
+                                style: TextStyle(
+                                  fontFamily:
+                                      'custom font', // remove this if don't have custom font
+                                  fontSize: 15.0, // text size
+                                  color: kTextColorLightGrey, // text color
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: kDefaultPadding),
+                          SizedBox(height: kDefaultPadding),
                           user.age >= 18
                               ? Text(
                                   "Safe <-- Filter NSFW --> Unsafe",
@@ -275,7 +226,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                   ),
                                 )
                               : Text(
-                                  "18+ Age must be verified on your Google account to enable some settings",
+                                  "18+ Age must be verified on your Google account to enable some settings\n If already logged in, please logout and login again to enable these settings.",
                                   style: TextStyle(
                                     fontFamily:
                                         'custom font', // remove this if don't have custom font
@@ -315,80 +266,134 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                   ),
                                 )
                               : Text(''),
-                          SizedBox(height: 30.0),
+                          SizedBox(height: kDefaultPadding),
                           Text(
                             'Support Us',
                             style: TextStyle(
                               fontFamily:
                                   'custom font', // remove this if don't have custom font
-                              fontSize: 17.0, // text size
+                              fontSize: 20.0, // text size
                               color: kTextColorLightGrey,
                               // text color
                             ),
                           ),
-                          SizedBox(),
+                          UniversalPlatform.isAndroid || UniversalPlatform.isIOS
+                              ? Text(
+                                  '\nPlease consider supporting us by subscribing or donating.',
+                                  style: TextStyle(
+                                    fontFamily:
+                                        'custom font', // remove this if don't have custom font
+                                    fontSize: 17.0, // text size
+                                    color: kTextColorLightGrey,
+                                    // text color
+                                  ),
+                                )
+                              : Text(
+                                  '\nPlease consider supporting us by downloading the ArtGen App and subscribing or donating.',
+                                  style: TextStyle(
+                                    fontFamily:
+                                        'custom font', // remove this if don't have custom font
+                                    fontSize: 12.0, // text size
+                                    color: kTextColorLightGrey,
+                                    // text color
+                                  ),
+                                ),
+                          SizedBox(
+                            height: kDefaultPadding,
+                          ),
+                          !UniversalPlatform.isAndroid &&
+                                  !UniversalPlatform.isIOS
+                              ? InkWell(
+                                  onTap: () async {
+                                    launchUrl(
+                                        'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
+                                            as Uri);
+                                  },
+                                  child: Container(
+                                    height: 100,
+                                    child: Image(
+                                        image: AssetImage('images/play.png')),
+                                  ),
+                                )
+                              : Text(''),
                           Container(
                             padding:
                                 EdgeInsets.symmetric(vertical: kDefaultPadding),
                             child: Row(
                               // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               mainAxisAlignment: MainAxisAlignment.center,
-
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
-                                    //save profile
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return SubscriptionView();
-                                      },
-                                    );
+                                    UniversalPlatform.isAndroid ||
+                                            UniversalPlatform.isIOS
+                                        ? showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return SubscriptionView();
+                                            },
+                                          )
+                                        : launchUrl(
+                                            'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
+                                                as Uri);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.transparent,
                                     primary: Color(0xFF58A408),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(10.0)),
+                                            BorderRadius.circular(15.0)),
                                   ),
-                                  child: Text('Support Tier '),
+                                  child: Text('Subscribe'),
                                 ),
                                 SizedBox(width: 10.0),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    //save profile
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return SubscriptionView();
-                                      },
-                                    );
+                                  onPressed: () async {
+                                    try {
+                                      Offerings offerings =
+                                          await Purchases.getOfferings();
+                                      if (offerings.current != null) {
+                                        // Display current offering with offerings.current
+                                      }
+                                    } on PlatformException catch (e) {
+                                      print("Error getting Offerings: ${e}");
+                                    }
+                                    UniversalPlatform.isAndroid ||
+                                            UniversalPlatform.isIOS
+                                        ? showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return SubscriptionView();
+                                            },
+                                          )
+                                        : launchUrl(
+                                            'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
+                                                as Uri);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.transparent,
                                     primary: Color(0xFF58A408),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(10.0)),
+                                            BorderRadius.circular(15.0)),
                                   ),
-                                  child: Text('Donate '),
+                                  child: Text('  Donate  '),
                                 ),
                               ],
                             ),
                           ),
                           SizedBox(height: kDefaultPadding / 10),
                           Container(
-                            height: 50,
-                            width: 250,
+                            // height: kDefaultHeight,
+                            // width: 100,
                             decoration: BoxDecoration(
                               color: kButtonLightPurple,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(15),
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (user.user?.isAnonymous ?? true) {
-                                  showDialog(
+                                  await showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AuthGate();
@@ -397,16 +402,17 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 } else {
                                   _signOut();
                                 }
+                                setState(() {});
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
+                                    borderRadius: BorderRadius.circular(15.0)),
                               ),
                               child: (user.user?.isAnonymous ?? true)
-                                  ? Text("Login")
-                                  : Text("Logout"),
+                                  ? Text("  Login  ")
+                                  : Text("  Logout  "),
                             ),
                           ),
                         ],
@@ -415,9 +421,9 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                   ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

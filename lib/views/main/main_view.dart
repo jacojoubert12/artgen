@@ -1,10 +1,7 @@
-import 'package:artgen/main.dart';
 import 'package:artgen/models/my_user.dart';
 import 'package:artgen/views/main_center_views/createimg_center_view.dart';
 import 'package:artgen/views/main_detail_views/createimg_detail_view.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-// import 'package:device_uuid/device_uuid.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
@@ -14,8 +11,6 @@ import 'package:artgen/views/main_center_views/likes_center_view.dart';
 import 'package:artgen/views/main_center_views/explore_center_view.dart';
 import 'package:artgen/views/main_center_views/profile_center_view.dart';
 import 'package:artgen/views/main_center_views/about_center_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:artgen/auth_gate.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 enum ViewMode { create, mygallery, explore, likes, profile, about, share }

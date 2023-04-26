@@ -158,7 +158,7 @@ class _AuthGateState extends State<AuthGate> {
                 onPressed: () {
                   // Replace the URL with your privacy policy link
                   launchUrl(
-                      'https://docs.google.com/document/d/17KdTKpDdhprAPpvhMeRsL6rp7OQuXBtUfsC0vWkdGVU/edit?usp=sharing'
+                      'https://docs.google.com/document/d/17KdTKpDdhprAPpvhMeRsL6rp7OQuXBtUfsC0vWkdGVU/edit?usp=share_link'
                           as Uri);
                 },
                 child: Text(
