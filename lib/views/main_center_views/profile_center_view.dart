@@ -26,8 +26,8 @@ class ProfileCenterView extends StatefulWidget {
 
 class _ProfileCenterViewState extends State<ProfileCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String _backgroundImage =
-      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+  // String _backgroundImage =
+  //     'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
   String _avatarImage =
       'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
   String _name = '';
@@ -35,6 +35,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   String _email = '';
   String _profileImg = '';
   int _totalImagesGenerated = 0;
+  String bannerImage = '';
 
   //TODO Move to my_user - get some structure on when to get data and where to store it
   Future _getDataFromDatabase() async {
@@ -138,11 +139,12 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                   children: <Widget>[
                     // Background image
                     Container(
-                      height: 200,
-                      width: double.maxFinite,
-                      color: Color(0xFF),
-                      child: Image.network(_backgroundImage, fit: BoxFit.cover),
-                    ),
+                        height: 200,
+                        width: double.maxFinite,
+                        color: Color(0xFF),
+                        child: Image(
+                          image: AssetImage('assets/images/flower.png'),
+                        )),
 
                     Padding(
                       padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 10.0),
@@ -347,7 +349,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.transparent,
-                                    primary: Color.fromARGB(255, 181, 9, 130),
+                                    primary: Color(0xFF58A408),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10.0)),
@@ -367,7 +369,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.transparent,
-                                    primary: Color.fromARGB(255, 181, 9, 130),
+                                    primary: Color(0xFF58A408),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10.0)),

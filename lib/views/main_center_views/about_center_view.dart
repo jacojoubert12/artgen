@@ -17,8 +17,8 @@ class AboutCenterView extends StatefulWidget {
 
 class _AboutCenterViewState extends State<AboutCenterView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String _backgroundImage =
-      'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg';
+
+  String bannerImage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +43,6 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                       ),
                     ),
                   ),
-                  // if (Responsive.isDesktop(context))
-                  // Container(
-                  //   child: Container(
-                  //     margin: EdgeInsets.only(left: 20),
-                  //     width: 45,
-                  //     height: 45,
-                  //     child: CircleAvatar(
-                  //         backgroundImage: NetworkImage(_avatarImage)),
-                  //   ),
-                  // ),
                   SizedBox(width: 5),
                 ],
               ),
@@ -71,28 +61,6 @@ class _AboutCenterViewState extends State<AboutCenterView> {
           right: false,
           child: Column(
             children: [
-              // This is our Seearch bar
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-              //   child: Row(
-              //     children: [
-              //       // Once user click the menu icon the menu shows like drawer
-              //       // Also we want to hide this menu icon on desktop
-              //       if (!Responsive.isDesktop(context))
-              //         IconButton(
-              //           icon: Icon(
-              //             Icons.menu,
-              //             color: kButtonLightPurple,
-              //           ),
-              //           onPressed: () {
-              //             _scaffoldKey.currentState!.openDrawer();
-              //           },
-              //         ),
-              //       if (!Responsive.isDesktop(context)) SizedBox(width: 5),
-              //     ],
-              //   ),
-              // ),
               Expanded(
                 child: Column(
                   children: <Widget>[
@@ -101,7 +69,8 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                       height: 200,
                       width: double.maxFinite,
                       color: Color.fromARGB(0, 0, 0, 0),
-                      child: Image.network(_backgroundImage, fit: BoxFit.cover),
+                      child:
+                          Image(image: AssetImage('assets/images/flower.png')),
                     ),
                     SizedBox(height: kDefaultPadding),
                     Text(

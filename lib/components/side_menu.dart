@@ -1,19 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:artgen/responsive.dart';
 import 'package:artgen/views/main/main_view.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../constants.dart';
-import '../extensions.dart';
 import 'side_menu_item.dart';
-import 'tags.dart';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SideMenu extends StatefulWidget {
   SideMenu({Key? key, this.setViewMode}) : super(key: key);
@@ -46,8 +36,7 @@ class _SideMenuState extends State<SideMenu> {
               Container(
                 width: double.maxFinite,
                 color: Color(0xFF),
-                child: FadeInImage(
-                  placeholder: AssetImage('assets/images/flower.png'),
+                child: Image(
                   image: AssetImage('assets/images/flower.png'),
                 ),
               ),
@@ -62,6 +51,12 @@ class _SideMenuState extends State<SideMenu> {
                 ),
               ),
               SideMenuItem(
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
+                ),
                 press: () {
                   this.widget.setViewMode!(ViewMode.create);
                 },
@@ -74,6 +69,12 @@ class _SideMenuState extends State<SideMenu> {
                 showBorder: true,
               ),
               SideMenuItem(
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
+                ),
                 press: () {
                   this.widget.setViewMode!(ViewMode.mygallery);
                 },
@@ -86,6 +87,12 @@ class _SideMenuState extends State<SideMenu> {
                 showBorder: true,
               ),
               SideMenuItem(
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
+                ),
                 press: () {
                   this.widget.setViewMode!(ViewMode.explore);
                 },
@@ -98,6 +105,12 @@ class _SideMenuState extends State<SideMenu> {
                 showBorder: true,
               ),
               SideMenuItem(
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
+                ),
                 press: () {
                   print(ViewMode.profile);
                   this.widget.setViewMode!(ViewMode.profile);
@@ -111,6 +124,12 @@ class _SideMenuState extends State<SideMenu> {
                 showBorder: true,
               ),
               SideMenuItem(
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
+                ),
                 press: () {
                   this.widget.setViewMode!(ViewMode.about);
                 },
@@ -123,6 +142,12 @@ class _SideMenuState extends State<SideMenu> {
                 showBorder: true,
               ),
               SideMenuItem(
+                style: TextStyle(
+                  fontFamily:
+                      'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: Color.fromARGB(255, 255, 255, 255), // text color
+                ),
                 press: () {
                   Share.share('check out my website https://google.com');
                 },

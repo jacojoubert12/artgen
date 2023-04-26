@@ -702,19 +702,12 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                   Expanded(
                     child: Text(''),
                   ),
-                  // loading
-                  //     ? Text('')
-                  //     :
                   Container(
                     height: 40,
                     width: 200,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: kButtonLightPurple,
-                      // gradient: LinearGradient(colors: [
-                      //   Color.fromARGB(255, 61, 2, 50),
-                      //   Color.fromARGB(255, 10, 6, 20)
-                      // ])
                     ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -825,7 +818,7 @@ class _CreateImgDetailViewState extends State<CreateImgDetailView> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(255, 181, 9, 130),
+                          primary: Color.fromRGBO(88, 164, 8, 1),
                           // onPrimary: Colors.black,
                           shape: CircleBorder()),
                     ),

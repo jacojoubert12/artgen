@@ -14,6 +14,7 @@ class SideMenuItem extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.press,
+    required TextStyle style,
   }) : super(key: key);
 
   final bool? isActive, isHover, showBorder;
@@ -34,10 +35,6 @@ class SideMenuItem extends StatelessWidget {
                 ? Icon(
                     Icons.create,
                   )
-                // ? SvgPicture.asset(
-                //     "assets/Icons/Angle right.svg",
-                //     width: 15,
-                //   )
                 : SizedBox(width: 15),
             SizedBox(width: kDefaultPadding / 4),
             Expanded(
@@ -53,18 +50,13 @@ class SideMenuItem extends StatelessWidget {
                 child: Row(
                   children: [
                     icon,
-                    // SvgPicture.asset(
-                    //   iconSrc,
-                    //   height: 20,
-                    //   color: (isActive || isHover) ? kPrimaryColor : kGrayColor,
-                    // ),
                     SizedBox(width: kDefaultPadding * 0.75),
                     Text(
                       title,
                       style: Theme.of(context).textTheme.button!.copyWith(
                             color: (isActive! || isHover!)
                                 ? kTextColor
-                                : kGrayColor,
+                                : kPrimaryLightColor,
                           ),
                     ),
                     Spacer(),
