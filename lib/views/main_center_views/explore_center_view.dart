@@ -343,7 +343,7 @@ class _ExploreCenterViewState extends State<ExploreCenterView> {
                     Expanded(
                       flex: 9,
                       child: Container(
-                        height: 40,
+                        height: Responsive.isMobile(context) ? 50 : 40,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: kTextFieldBackgroundColor,
