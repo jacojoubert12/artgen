@@ -513,14 +513,16 @@ class _ImgGridViewState extends State<ImgGridView> {
                   ),
                 ),
 
+              SizedBox(
+                height: (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+                    ? (kDefaultPadding / 2) : kDefaultPadding
+              ),
               if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
                 Container(
                   width: bannerAd!.size.width.toDouble(),
                   height: bannerAd!.size.height.toDouble(),
                   child: _buildBannerAdWidget(),
                 )
-              else
-                SizedBox(height: kDefaultPadding),
             ],
           ),
         ),
