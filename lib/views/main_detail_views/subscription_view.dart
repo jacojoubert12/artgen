@@ -1,13 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:artgen/components/side_menu.dart';
 import 'package:artgen/responsive.dart';
+import 'package:flutter/services.dart';
+import 'package:purchases_flutter/models/offerings_wrapper.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
 import '../../../constants.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class SubscriptionView extends StatelessWidget {
+class SubscriptionView extends StatefulWidget {
+  @override
+  State<SubscriptionView> createState() => _SubscriptionViewState();
+}
+
+class _SubscriptionViewState extends State<SubscriptionView> {
+  @override
+  void initState() {
+    getOfferings();
+    super.initState();
+  }
+
+  void getOfferings() async {
+    try {
+      Offerings offerings = await Purchases.getOfferings();
+      print(offerings);
+      if (offerings.current != null) {
+        // Display current offering with offerings.current
+      }
+    } on PlatformException catch (e) {
+      print("Error getting Offerings: ${e}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -77,7 +77,9 @@ class _AboutCenterViewState extends State<AboutCenterView> {
                       right: false,
                       child: Padding(
                         padding: EdgeInsets.only(
-                            top: 200 + kDefaultPadding,
+                            top: Responsive.isDesktop(context)
+                                ? 200 + kDefaultPadding
+                                : 150,
                             left: kDefaultPadding * 4,
                             right: kDefaultPadding * 4),
                         child: Column(
@@ -299,7 +301,8 @@ class _AboutCenterViewState extends State<AboutCenterView> {
             ),
           ),
           Container(
-            height: 200 + kDefaultPadding * 2,
+            height:
+                Responsive.isDesktop(context) ? 200 + kDefaultPadding * 2 : 150,
             width: double.maxFinite,
             color: kBgDarkColor,
             child: Image(

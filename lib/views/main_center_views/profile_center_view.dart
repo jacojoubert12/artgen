@@ -141,7 +141,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
       body: Column(
         children: [
           Container(
-            height: 200 + kDefaultPadding,
+            height: Responsive.isDesktop(context) ? 200 + kDefaultPadding : 100,
             width: double.maxFinite,
             color: Color.fromARGB(0, 0, 0, 0),
             child: Image(
@@ -195,7 +195,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                               ),
                             ],
                           ),
-                          SizedBox(height: kDefaultPadding),
+                          SizedBox(height: kDefaultPadding / 2),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -222,7 +222,6 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                               ),
                             ],
                           ),
-                          SizedBox(height: kDefaultPadding),
                           SizedBox(height: kDefaultPadding),
                           user.age >= 18
                               ? Text(
@@ -276,7 +275,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                   ),
                                 )
                               : Text(''),
-                          SizedBox(height: kDefaultPadding),
+                          // SizedBox(height: kDefaultPadding),
                           Text(
                             'Support Us',
                             style: TextStyle(
@@ -293,7 +292,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                   style: TextStyle(
                                     fontFamily:
                                         'custom font', // remove this if don't have custom font
-                                    fontSize: 17.0, // text size
+                                    fontSize: 12.0, // text size
                                     color: kTextColorLightGrey,
                                     // text color
                                   ),
@@ -359,15 +358,6 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
                                 SizedBox(width: 10.0),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    try {
-                                      Offerings offerings =
-                                          await Purchases.getOfferings();
-                                      if (offerings.current != null) {
-                                        // Display current offering with offerings.current
-                                      }
-                                    } on PlatformException catch (e) {
-                                      print("Error getting Offerings: ${e}");
-                                    }
                                     UniversalPlatform.isAndroid ||
                                             UniversalPlatform.isIOS
                                         ? showDialog(
