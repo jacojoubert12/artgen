@@ -62,8 +62,8 @@ class MyWebsockets {
       if (webSocketChannel == null || webSocketChannel!.closeCode != null) {
         _didDisconnect = true;
         print("Websocket Disconnected - Cancel Timer");
+        timer.cancel();
         _reconnectWS();
-        // timer.cancel();
       } else {
         print("Websocket Send Ping");
         if (_didDisconnect || lastSub != user.selectedModel) {
