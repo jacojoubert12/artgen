@@ -38,5 +38,7 @@ const kDeafaultButton = 20.0;
 const kDeafaultJournalEntry = 50.0;
 const kDefaultHeight = 10.0;
 const kDefaultBorderRadius = 10.0;
+const kDefaultProfilePicHeight = 150.0;
+const kDefaultCoverPicHeight = 240.0;
 
 const kTextFontSize = 16.0;
