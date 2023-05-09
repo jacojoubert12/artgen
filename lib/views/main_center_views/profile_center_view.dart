@@ -34,7 +34,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   String _name = '';
   String _surname = '';
   String _email = '';
-  String _profileImg = '';
+  String _profileImg = 'https://ws.artgen.fun/images/icon.png';
   int _totalImagesGenerated = 0;
   String bannerImage = '';
 
@@ -42,7 +42,7 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
   Future _getDataFromDatabase() async {
     if (user.user?.photoURL != null) {
       setState(() {
-        _avatarImage = user.user!.photoURL!;
+        _profileImg = user.user!.photoURL!;
       });
     }
     await FirebaseFirestore.instance
@@ -138,293 +138,293 @@ class _ProfileCenterViewState extends State<ProfileCenterView> {
         constraints: BoxConstraints(maxWidth: 250),
         child: SideMenu(setViewMode: widget.setViewMode),
       ),
-      body: Column(
-        children: [
-          Container(
-            height: Responsive.isDesktop(context) ? 200 + kDefaultPadding : 100,
-            width: double.maxFinite,
-            color: Color.fromARGB(0, 0, 0, 0),
-            child: Image(
-              image: AssetImage('assets/images/banner.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: kIsWeb ? kDefaultPadding : 0),
-              color: kBgDarkColor,
-              child: SafeArea(
-                right: false,
-                child: Column(
+      body: Container(
+        color: kBgDarkColor,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            buildTop(),
+            buildContent(),
+          ],
+        ),
+      )
+    );
+  }
+
+  Widget buildContent() {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(kDefaultPadding),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(height: kDefaultPadding),
+              Text(
+                (_name != "") ? _name : "Please Login",
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: kTextColorLightGrey,
+                ),
+              ),
+              const SizedBox(height: kDefaultPadding / 4),
+              if (_name != "")
+                Text(
+                  (_email != "") ? _email : "Please Login",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey,
+                  ),
+                ),
+
+              SizedBox(height: kDefaultPadding),
+              user.age >= 18
+                  ? Text(
+                "Safe <-- Filter NSFW --> Unsafe",
+                style: TextStyle(
+                  fontFamily:
+                  'custom font', // remove this if don't have custom font
+                  fontSize: 12.0, // text size
+                  color: kTextColorLightGrey,
+                  // text color
+                ),
+              )
+                  : Text(
+                "18+ Age must be verified on your Google account to enable some settings. "
+                "If already logged in, please logout and login again to enable these settings.",
+                style: TextStyle(
+                  fontFamily:
+                  'custom font', // remove this if don't have custom font
+                  fontSize: 12.0, // text size
+                  color: kTextColorLightGrey,
+                  // text color
+                ),
+              ),
+              user.age >= 18
+                  ? SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackShape: RoundedRectSliderTrackShape(),
+                  thumbShape: RoundSliderThumbShape(
+                      enabledThumbRadius: 12.0),
+                  overlayShape: RoundSliderOverlayShape(
+                      overlayRadius: 28.0),
+                ),
+                child: Container(
+                  width: kDefaultWidth * 35,
+                  child: Slider(
+                    value: user.nsfwFilterSliderValue,
+                    max: 1,
+                    min: 0,
+                    divisions: 101,
+                    label: user.nsfwFilterSliderValue
+                        .toStringAsFixed(2),
+                    activeColor:
+                    kButtonLightPurple, // Set the active color here
+                    inactiveColor:
+                    kButtonLightPurpleTransparent,
+                    onChanged: (double value) {
+                      setState(() {
+                        user.nsfwFilterSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
+              )
+                  : Text(''),
+              SizedBox(height: kDefaultPadding),
+              Text(
+                'Support Us',
+                style: TextStyle(
+                  fontFamily:
+                  'custom font', // remove this if don't have custom font
+                  fontSize: 20.0, // text size
+                  color: kTextColorLightGrey,
+                  // text color
+                ),
+              ),
+              (UniversalPlatform.isAndroid || UniversalPlatform.isIOS)
+                  ? Text(
+                '\nPlease consider supporting us by subscribing or donating.',
+                style: TextStyle(
+                  fontFamily:
+                  'custom font', // remove this if don't have custom font
+                  fontSize: 12.0, // text size
+                  color: kTextColorLightGrey,
+                  // text color
+                ),
+              )
+                  : Text(
+                '\nPlease consider supporting us by downloading the ArtGen App and subscribing or donating.',
+                style: TextStyle(
+                  fontFamily:
+                  'custom font', // remove this if don't have custom font
+                  fontSize: 12.0, // text size
+                  color: kTextColorLightGrey,
+                  // text color
+                ),
+              ),
+              if (!(UniversalPlatform.isAndroid || UniversalPlatform.isIOS))
+                SizedBox(
+                  height: kDefaultPadding,
+                ),
+              if (!(UniversalPlatform.isAndroid || UniversalPlatform.isIOS))
+                InkWell(
+                  onTap: () async {
+                    launchUrl(
+                        'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
+                        as Uri);
+                  },
+                  child: Container(
+                    height: 100,
+                    child: Image(
+                        image: AssetImage('images/play.png')),
+                  ),
+                ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: kDefaultPadding),
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(
-                              user.user?.photoURL ?? _avatarImage,
-                            ),
-                          ),
-                          SizedBox(height: kDefaultPadding),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Text(
-                              //   "User:  ",
-                              //   style: TextStyle(
-                              //     fontFamily:
-                              //         'custom font', // remove this if don't have custom font
-                              //     fontSize: 20.0, // text size
-                              //     color: kTextColorLightGrey, // text color
-                              //   ),
-                              //   textAlign: TextAlign.center,
-                              // ),
-                              // SizedBox(height: kDefaultPadding),
-                              Text(
-                                user.user?.displayName ?? "Please Login",
-                                style: TextStyle(
-                                  fontFamily:
-                                      'custom font', // remove this if don't have custom font
-                                  fontSize: 15.0, // text size
-                                  color: kTextColorLightGrey, // text color
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: kDefaultPadding / 2),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              //   Text(
-                              //     "Email:  ",
-                              //     style: TextStyle(
-                              //       fontFamily:
-                              //           'custom font', // remove this if don't have custom font
-                              //       fontSize: 20.0, // text size
-                              //       color: kTextColorLightGrey, // text color
-                              //     ),
-                              //     textAlign: TextAlign.center,
-                              //   ),
-                              //   SizedBox(height: kDefaultPadding),
-                              Text(
-                                user.user?.email ?? "Please Login",
-                                style: TextStyle(
-                                  fontFamily:
-                                      'custom font', // remove this if don't have custom font
-                                  fontSize: 15.0, // text size
-                                  color: kTextColorLightGrey, // text color
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: kDefaultPadding),
-                          user.age >= 18
-                              ? Text(
-                                  "Safe <-- Filter NSFW --> Unsafe",
-                                  style: TextStyle(
-                                    fontFamily:
-                                        'custom font', // remove this if don't have custom font
-                                    fontSize: 12.0, // text size
-                                    color: kTextColorLightGrey,
-                                    // text color
-                                  ),
-                                )
-                              : Text(
-                                  "18+ Age must be verified on your Google account to enable some settings\n If already logged in, please logout and login again to enable these settings.",
-                                  style: TextStyle(
-                                    fontFamily:
-                                        'custom font', // remove this if don't have custom font
-                                    fontSize: 12.0, // text size
-                                    color: kTextColorLightGrey,
-                                    // text color
-                                  ),
-                                ),
-                          user.age >= 18
-                              ? SliderTheme(
-                                  data: SliderTheme.of(context).copyWith(
-                                    trackShape: RoundedRectSliderTrackShape(),
-                                    thumbShape: RoundSliderThumbShape(
-                                        enabledThumbRadius: 12.0),
-                                    overlayShape: RoundSliderOverlayShape(
-                                        overlayRadius: 28.0),
-                                  ),
-                                  child: Container(
-                                    width: kDefaultWidth * 35,
-                                    child: Slider(
-                                      value: user.nsfwFilterSliderValue,
-                                      max: 1,
-                                      min: 0,
-                                      divisions: 101,
-                                      label: user.nsfwFilterSliderValue
-                                          .toStringAsFixed(2),
-                                      activeColor:
-                                          kButtonLightPurple, // Set the active color here
-                                      inactiveColor:
-                                          kButtonLightPurpleTransparent,
-                                      onChanged: (double value) {
-                                        setState(() {
-                                          user.nsfwFilterSliderValue = value;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                )
-                              : Text(''),
-                          // SizedBox(height: kDefaultPadding),
-                          Text(
-                            'Support Us',
-                            style: TextStyle(
-                              fontFamily:
-                                  'custom font', // remove this if don't have custom font
-                              fontSize: 20.0, // text size
-                              color: kTextColorLightGrey,
-                              // text color
-                            ),
-                          ),
-                          UniversalPlatform.isAndroid || UniversalPlatform.isIOS
-                              ? Text(
-                                  '\nPlease consider supporting us by subscribing or donating.',
-                                  style: TextStyle(
-                                    fontFamily:
-                                        'custom font', // remove this if don't have custom font
-                                    fontSize: 12.0, // text size
-                                    color: kTextColorLightGrey,
-                                    // text color
-                                  ),
-                                )
-                              : Text(
-                                  '\nPlease consider supporting us by downloading the ArtGen App and subscribing or donating.',
-                                  style: TextStyle(
-                                    fontFamily:
-                                        'custom font', // remove this if don't have custom font
-                                    fontSize: 12.0, // text size
-                                    color: kTextColorLightGrey,
-                                    // text color
-                                  ),
-                                ),
-                          SizedBox(
-                            height: kDefaultPadding,
-                          ),
-                          !UniversalPlatform.isAndroid &&
-                                  !UniversalPlatform.isIOS
-                              ? InkWell(
-                                  onTap: () async {
-                                    launchUrl(
-                                        'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
-                                            as Uri);
-                                  },
-                                  child: Container(
-                                    height: 100,
-                                    child: Image(
-                                        image: AssetImage('images/play.png')),
-                                  ),
-                                )
-                              : Text(''),
-                          Container(
-                            padding:
-                                EdgeInsets.symmetric(vertical: kDefaultPadding),
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    UniversalPlatform.isAndroid ||
-                                            UniversalPlatform.isIOS
-                                        ? showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return SubscriptionView();
-                                            },
-                                          )
-                                        : launchUrl(
-                                            'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
-                                                as Uri);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shadowColor: Colors.transparent,
-                                    primary: Color(0xFF58A408),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0)),
-                                  ),
-                                  child: Text('Subscribe'),
-                                ),
-                                SizedBox(width: 10.0),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    UniversalPlatform.isAndroid ||
-                                            UniversalPlatform.isIOS
-                                        ? showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return SubscriptionView();
-                                            },
-                                          )
-                                        : launchUrl(
-                                            'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
-                                                as Uri);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shadowColor: Colors.transparent,
-                                    primary: Color(0xFF58A408),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0)),
-                                  ),
-                                  child: Text('  Donate  '),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: kDefaultPadding / 10),
-                          Container(
-                            // height: kDefaultHeight,
-                            // width: 100,
-                            decoration: BoxDecoration(
-                              color: kButtonLightPurple,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (user.user?.isAnonymous ?? true) {
-                                  await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AuthGate();
-                                    },
-                                  );
-                                } else {
-                                  _signOut();
-                                }
-                                setState(() {});
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0)),
-                              ),
-                              child: (user.user?.isAnonymous ?? true)
-                                  ? Text("  Login  ")
-                                  : Text("  Logout  "),
-                            ),
-                          ),
-                        ],
+                    ElevatedButton(
+                      onPressed: () {
+                        UniversalPlatform.isAndroid ||
+                            UniversalPlatform.isIOS
+                            ? showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SubscriptionView();
+                          },
+                        )
+                            : launchUrl(
+                            'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
+                            as Uri);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
+                        primary: Color(0xFF58A408),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(15.0)),
                       ),
+                      child: Text('Subscribe'),
+                    ),
+                    SizedBox(width: 10.0),
+                    ElevatedButton(
+                      onPressed: () async {
+                        UniversalPlatform.isAndroid ||
+                            UniversalPlatform.isIOS
+                            ? showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SubscriptionView();
+                          },
+                        )
+                            : launchUrl(
+                            'https://play.google.com/store/apps/details?id=com.enginosoft.artgen'
+                            as Uri);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
+                        primary: Color(0xFF58A408),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(15.0)),
+                      ),
+                      child: Text('  Donate  '),
                     ),
                   ],
                 ),
               ),
-            ),
+              SizedBox(height: kDefaultPadding / 10),
+              Container(
+                // height: kDefaultHeight,
+                // width: 100,
+                decoration: BoxDecoration(
+                  color: kButtonLightPurple,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (user.user?.isAnonymous ?? true) {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AuthGate();
+                        },
+                      );
+                    } else {
+                      _signOut();
+                    }
+                    setState(() {});
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) ? const Size(double.infinity, 50) : const Size(120, 40),
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
+                  ),
+                  child: (user.user?.isAnonymous ?? true)
+                      ? Text("  Login  ")
+                      : Text("  Logout  "),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+  Widget buildTop() {
+    final profilePicBottom = kDefaultProfilePicHeight / 3;
+    final profilePicTop = kDefaultCoverPicHeight - (kDefaultProfilePicHeight / 1.5);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Container(
+          margin: EdgeInsets.only(bottom: profilePicBottom),
+          child: buildCoverImage(),
+        ),
+        Positioned(
+          top: profilePicTop,
+          child: buildProfileImage(),
+        ),
+      ],
+    );
+  }
+
+  Widget buildCoverImage() => Container(
+    color: Colors.grey,
+    child: GestureDetector(
+      onTap: () {},
+      child: Image.asset('assets/images/banner.png',
+        width: double.infinity,
+        height: kDefaultCoverPicHeight,
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+
+  Widget buildProfileImage() => FutureBuilder(
+    future: _getDataFromDatabase(),
+      builder: (context, value) {
+        return CircleAvatar(
+          radius: kDefaultProfilePicHeight / 2,
+          backgroundColor: Colors.white,
+          child: GestureDetector(
+            onTap: () {},
+            child: CircleAvatar(
+              radius: kDefaultProfilePicHeight / 2 - 2,
+              backgroundColor: Colors.white,
+              foregroundImage: NetworkImage(_profileImg),
+            ),
+          ),
+        );
+      }
+  );
 }
